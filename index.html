@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift</title>
+  <meta
+    name="description"
+    content="Formal bounds, drift-aligned tangent regularization, and deployment experiments for frozen predictors under dynamic covariate drift."
+  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f2eb;
+      --bg2: #ece5da;
+      --card: rgba(255,255,255,.76);
+      --line: rgba(16,21,34,.1);
+      --ink: #101522;
+      --muted: #5e6877;
+      --accent: #b36b42;
+      --deep: #2f4458;
+      --shadow: 0 18px 54px rgba(16,21,34,.07);
+      --max: 1040px;
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      font-size: 15px;
+      color: var(--ink);
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at top left, rgba(179,107,66,.18), transparent 30%),
+        radial-gradient(circle at top right, rgba(47,68,88,.16), transparent 28%),
+        linear-gradient(180deg, var(--bg) 0%, #f7f5f0 45%, var(--bg2) 100%);
+    }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; width: 100%; height: auto; }
+    .topbar {
+      position: sticky; top: 0; z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(245,242,235,.82);
+      border-bottom: 1px solid rgba(16,21,34,.06);
+    }
+    .wrap { width: min(calc(100% - 2rem), var(--max)); margin: 0 auto; }
+    .topbar .wrap, .hero, .section, .footer { position: relative; z-index: 1; }
+    .navline {
+      min-height: 4.1rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .brand { display: flex; align-items: center; gap: .85rem; font-weight: 800; letter-spacing: .02em; }
+    .mark {
+      width: 2rem; height: 2rem; display: grid; place-items: center;
+      border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(16,21,34,.08);
+      background: linear-gradient(135deg, rgba(179,107,66,.16), rgba(47,68,88,.22));
+      font-family: "Cormorant Garamond", serif; font-size: 1.1rem;
+    }
+    .nav { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+    .nav a { font-size: .84rem; font-weight: 700; color: var(--muted); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .55rem;
+      padding: .68rem 1rem; border-radius: 999px; font-weight: 800; font-size: .87rem;
+      border: 1px solid transparent; transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(16,21,34,.08); }
+    .btn.primary { background: linear-gradient(135deg, #243548, var(--deep)); color: #fff; }
+    .btn.secondary { background: rgba(255,255,255,.78); border-color: rgba(16,21,34,.08); }
+    .hero { padding: 3.25rem 0 1.7rem; }
+    .hero-grid, .repo-grid { display: grid; grid-template-columns: 1.45fr .7fr; gap: 1rem; }
+    .card, .hero-copy, .theorem, .figure-card, .repo-card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+      box-shadow: var(--shadow); backdrop-filter: blur(16px);
+    }
+    .hero-copy, .theorem, .repo-card { padding: 1.4rem; }
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+      gap: 1.1rem;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem; margin-bottom: .8rem; padding: .35rem .65rem;
+      border-radius: 999px; border: 1px solid rgba(16,21,34,.08); background: rgba(255,255,255,.54);
+      font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    }
+    .eyebrow::before {
+      content: ""; width: .45rem; height: .45rem; border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--deep));
+    }
+    h1, h2, h3 { margin: 0; font-family: "Cormorant Garamond", serif; letter-spacing: -.03em; line-height: .98; }
+    h1 {
+      font-size: clamp(1.95rem, 3.8vw, 3.15rem);
+      max-width: none;
+      width: 100%;
+      margin-bottom: .45rem;
+      text-wrap: balance;
+    }
+    .hero-meta {
+      margin-bottom: .85rem;
+      color: var(--muted);
+      font-size: .83rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    .hero-meta a {
+      text-decoration: underline;
+      text-underline-offset: .16em;
+    }
+    .hero-copy p, .theorem p, .section-head p, .card p, .repo-card p, .figure-card p { color: var(--muted); }
+    .hero-copy p { margin: 0; }
+    .hero-top {
+      display: grid;
+      gap: .8rem;
+      align-content: start;
+    }
+    .hero-bottom {
+      margin-top: auto;
+      display: grid;
+      gap: 1rem;
+    }
+    .actions { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 0; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin-top: 0; }
+    .stat {
+      padding: .8rem; border-radius: 14px; background: rgba(255,255,255,.68);
+      border: 1px solid rgba(16,21,34,.06);
+    }
+    .stat strong { display: block; font-size: 1.18rem; line-height: 1; margin-bottom: .25rem; }
+    .stat span { display: block; font-size: .78rem; color: var(--muted); }
+    .kicker { color: var(--accent); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .theorem h2 { font-size: 1.55rem; margin: .5rem 0 .7rem; }
+    .math {
+      margin: .75rem 0; padding: .72rem .85rem; overflow-x: auto; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(179,107,66,.08), rgba(47,68,88,.06));
+      border: 1px solid rgba(16,21,34,.08);
+    }
+    .math mjx-container { font-size: 92% !important; }
+    .microgrid, .card-grid, .highlights, .figure-grid { display: grid; gap: 1rem; }
+    .microgrid { display: flex; flex-direction: column; margin-top: .8rem; gap: .7rem; }
+    .micro, .highlight {
+      padding: .75rem .85rem; border-radius: 14px; background: rgba(255,255,255,.66);
+      border: 1px solid rgba(16,21,34,.06);
+    }
+    .micro strong, .highlight strong { display: block; margin-bottom: .25rem; }
+    .micro, .highlight, .card li, .repo-list li, .result-list li, .linkbox { font-size: .9rem; }
+    .section { padding: .5rem 0 1.45rem; }
+    .section-head {
+      display: flex; justify-content: space-between; align-items: end; gap: .9rem; flex-wrap: wrap; margin-bottom: .95rem;
+    }
+    .section-head h2 { font-size: clamp(1.65rem, 2.8vw, 2.45rem); }
+    .section-head p { margin: 0; max-width: 54ch; }
+    .card-grid { grid-template-columns: repeat(3, 1fr); }
+    .card { padding: 1.05rem; }
+    .card h3 { font-size: 1.35rem; margin-bottom: .45rem; }
+    .card ul, .repo-list, .result-list {
+      list-style: none; margin: .8rem 0 0; padding: 0; display: grid; gap: .45rem;
+    }
+    .card li {
+      position: relative; padding-left: .9rem; color: var(--muted);
+    }
+    .card li::before {
+      content: ""; position: absolute; left: 0; top: .63rem; width: .32rem; height: .32rem;
+      border-radius: 999px; background: linear-gradient(135deg, var(--accent), var(--deep));
+    }
+    .highlights { grid-template-columns: repeat(4, 1fr); margin-top: .8rem; gap: .7rem; }
+    .figure-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .9rem; }
+    .figure-card { overflow: hidden; }
+    .frame { padding: .8rem .8rem 0; }
+    .frame-inner {
+      border-radius: 14px; overflow: hidden; border: 1px solid rgba(16,21,34,.08);
+      background: rgba(255,255,255,.88);
+    }
+    .frame-inner img { max-height: 220px; object-fit: contain; }
+    .figure-copy { padding: .95rem 1rem 1.05rem; }
+    .figure-copy h3 { font-size: 1.5rem; margin: .25rem 0 .35rem; }
+    .result-list li {
+      display: flex; justify-content: space-between; gap: .75rem; padding-bottom: .45rem;
+      border-bottom: 1px solid rgba(16,21,34,.07); color: var(--muted);
+    }
+    .result-list li:last-child { border-bottom: 0; padding-bottom: 0; }
+    .result-list span:last-child { color: var(--ink); font-weight: 800; white-space: nowrap; }
+    .repo-list li, .linkbox {
+      padding: .8rem .9rem; border-radius: 14px; background: rgba(255,255,255,.66);
+      border: 1px solid rgba(16,21,34,.06);
+    }
+    .repo-list strong, .linkbox strong { display: block; margin-bottom: .2rem; }
+    pre {
+      margin: .8rem 0; padding: .85rem .95rem; overflow-x: auto; border-radius: 14px; font-size: .84rem;
+      background: #101522; color: #f4f7fb; border: 1px solid rgba(255,255,255,.08);
+    }
+    code, pre { font-family: Consolas, "Liberation Mono", Menlo, monospace; }
+    .repo-card h3 { font-size: 1.45rem; }
+    .footer { padding: 0 0 2rem; }
+    .footer-line {
+      padding-top: 1.1rem; border-top: 1px solid rgba(16,21,34,.08);
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .footer-line h3 { font-size: 1.15rem; }
+    @media (max-width: 1080px) {
+      .hero-grid, .repo-grid, .card-grid, .highlights, .figure-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      body { font-size: 14px; }
+      .hero { padding-top: 2.6rem; }
+      .stats { grid-template-columns: 1fr; }
+      .hero-copy, .theorem, .repo-card { padding: 1rem; }
+      .figure-copy { padding: .9rem; }
+      .frame-inner img { max-height: 200px; }
+      .result-list li { flex-direction: column; gap: .2rem; }
+      h1 { max-width: none; }
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]], displayMath: [["\\[", "\\]"], ["$$", "$$"]] },
+      svg: { fontCache: "global" }
+    };
+  </script>
+  <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap navline">
+      <a class="brand" href="#top"><span class="mark">J</span><span>Jacobian-Velocity Bounds</span></a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#context">Context</a>
+        <a href="#math">Mathematics</a>
+        <a href="#experiments">Experiments</a>
+        <a href="#repo">Repository</a>
+        <a class="btn primary" href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">Read Manuscript</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <div class="hero-top">
+            <div class="eyebrow">Frozen Deployment Under Drift</div>
+            <h1>Deployment risk is a tangent-geometry problem.</h1>
+            <div class="hero-meta">
+              Jonathan R. Landers<br>
+              ORCID: <a href="https://orcid.org/0000-0003-1872-6179">0000-0003-1872-6179</a>
+            </div>
+            <p>
+              This project develops a formal account of long-horizon deployment instability for frozen predictors under dynamic covariate drift.
+              The central object is the Jacobian-velocity interaction \(J_f(X_t)\dot X_t\): environmental motion only becomes dangerous when it passes through directions where the model is locally steep.
+            </p>
+          </div>
+          <div class="hero-bottom">
+            <div class="actions">
+              <a class="btn primary" href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">Open the Paper</a>
+              <a class="btn secondary" href="#experiments">Explore Results</a>
+            </div>
+            <div class="stats">
+              <div class="stat"><strong>91.6%</strong><span>Synthetic volatility reduction with DTR</span></div>
+              <div class="stat"><strong>95.8%</strong><span>Synthetic directional-gain reduction</span></div>
+              <div class="stat"><strong>30.2%</strong><span>Air Quality volatility reduction at \(\lambda=0.03\)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="theorem">
+          <div class="kicker">Core Result</div>
+          <h2>Risk volatility is controlled by Jacobian-velocity energy.</h2>
+          <p>
+            A time-domain Poincare inequality turns volatility into derivative energy. The main theorem then bounds that energy by accumulated tangent amplification along the deployment path.
+          </p>
+          <div class="math">
+            \[
+            \mathrm{Var}_U(r(U))
+            \le
+            \frac{\beta^2 T}{\pi^2}
+            \int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
+            \]
+          </div>
+          <p>
+            In low-rank drift regimes, the leading term lives in the drift subspace, which motivates drift-aligned tangent regularization rather than isotropic smoothing.
+          </p>
+          <div class="microgrid">
+            <div class="micro">
+              <strong>DTR objective</strong>
+              <div>\(\mathcal{L}_{\mathrm{DTR}}=\mathbb{E}\ell+\lambda \mathbb{E}\|J_f(X)V\|_F^2\)</div>
+            </div>
+            <div class="micro">
+              <strong>Matched monitor</strong>
+              <div>\(h_t=s_t^2 g_t\), large only when drift is fast and tangent gain is high</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="context">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Context</h2>
+          <p>
+            The paper focuses on a narrow but important regime: the predictor is frozen, the environment drifts continuously, and the object of interest is a deployment-risk trajectory rather than a single train-test shift gap.
+          </p>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <h3>The setup</h3>
+            <div class="math">\[
+            r(t):=\mathbb{E}[g_\theta(X_t)].
+            \]</div>
+            <p>
+              The model \(f_\theta\) stays fixed after training while covariates evolve as \(X_t\). Instability is therefore temporal and geometric.
+            </p>
+            <ul>
+              <li>Frozen predictor \(f_\theta : \mathbb{R}^d \to \mathbb{R}\)</li>
+              <li>Dynamic covariate path \(X_t\)</li>
+              <li>Risk volatility measured over \(t \in [0,T]\)</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>The mechanism</h3>
+            <div class="math">\[
+            J_f(X_t)\dot X_t
+            \]</div>
+            <p>
+              The same drift path can be benign for one model and harmful for another. What matters is whether motion aligns with locally steep predictor directions.
+            </p>
+            <ul>
+              <li>Flat tangent directions make drift comparatively mild</li>
+              <li>Steep tangent directions turn motion into volatility</li>
+              <li>The theorem isolates this interaction explicitly</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>The payoff</h3>
+            <div class="math">\[
+            \mathcal{L}_{\mathrm{DTR}}(\theta)=
+            \mathbb{E}\ell(f_\theta(X),Y)+
+            \lambda \mathbb{E}\|J_f(X)V\|_F^2
+            \]</div>
+            <p>
+              Once the drift geometry is estimated, robustness should be enforced in those directions instead of spread uniformly across the ambient space.
+            </p>
+            <ul>
+              <li>Directional regularization instead of isotropic Jacobian smoothing</li>
+              <li>Monitoring score aligned with the same geometry</li>
+              <li>One theorem-to-method story from synthetic to field deployment</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="math">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Main Mathematical Results</h2>
+          <p>
+            The formal story is compact: first control temporal volatility by derivative energy, then control derivative energy by Jacobian-velocity energy, then specialize to low-rank drift.
+          </p>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Lemma</h3>
+            <div class="math">\[
+            \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2dt.
+            \]</div>
+            <p>Large volatility requires large derivative energy somewhere along deployment time.</p>
+          </article>
+          <article class="card">
+            <h3>Theorem</h3>
+            <div class="math">\[
+            \mathrm{Var}_U(r(U)) \le \frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
+            \]</div>
+            <p>Deployment instability is driven by accumulated tangent amplification of realized motion.</p>
+          </article>
+          <article class="card">
+            <h3>Corollary</h3>
+            <div class="math">\[
+            \dot X_t=Va_t+\rho_t,\qquad V^\top V=I_k.
+            \]</div>
+            <p>In low-rank regimes, the leading term is directional Jacobian energy in the drift subspace.</p>
+          </article>
+        </div>
+        <div class="highlights">
+          <div class="highlight"><strong>A1</strong><span>Deployment paths are absolutely continuous with finite velocity energy.</span></div>
+          <div class="highlight"><strong>A2</strong><span>The performance field admits a valid chain rule along the trajectory.</span></div>
+          <div class="highlight"><strong>A3</strong><span>Directional changes in the performance field are dominated by score-Jacobian changes.</span></div>
+          <div class="highlight"><strong>Operational view</strong><span>Flatten the predictor where future motion is likely, then monitor the same directional mechanism during deployment.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="experiments">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Experimental Results</h2>
+          <p>
+            The experiments mirror the theorem-to-method pipeline: visualize the geometry, verify the theorem in a clean synthetic benchmark, compare directional and isotropic smoothing, then test the same story on a real field deployment.
+          </p>
+        </div>
+        <div class="figure-grid">
+          <article class="figure-card">
+            <div class="frame"><div class="frame-inner"><img src="./figures/figure_1_geometry.png" alt="Geometry figure comparing steep versus flat tangent directions along the same drift path."></div></div>
+            <div class="figure-copy">
+              <div class="kicker">Figure 1</div>
+              <h3>Geometric intuition</h3>
+              <p>
+                The deployment path is identical in both panels. Only tangent geometry changes. Drift is dangerous only when it aligns with steep local directions of the predictor.
+              </p>
+              <ul class="result-list">
+                <li><span>Conceptual quantity</span><span>\(J_f(x)v\)</span></li>
+                <li><span>Takeaway</span><span>Drift magnitude alone is not enough</span></li>
+                <li><span>Design implication</span><span>Regularize along drift directions</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="figure-card">
+            <div class="frame"><div class="frame-inner"><img src="./figures/figure_2_synthetic_theorem.png" alt="Synthetic theorem sanity check figure."></div></div>
+            <div class="figure-copy">
+              <div class="kicker">Figure 2</div>
+              <h3>Synthetic theorem sanity check</h3>
+              <p>
+                Each point is one trained model evaluated over the drifting synthetic path. DTR moves the cloud toward lower derivative energy and lower volatility.
+              </p>
+              <ul class="result-list">
+                <li><span>Standard volatility</span><span>\(3.13\times10^{-3}\)</span></li>
+                <li><span>DTR volatility</span><span>\(2.62\times10^{-4}\)</span></li>
+                <li><span>Volatility reduction</span><span>91.6%</span></li>
+                <li><span>Directional-gain reduction</span><span>95.8%</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="figure-card">
+            <div class="frame"><div class="frame-inner"><img src="./figures/figure_4_directional_ablation.png" alt="Directional ablation comparing DTR, isotropic smoothing, and misspecified drift subspaces."></div></div>
+            <div class="figure-copy">
+              <div class="kicker">Figure 4</div>
+              <h3>Directional beats isotropic</h3>
+              <p>
+                At matched \(\lambda=0.03\), DTR improves on both the standard model and isotropic Jacobian regularization across derivative energy, volatility, directional gain, and terminal risk.
+              </p>
+              <ul class="result-list">
+                <li><span>Standard terminal risk</span><span>0.171</span></li>
+                <li><span>Isotropic terminal risk</span><span>0.161</span></li>
+                <li><span>DTR terminal risk</span><span>0.127</span></li>
+                <li><span>Wrong-subspace volatility inflation</span><span>23.9x</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="figure-card">
+            <div class="frame"><div class="frame-inner"><img src="./figures/figure_3_air_quality_monitoring.png" alt="Air Quality deployment figure showing blockwise MSE and hazard score."></div></div>
+            <div class="figure-copy">
+              <div class="kicker">Figure 3</div>
+              <h3>Field deployment on UCI Air Quality</h3>
+              <p>
+                The real-data study freezes the regressor, estimates a 2D drift subspace from unlabeled deployment covariates, and evaluates blockwise MSE over 20 biweekly deployment blocks.
+              </p>
+              <ul class="result-list">
+                <li><span>Selected DTR volatility</span><span>\(6.49\times10^{-2}\)</span></li>
+                <li><span>Standard volatility</span><span>\(9.29\times10^{-2}\)</span></li>
+                <li><span>Volatility reduction</span><span>30.2%</span></li>
+                <li><span>Peak MSE, standard vs DTR</span><span>1.152 vs 0.949</span></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="repo">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Repository</h2>
+          <p>
+            The repo is organized to be readable both as a paper companion and as a reproducible experiment package: manuscript, cached summaries, figures, and training scripts are all included.
+          </p>
+        </div>
+        <div class="repo-grid">
+          <article class="repo-card">
+            <h3>What lives where</h3>
+            <ul class="repo-list">
+              <li><strong>Manuscript</strong><span><a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">PDF</a> and <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.tex">LaTeX source</a> for the paper.</span></li>
+              <li><strong><code>scripts/</code></strong><span>Training, evaluation, and plotting code for the synthetic theorem benchmark, directional ablation, and Air Quality study.</span></li>
+              <li><strong><code>figures/</code></strong><span>Rendered figure assets plus cached CSV/JSON summaries consumed by the plotting scripts.</span></li>
+              <li><strong><code>data/</code></strong><span>Cached Air Quality dataset used by the field deployment experiment.</span></li>
+            </ul>
+          </article>
+          <article class="repo-card">
+            <h3>Quick Start</h3>
+            <p>Install the Python dependencies, regenerate the figure assets, and build the manuscript if you want a full local rebuild.</p>
+            <pre><code>python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python scripts/generate_all_figures.py
+latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</code></pre>
+            <div class="linkbox"><strong>License</strong><span>This repository is released under the <a href="./LICENSE">MIT License</a>.</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-line">
+      <div>
+        <h3>Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift</h3>
+        <p>A formal and empirical case for drift-aligned tangent control in frozen-model deployment.</p>
+      </div>
+      <div class="actions">
+        <a class="btn secondary" href="#repo">Repository</a>
+        <a class="btn primary" href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">Manuscript</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{
+  "split": {
+    "train_start": "2004-03-10",
+    "train_end": "2004-06-02",
+    "val_start": "2004-06-04",
+    "val_end": "2004-06-30",
+    "deploy_start": "2004-06-30",
+    "deploy_end": "2005-04-04",
+    "train_rows": 1573,
+    "val_rows": 580,
+    "deploy_rows": 5191,
+    "deploy_blocks": 20,
+    "block_days": 14,
+    "target": "CO(GT)",
+    "drift_sv_1": 6.921904563903809,
+    "drift_sv_2": 3.3510241508483887
+  },
+  "standard_mean": {
+    "val_mse": 0.5624943176905314,
+    "volatility": 0.09291448811525889,
+    "initial_risk": 0.4192654490470886,
+    "terminal_risk": 0.16898536185423532,
+    "mean_gain": 0.08647120810346677,
+    "max_hazard": 0.8244456899925598
+  },
+  "dtr_family_mean": {
+    "val_mse": 0.4931647703051567,
+    "volatility": 0.08160938568144159,
+    "initial_risk": 0.3708520159125328,
+    "terminal_risk": 0.16938850035270056,
+    "mean_gain": 0.06795858495364275,
+    "max_hazard": 0.748499127848275
+  },
+  "selected_dtr_mean": {
+    "lambda": 0.03,
+    "val_mse": 0.495313157637914,
+    "volatility": 0.06487136746139095,
+    "initial_risk": 0.3679014543692271,
+    "terminal_risk": 0.14910920957724252,
+    "mean_gain": 0.06093567511998118,
+    "max_hazard": 0.6462030924877479
+  },
+  "selected_standard": {
+    "initial_risk": 0.3633093535900116,
+    "terminal_risk": 0.17603157460689545,
+    "volatility": 0.08649754307718685,
+    "mean_gain": 0.08767702484037727,
+    "max_hazard": 0.7907218189751611
+  },
+  "selected_dtr": {
+    "initial_risk": 0.34193387627601624,
+    "terminal_risk": 0.15155097842216492,
+    "volatility": 0.0625787736819644,
+    "mean_gain": 0.06086084195412696,
+    "max_hazard": 0.7265809054823478
+  },
+  "selected_dtr_reduction": {
+    "volatility_pct": 30.181644674273954,
+    "mean_gain_pct": 29.530676792362097
+  }
+}
