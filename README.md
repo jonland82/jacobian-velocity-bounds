@@ -100,7 +100,9 @@ This experiment verifies the time-domain inequality in the smallest controlled s
 - DTR mean directional gain: $1.91$
 - Relative directional-gain reduction: **95.8%**
 
-Figure: ![Synthetic theorem sanity check](./figures/figure_2_synthetic_theorem.png)
+Figure:
+
+<img src="./figures/figure_2_synthetic_theorem.png" alt="Synthetic theorem sanity check" width="420" style="max-width: 420px; width: 100%;">
 
 ### Directional vs isotropic Jacobian smoothing
 
@@ -120,7 +122,9 @@ The misspecification study shows the expected directional behavior:
 - A $20^\circ$ rotation raises volatility by a factor of **1.43** relative to aligned DTR.
 - A wrong orthogonal subspace raises volatility by a factor of **23.9**.
 
-Figure: ![Directional comparison and misspecification ablation](./figures/figure_4_directional_ablation.png)
+Figure:
+
+<img src="./figures/figure_4_directional_ablation.png" alt="Directional comparison and misspecification ablation" width="420" style="max-width: 420px; width: 100%;">
 
 ### Field deployment on UCI Air Quality
 
@@ -140,7 +144,9 @@ The real-data study freezes a regressor after training, estimates a 2D drift sub
 
 For the representative seed shown in the figure, the standard regressor peaks at deployment MSE `1.152`, while the DTR regressor peaks at `0.949`.
 
-Figure: ![Air Quality deployment monitoring](./figures/figure_3_air_quality_monitoring.png)
+Figure:
+
+<img src="./figures/figure_3_air_quality_monitoring.png" alt="Air Quality deployment monitoring" width="420" style="max-width: 420px; width: 100%;">
 
 ## Repository Layout
 
