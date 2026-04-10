@@ -6,9 +6,7 @@ Professional package for the manuscript, experiments, and figures accompanying:
 
 This repository studies a frozen predictor deployed under dynamic covariate drift. The central claim is that long-horizon deployment instability is governed not just by how much the environment moves, but by how that motion aligns with the model's local tangent geometry. The dangerous quantity is the Jacobian-velocity interaction
 
-$$
-J_f(X_t)\dot X_t.
-$$
+$$ J_f(X_t)\dot X_t. $$
 
 That geometric view yields:
 
@@ -23,9 +21,7 @@ An expanded project page for GitHub Pages lives at [`index.html`](./index.html).
 
 Let $X_t \in \mathbb{R}^d$ denote the deployment covariate path, let $f_\theta$ be a frozen predictor, and let
 
-$$
-r(t) := \mathbb{E}[g_\theta(X_t)]
-$$
+$$ r(t) := \mathbb{E}[g_\theta(X_t)] $$
 
 be the deployment-risk trajectory induced by a performance field $g_\theta$.
 
@@ -37,9 +33,7 @@ The paper's main theorem package formalizes the intuition that risk becomes vola
 
 If $r$ is absolutely continuous on $[0,T]$, then
 
-$$
-\mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2\,dt,
-$$
+$$ \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2\,dt, $$
 
 where $U \sim \mathrm{Unif}[0,T]$.
 
@@ -49,11 +43,7 @@ This is the temporal Poincare/Wirtinger step: deployment volatility cannot be la
 
 Under the paper's regularity assumptions A1-A3,
 
-$$
-\mathrm{Var}_U(r(U))
-\le
-\frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
-$$
+$$ \mathrm{Var}_U(r(U)) \le \frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt. $$
 
 This identifies the geometric driver of instability: accumulated tangent amplification of the deployment path.
 
@@ -61,29 +51,15 @@ This identifies the geometric driver of instability: accumulated tangent amplifi
 
 If the deployment velocity decomposes as
 
-$$
-\dot X_t = Va_t + \rho_t, \qquad V^\top V = I_k,
-$$
+$$ \dot X_t = Va_t + \rho_t, \qquad V^\top V = I_k, $$
 
 then the leading term is governed by directional Jacobian energy inside the drift subspace:
 
-$$
-\mathcal{L}_{\mathrm{DTR}}(\theta)
-=
-\mathbb{E}_{(X,Y)}[\ell(f_\theta(X),Y)]
-+
-\lambda \mathbb{E}_X\|J_f(X)V\|_F^2.
-$$
+$$ \mathcal{L}_{\mathrm{DTR}}(\theta) = \mathbb{E}_{(X,Y)}[\ell(f_\theta(X),Y)] + \lambda \mathbb{E}_X\|J_f(X)V\|_F^2. $$
 
 The same geometry yields the monitoring score
 
-$$
-h_t = s_t^2 g_t,
-\qquad
-s_t := \|\Delta \mu_t\|/\Delta,
-\qquad
-g_t := \mathbb{E}\|J_f(X_t)V_t\|_F^2.
-$$
+$$ h_t = s_t^2 g_t, \qquad s_t := \|\Delta \mu_t\|/\Delta, \qquad g_t := \mathbb{E}\|J_f(X_t)V_t\|_F^2. $$
 
 ## Experimental Results
 
