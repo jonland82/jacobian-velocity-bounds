@@ -2,6 +2,8 @@
 
 Professional package for the manuscript, experiments, and figures accompanying:
 
+**[View the live project site](https://jonland82.github.io/jacobian-velocity-bounds/)**
+
 **[Read the manuscript (PDF)](./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf)**
 
 This repository studies a frozen predictor deployed under dynamic covariate drift. The central claim is that long-horizon deployment instability is governed not just by how much the environment moves, but by how that motion aligns with the model's local tangent geometry. The dangerous quantity is the Jacobian-velocity interaction
