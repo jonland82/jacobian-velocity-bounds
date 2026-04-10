@@ -202,16 +202,62 @@
     .footer-line h3 { font-size: 1.15rem; }
     @media (max-width: 1080px) {
       .hero-grid, .repo-grid, .card-grid, .highlights, .figure-grid { grid-template-columns: 1fr; }
+      .section-head { align-items: start; }
+      .section-head p { max-width: none; }
     }
     @media (max-width: 760px) {
       body { font-size: 14px; }
-      .hero { padding-top: 2.6rem; }
+      .wrap { width: min(calc(100% - 1rem), var(--max)); }
+      .topbar { position: static; }
+      .navline {
+        min-height: auto;
+        padding: .75rem 0;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+      .nav {
+        width: 100%;
+        gap: .5rem .65rem;
+        align-items: flex-start;
+      }
+      .nav .btn.primary {
+        width: 100%;
+        justify-content: center;
+      }
+      .hero { padding: 1.2rem 0 1rem; }
+      .hero-copy, .theorem, .repo-card, .card { padding: 1rem; }
+      .hero-copy { gap: .9rem; }
+      .hero-top { gap: .65rem; }
+      .hero-bottom { gap: .8rem; }
+      h1 {
+        font-size: clamp(1.8rem, 9vw, 2.35rem);
+        max-width: none;
+      }
+      .hero-meta { font-size: .8rem; margin-bottom: .2rem; }
+      .actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
       .stats { grid-template-columns: 1fr; }
-      .hero-copy, .theorem, .repo-card { padding: 1rem; }
+      .card-grid, .highlights, .figure-grid, .repo-grid { grid-template-columns: 1fr; }
+      .section { padding: .35rem 0 1.1rem; }
+      .section-head { margin-bottom: .8rem; }
       .figure-copy { padding: .9rem; }
-      .frame-inner img { max-height: 200px; }
-      .result-list li { flex-direction: column; gap: .2rem; }
-      h1 { max-width: none; }
+      .figure-copy h3 { font-size: 1.35rem; }
+      .frame { padding: .65rem .65rem 0; }
+      .frame-inner img { max-height: 180px; }
+      .result-list li {
+        flex-direction: column;
+        gap: .2rem;
+      }
+      .result-list span:last-child { white-space: normal; }
+      pre { font-size: .8rem; }
+      .footer-line { flex-direction: column; }
     }
   </style>
   <script>
