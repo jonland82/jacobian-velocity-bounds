@@ -169,11 +169,11 @@
     .kicker { color: var(--accent); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .theorem h2 { font-size: 1.55rem; margin: .5rem 0 .7rem; }
     .math {
-      margin: .75rem 0; padding: .72rem .85rem; overflow-x: auto; border-radius: 14px;
+      margin: .75rem 0; padding: .72rem .85rem; overflow: hidden; border-radius: 14px;
       background: linear-gradient(135deg, rgba(179,107,66,.08), rgba(47,68,88,.06));
       border: 1px solid rgba(16,21,34,.08);
     }
-    .math mjx-container { font-size: 92% !important; }
+    .math mjx-container { font-size: 92% !important; max-width: 100% !important; }
     .microgrid, .card-grid, .highlights, .figure-grid { display: grid; gap: 1rem; }
     .microgrid { display: flex; flex-direction: column; margin-top: .8rem; gap: .7rem; }
     .micro, .highlight {
@@ -229,6 +229,32 @@
       max-width: 100%;
     }
     code, pre { font-family: Consolas, "Liberation Mono", Menlo, monospace; }
+    pre code {
+      display: block;
+      white-space: inherit;
+    }
+    .command-block {
+      margin: .8rem 0;
+      padding: .7rem;
+      border-radius: 18px;
+      background: #141a28;
+      border: 1px solid rgba(255,255,255,.08);
+      display: grid;
+      gap: .5rem;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    .command-line {
+      display: block;
+      padding: .75rem .9rem;
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+      color: #f4f7fb;
+      font-family: Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: .84rem;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     .repo-card h3 { font-size: 1.45rem; }
     .footer { padding: 0 0 2rem; }
     .footer-line {
@@ -293,7 +319,27 @@
         gap: .2rem;
       }
       .result-list span:last-child { white-space: normal; }
-      pre { font-size: .8rem; }
+      pre {
+        font-size: .8rem;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        overflow: hidden;
+      }
+      pre code {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+      .command-block {
+        padding: .55rem;
+        border-radius: 16px;
+        gap: .4rem;
+      }
+      .command-line {
+        padding: .65rem .75rem;
+        font-size: .78rem;
+      }
       .footer-line { flex-direction: column; }
     }
   </style>
@@ -314,6 +360,7 @@
         <a href="#math">Mathematics</a>
         <a href="#experiments">Experiments</a>
         <a href="#repo">Repository</a>
+        <a href="https://github.com/jonland82/jacobian-velocity-bounds">GitHub</a>
         <a class="btn primary" href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">Read Manuscript</a>
       </nav>
     </div>
@@ -334,9 +381,13 @@
               This project develops a formal account of long-horizon deployment instability for frozen predictors under dynamic covariate drift.
               The central object is the Jacobian-velocity interaction \(J_f(X_t)\dot X_t\): environmental motion only becomes dangerous when it passes through directions where the model is locally steep.
             </p>
+            <p>
+              The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time hazard assessment through one coherent mechanism.
+            </p>
           </div>
           <div class="hero-bottom">
             <div class="actions">
+              <a class="btn secondary" href="https://github.com/jonland82/jacobian-velocity-bounds">Repository Home</a>
               <a class="btn primary" href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">Open the Paper</a>
               <a class="btn secondary" href="#experiments">Explore Results</a>
             </div>
@@ -356,10 +407,10 @@
           </p>
           <div class="math">
             \[
-            \mathrm{Var}_U(r(U))
-            \le
-            \frac{\beta^2 T}{\pi^2}
-            \int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
+            \begin{multline*}
+            \mathrm{Var}_U(r(U)) \le \\
+            \frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
+            \end{multline*}
             \]
           </div>
           <p>
@@ -419,9 +470,10 @@
           <article class="card">
             <h3>The payoff</h3>
             <div class="math">\[
-            \mathcal{L}_{\mathrm{DTR}}(\theta)=
-            \mathbb{E}\ell(f_\theta(X),Y)+
-            \lambda \mathbb{E}\|J_f(X)V\|_F^2
+            \begin{multline*}
+            \mathcal{L}_{\mathrm{DTR}}(\theta) = \\
+            \mathbb{E}\ell(f_\theta(X),Y) + \lambda \mathbb{E}\|J_f(X)V\|_F^2
+            \end{multline*}
             \]</div>
             <p>
               Once the drift geometry is estimated, robustness should be enforced in those directions instead of spread uniformly across the ambient space.
@@ -448,21 +500,30 @@
           <article class="card">
             <h3>Lemma</h3>
             <div class="math">\[
-            \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2dt.
+            \begin{multline*}
+            \mathrm{Var}_U(r(U)) \le \\
+            \frac{T}{\pi^2}\int_0^T (r'(t))^2dt.
+            \end{multline*}
             \]</div>
             <p>Large volatility requires large derivative energy somewhere along deployment time.</p>
           </article>
           <article class="card">
             <h3>Theorem</h3>
             <div class="math">\[
-            \mathrm{Var}_U(r(U)) \le \frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
+            \begin{multline*}
+            \mathrm{Var}_U(r(U)) \le \\
+            \frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
+            \end{multline*}
             \]</div>
             <p>Deployment instability is driven by accumulated tangent amplification of realized motion.</p>
           </article>
           <article class="card">
             <h3>Corollary</h3>
             <div class="math">\[
-            \dot X_t=Va_t+\rho_t,\qquad V^\top V=I_k.
+            \begin{multline*}
+            \dot X_t = \\
+            Va_t+\rho_t, \qquad V^\top V=I_k.
+            \end{multline*}
             \]</div>
             <p>In low-rank regimes, the leading term is directional Jacobian energy in the drift subspace.</p>
           </article>
@@ -576,11 +637,13 @@
           <article class="repo-card">
             <h3>Quick Start</h3>
             <p>Install the Python dependencies, regenerate the figure assets, and build the manuscript if you want a full local rebuild.</p>
-            <pre><code>python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-python scripts/generate_all_figures.py
-latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</code></pre>
+            <div class="command-block" aria-label="Quick start commands">
+              <div class="command-line">python -m venv .venv</div>
+              <div class="command-line">.venv\Scripts\Activate.ps1</div>
+              <div class="command-line">pip install -r requirements.txt</div>
+              <div class="command-line">python scripts/generate_all_figures.py</div>
+              <div class="command-line">latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</div>
+            </div>
             <div class="linkbox"><strong>License</strong><span>This repository is released under the <a href="./LICENSE">MIT License</a>.</span></div>
           </article>
         </div>

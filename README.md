@@ -2,6 +2,8 @@
 
 Professional package for the manuscript, experiments, and figures accompanying:
 
+**[Repository home](https://github.com/jonland82/jacobian-velocity-bounds)**
+
 **[View the live project site](https://jonland82.github.io/jacobian-velocity-bounds/)**
 
 **[Read the manuscript (PDF)](./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf)**
