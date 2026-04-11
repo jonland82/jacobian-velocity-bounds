@@ -33,6 +33,7 @@
       font-size: 15px;
       color: var(--ink);
       line-height: 1.55;
+      overflow-x: hidden;
       background:
         radial-gradient(circle at top left, rgba(179,107,66,.18), transparent 30%),
         radial-gradient(circle at top right, rgba(47,68,88,.16), transparent 28%),
@@ -76,6 +77,26 @@
       background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
       box-shadow: var(--shadow); backdrop-filter: blur(16px);
     }
+    .hero-grid > *,
+    .repo-grid > *,
+    .card-grid > *,
+    .highlights > *,
+    .figure-grid > *,
+    .card,
+    .hero-copy,
+    .theorem,
+    .figure-card,
+    .repo-card,
+    .figure-copy,
+    .stat,
+    .highlight,
+    .micro,
+    .repo-list li,
+    .linkbox,
+    .section-head,
+    .footer-line {
+      min-width: 0;
+    }
     .hero-copy, .theorem, .repo-card { padding: 1.4rem; }
     .hero-copy {
       display: flex;
@@ -112,6 +133,20 @@
       text-underline-offset: .16em;
     }
     .hero-copy p, .theorem p, .section-head p, .card p, .repo-card p, .figure-card p { color: var(--muted); }
+    .hero-copy p,
+    .theorem p,
+    .section-head p,
+    .card p,
+    .repo-card p,
+    .figure-card p,
+    .repo-list li,
+    .linkbox,
+    .footer-line p,
+    .result-list span,
+    .nav a {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
     .hero-copy p { margin: 0; }
     .hero-top {
       display: grid;
@@ -191,6 +226,7 @@
     pre {
       margin: .8rem 0; padding: .85rem .95rem; overflow-x: auto; border-radius: 14px; font-size: .84rem;
       background: #101522; color: #f4f7fb; border: 1px solid rgba(255,255,255,.08);
+      max-width: 100%;
     }
     code, pre { font-family: Consolas, "Liberation Mono", Menlo, monospace; }
     .repo-card h3 { font-size: 1.45rem; }
@@ -245,6 +281,7 @@
       }
       .stats { grid-template-columns: 1fr; }
       .card-grid, .highlights, .figure-grid, .repo-grid { grid-template-columns: 1fr; }
+      .navline, .nav, .section-head, .footer-line { width: 100%; }
       .section { padding: .35rem 0 1.1rem; }
       .section-head { margin-bottom: .8rem; }
       .figure-copy { padding: .9rem; }
