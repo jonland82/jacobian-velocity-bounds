@@ -1,3 +1,5 @@
+\pdfminorversion=4
+\pdfobjcompresslevel=0
 \documentclass[conference]{IEEEtran}
 
 \usepackage{amsmath,amssymb,amsthm,mathtools,bm}
@@ -7,7 +9,6 @@
 \usepackage{microtype}
 \usepackage{cite}
 \usepackage[hidelinks]{hyperref}
-\usepackage{orcidlink}
 
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
@@ -19,10 +20,11 @@
 
 \title{Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift}
 \author{
-\IEEEauthorblockN{Jonathan R. Landers\,\orcidlink{0000-0003-1872-6179}}
+\IEEEauthorblockN{Jonathan R. Landers}
 \IEEEauthorblockA{
-\href{mailto:jonathan.robert.landers@gmail.com}{jonathan.robert.landers@gmail.com}\\
-\href{https://orcid.org/0000-0003-1872-6179}{ORCID: 0000-0003-1872-6179}
+Independent\\
+New York, NY, USA\\
+\href{mailto:jonathan.robert.landers@gmail.com}{jonathan.robert.landers@gmail.com}
 }
 }
 
@@ -30,20 +32,25 @@
 \maketitle
 
 \begin{abstract}
-We study long-horizon deployment of a frozen predictor under dynamic covariate shift. A time-domain Poincare inequality reduces temporal risk volatility to derivative energy, and a Jacobian-velocity theorem bounds that energy by the accumulated tangent amplification of the feature stream along the deployment path. When drift is low-rank, the leading term is governed by directional Jacobian energy in the drift subspace, motivating drift-aligned tangent regularization (DTR). Rather than smoothing the network isotropically, DTR penalizes sensitivity only along estimated drift directions, and the same geometric quantity yields a matched monitoring score. We validate the theorem-to-method pipeline in three experiments, namely a synthetic benchmark for the time-domain inequality, a controlled synthetic comparison against isotropic Jacobian regularization, and a field-deployment study on the UCI Air Quality sensor dataset. DTR consistently reduces risk volatility and directional gain relative to standard training and isotropic smoothing. Moderate drift-subspace misspecification is tolerable while orthogonal misspecification largely removes the benefit.
+We study long-horizon deployment of a frozen predictor under dynamic covariate shift. A time-domain Poincare inequality reduces temporal risk volatility to derivative energy, and a Jacobian-velocity theorem bounds that energy by the accumulated tangent amplification of the feature stream along the deployment path under explicit along-path regularity and domination assumptions. When drift is low-rank, the leading term is governed by directional Jacobian energy in the drift subspace, motivating drift-aligned tangent regularization (DTR). Rather than smoothing the network isotropically, DTR penalizes sensitivity only along estimated drift directions, and the same geometric quantity yields a matched monitoring proxy. We validate the theorem-to-method pipeline in three experiments, namely a synthetic benchmark for the time-domain inequality, a controlled synthetic comparison against isotropic Jacobian regularization, and a field-deployment study on the UCI Air Quality sensor dataset. DTR consistently reduces risk volatility and directional gain relative to standard training and isotropic smoothing. Moderate drift-subspace misspecification is tolerable while orthogonal misspecification largely removes the benefit.
 \end{abstract}
+
+\begin{IEEEkeywords}
+covariate drift, deployment risk, Jacobian regularization, temporal robustness, distribution shift
+\end{IEEEkeywords}
 
 \section{Introduction}
 Distribution shift is often discussed statically by training on one distribution, testing on another, and measuring the gap \cite{ben-david-shift,moreno-shift}. Long-horizon deployment is different. A model may be frozen while the environment moves continuously, so the relevant object is not a single out-of-domain error but a risk trajectory. Temporal benchmarks and deployment studies make the same point from different angles. Even when labels and architecture are fixed, performance can move materially over time \cite{gama-drift,koh-wilds,yao-wildtime,han-temporal}. The practical question is therefore not only whether shift occurs, but how violently performance can move once deployment begins.
 
-This paper develops a geometric answer. If the feature stream follows a path $X_t$ and the predictor has local tangent map $J_f(X_t)$, then instability is governed not by shift magnitude alone but by the directional interaction between the data velocity $\dot X_t$ and the model tangent geometry. The dangerous quantity is $J_f(X_t)\dot X_t$. The intuition is simple. The same deployment path can be almost harmless for one model and damaging for another, because only motion through steep tangent directions accumulates into large score variation. If the stream moves through a flat direction, drift can be present without being operationally dangerous. If it moves through a steep direction, even gentle but persistent motion can compound into long-horizon degradation. The paper's central bound formalizes this. Under mild regularity and a domination condition on the performance field,
+This paper develops a geometric answer. If the feature stream follows a path $X_t$ and the predictor has local tangent map $J_f(X_t)$, then instability is governed not by shift magnitude alone but by the directional interaction between the data velocity $\dot X_t$ and the model tangent geometry. The dangerous quantity is $J_f(X_t)\dot X_t$. The intuition is simple. The same deployment path can be almost harmless for one model and damaging for another, because only motion through steep tangent directions accumulates into large score variation. If the stream moves through a flat direction, drift can be present without being operationally dangerous. If it moves through a steep direction, even gentle but persistent motion can compound into long-horizon degradation. The paper's central bound formalizes this. Under explicit along-path regularity and directional domination assumptions,
 \[
 \Var_U(r(U)) \le \frac{\beta^2 T}{\pi^2}\int_0^T \E\|J_f(X_t)\dot X_t\|^2dt.
 \]
 
-First, a time-domain Poincare inequality converts temporal volatility into derivative energy. Second, a Jacobian-velocity theorem bounds that energy under explicit regularity assumptions on the deployment performance field. Third, a low-rank drift specialization makes a drift-aligned regularizer and a matched monitoring score almost inevitable. Fourth, we test the resulting story with a synthetic theorem sanity check, a compact isotropic-versus-directional comparison, and a real field-deployment study on Air Quality. The empirical sequence mirrors the logical one. It first verifies the inequality itself, then compares competing regularizers in the idealized low-rank regime, and only then moves to a real deployment path where the drift subspace must be estimated. Concretely, the paper contributes a defensible bound on risk volatility for frozen deployment, a low-rank reduction that isolates the drift subspace, a drift-aligned tangent regularizer (DTR), a matched hazard score, and empirical evidence that the same directional geometry matters. DTR reduces risk volatility and directional gain relative to standard training and isotropic smoothing in both controlled synthetic experiments and a real field-deployment study.
+First, a time-domain Poincare inequality converts temporal volatility into derivative energy. Second, a Jacobian-velocity theorem bounds that energy under explicit along-path assumptions on the deployment performance field. Third, a low-rank drift specialization makes a drift-aligned regularizer and a matched monitoring proxy almost inevitable. Fourth, we test the resulting story with a synthetic time-domain sanity check, a compact isotropic-versus-directional comparison, and a real field-deployment study on Air Quality. The empirical sequence mirrors the logical one. It first verifies the temporal inequality itself, then compares competing regularizers in the idealized low-rank regime, and only then moves to a real deployment path where the drift subspace must be estimated. Concretely, the paper contributes a defensible bound on risk volatility for frozen deployment, a low-rank reduction that isolates the drift subspace, a drift-aligned tangent regularizer (DTR), a matched hazard proxy, and empirical evidence that the same directional geometry matters. DTR reduces risk volatility and directional gain relative to standard training and isotropic smoothing in both controlled synthetic experiments and a real field-deployment study.
 
 The paper is narrow by design. It does not address general distribution shift or test-time adaptation, but asks specifically what local geometry governs frozen-model degradation and whether that geometry remains visible on real drifting data.
+Code, scripts, and supplementary materials are available in a public repository \cite{landers-repo}. A companion project page with figures and summaries is available at \cite{landers-site}.
 
 \section{Related Work}
 The paper sits closest to temporal distribution shift and dynamic deployment evaluation. Classical dataset-shift taxonomies separate covariate, label, and concept shift \cite{ben-david-shift,moreno-shift}, while concept-drift work emphasizes sequential adaptation under evolving streams \cite{gama-drift}. More recent benchmark-driven work has made temporal structure explicit, both in naturally shifted datasets and in stylized train-deploy protocols \cite{koh-wilds,yao-wildtime,simchowitz-shift,han-temporal}. Our focus is narrower. Rather than estimating a worst-case shift gap, we study the volatility of one frozen model along a deployment path.
@@ -55,15 +62,16 @@ Finally, the work draws on two technical lines. The regularization side is relat
 \begin{figure*}[t]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/figure_1_geometry.png}
-  \caption{Geometric intuition for drift-aligned instability. The deployment path is the same in both panels, but the local tangent geometry is different. When the drift direction aligns with a steep tangent direction, the score changes rapidly, whereas when the model is flat along that same direction, the score remains stable. Figure~1 visualizes the directional quantity that appears in Theorem~\ref{thm:jv}.}
+  \caption{Geometric intuition for drift-aligned instability. The deployment path is the same in both panels, but the local tangent geometry is different. When the drift direction aligns with a steep tangent direction, the score changes rapidly, whereas when the model is flat along that same direction, the score remains stable. Figure~1 visualizes the directional quantity that appears in Theorem~\ref{thm:jv} and \eqref{eq:jv-bound}.}
   \label{fig:geometry}
 \end{figure*}
 
 \section{Setup and Assumptions}
 Let $t\in[0,T]$ index deployment time. Let $X_t\in\R^d$ denote the covariate process, and let $f_\theta:\R^d\to\R$ be a frozen scalar score function. We study a scalar deployment performance field $g_\theta:\R^d\to\R$ and the associated trajectory
-\[
+\begin{equation}
+\label{eq:risk-trajectory}
 r(t):=\E[g_\theta(X_t)].
-\]
+\end{equation}
 For classification, a natural example is
 \[
 g_\theta(x)=\E_{Y\sim P_0(\cdot\mid x)}[\ell(f_\theta(x),Y)],
@@ -72,9 +80,11 @@ but the theorem below does not rely on this representation alone. Instead, we st
 The point of this setup is to separate two roles that are often conflated in shift analyses. The model is frozen, while the covariate stream is allowed to move.
 
 To measure temporal instability, draw $U\sim\mathrm{Unif}[0,T]$ and define
-\[
+\begin{equation}
+\label{eq:temporal-volatility}
 \Var_U(r(U))=\E[(r(U)-\E r(U))^2].
-\]
+\end{equation}
+The quantity in \eqref{eq:temporal-volatility} is the notion of deployment volatility studied throughout the paper.
 
 \textit{Assumption A1 (trajectory regularity).} The sample paths $t\mapsto X_t$ are almost surely absolutely continuous and
 \[
@@ -83,25 +93,38 @@ To measure temporal instability, draw $U\sim\mathrm{Unif}[0,T]$ and define
 
 \textit{Assumption A2 (chain rule under the expectation).} The field $g_\theta$ is weakly differentiable, $t\mapsto g_\theta(X_t)$ is almost surely absolutely continuous, and
 \[
-g_\theta(X_t)-g_\theta(X_s)=\int_s^t \nabla g_\theta(X_u)^\top \dot X_u\,du
+g_\theta(X_t)-g_\theta(X_s)=\int_s^t \nabla g_\theta(X_u)^\top \dot X_u\,du,
 \]
 for all $0\le s<t\le T$ on almost every sample path, with
 \[
 \E\int_0^T |\nabla g_\theta(X_t)^\top \dot X_t|dt < \infty.
 \]
 
-\textit{Assumption A3 (directional domination by the score Jacobian).} There exists $\beta>0$ such that for almost every $x$ and every $v\in\R^d$,
+\textit{Assumption A3 (score Jacobian well posed and directional domination along deployment).} There exists a measurable matrix field $J_f$ such that $J_f(X_t)$ is well defined almost surely for almost every $t\in[0,T]$,
 \[
-|\nabla g_\theta(x)^\top v| \le \beta \|J_f(x)v\|.
+\E\int_0^T \|J_f(X_t)\dot X_t\|^2dt < \infty,
 \]
+and there exists $\beta>0$ such that
+\[
+|\nabla g_\theta(X_t)^\top \dot X_t| \le \beta \|J_f(X_t)\dot X_t\|
+\]
+for almost every $t\in[0,T]$ on almost every sample path.
 
-Assumption A3 is the paper's main compatibility condition. It should not be read as a consequence of dynamic covariate shift alone. Rather, it asserts that along deployment directions, the local change in the chosen performance field is dominated by the local change in the score.
+Assumption A3 is the paper's main compatibility condition. It should not be read as a consequence of dynamic covariate shift alone. Rather, it asserts that along the realized deployment path, the local change in the chosen performance field is dominated by the local change in the score, and that the score Jacobian is well posed there.
 
-\begin{remark}[When A3 holds and when it fails]
+\begin{remark}[What A3 means, when it holds, and when it fails]
 \label{rem:a3}
-A3 holds in the natural composition case. If $g_\theta(x)=h(f_\theta(x))$, then $\nabla g_\theta(x)=h'(f_\theta(x))\nabla f_\theta(x)$ and A3 follows with $\beta=\sup|h'|$. For Bernoulli cross-entropy against a fixed soft target, $|h'|\le 1$, giving $\beta=1$.
+A3 is deliberately along-path rather than pointwise in every ambient direction. The proof only needs control of $\nabla g_\theta(X_t)^\top \dot X_t$ by $J_f(X_t)\dot X_t$ along the realized velocity.
 
-A3 does not follow from pure covariate shift alone. The general risk $g_\theta(x)=\E_{Y\sim P_0(\cdot\mid x)}[\ell(f_\theta(x),Y)]$ carries an extra $\nabla\eta(x)$ term from the label conditional, which need not be dominated by $\|J_f(x)v\|$ even when $\eta$ is time-invariant. A3 also fails under simultaneous concept shift, and at score saturation wherever $\nabla f_\theta(x)=0$ but $\nabla g_\theta(x)\neq 0$.
+A3 holds in the natural composition case. If $g_\theta(x)=h(f_\theta(x))$, then
+\[
+\nabla g_\theta(X_t)^\top \dot X_t
+=
+h'(f_\theta(X_t))\,J_f(X_t)\dot X_t,
+\]
+so A3 follows with $\beta=\sup|h'|$ whenever $J_f(X_t)$ is well defined almost surely for almost every $t$. For Bernoulli cross-entropy against a fixed soft target, $|h'|\le 1$, giving $\beta=1$. The theorem is therefore not ReLU-specific. Smooth predictors fit directly, and piecewise-linear predictors such as ReLU networks fit as soon as the deployment path avoids their nondifferentiability set almost surely for almost every deployment time.
+
+A3 does not follow from pure covariate shift alone. The general risk $g_\theta(x)=\E_{Y\sim P_0(\cdot\mid x)}[\ell(f_\theta(x),Y)]$ carries an extra $\nabla\eta(x)$ term from the label conditional, which need not be dominated by the score-Jacobian term even when $\eta$ is time-invariant. A3 also fails under simultaneous concept shift, and at score saturation wherever $\nabla f_\theta(x)=0$ but $\nabla g_\theta(x)\neq 0$.
 \end{remark}
 
 \section{Main Theorem Package}
@@ -110,27 +133,30 @@ The first step is purely temporal.
 \begin{lemma}[Time-domain derivative-energy control]
 \label{lem:poincare}
 If $r$ is absolutely continuous on $[0,T]$, then
-\[
+\begin{equation}
+\label{eq:poincare-bound}
 \Var_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2dt.
-\]
+\end{equation}
 \end{lemma}
 
 \begin{proof}
 Let $\bar r=T^{-1}\int_0^T r(t)\,dt$. The Wirtinger inequality yields
-\[
+\begin{equation}
+\label{eq:wirtinger}
 \int_0^T (r(t)-\bar r)^2dt \le \frac{T^2}{\pi^2}\int_0^T (r'(t))^2dt.
-\]
+\end{equation}
 Divide by $T$.
 \end{proof}
 
-Lemma~\ref{lem:poincare} says volatility is impossible without derivative energy. The next result identifies the geometric driver of that energy.
+Lemma~\ref{lem:poincare} says volatility is impossible without derivative energy; see \eqref{eq:poincare-bound}. The next result identifies the geometric driver of that energy.
 
 \begin{theorem}[Jacobian-velocity control of risk volatility]
 \label{thm:jv}
-Assume A1--A3 and suppose $f_\theta$ is a ReLU network, so $J_f(x)$ exists almost everywhere. Then $r$ is absolutely continuous and
-\[
+Assume A1--A3. Then $r$ is absolutely continuous and
+\begin{equation}
+\label{eq:jv-bound}
 \Var_U(r(U)) \le \frac{\beta^2 T}{\pi^2}\int_0^T \E\|J_f(X_t)\dot X_t\|^2dt.
-\]
+\end{equation}
 \end{theorem}
 
 \begin{proof}
@@ -143,21 +169,23 @@ r(t)-r(s)
 \int_s^t \E[\nabla g_\theta(X_u)^\top \dot X_u]\,du.
 \end{align*}
 Hence $r$ is absolutely continuous and, for almost every $t$,
-\[
+\begin{equation}
+\label{eq:r-prime}
 r'(t)=\E[\nabla g_\theta(X_t)^\top \dot X_t].
-\]
+\end{equation}
 Jensen's inequality and Assumption A3 then give
-\[
+\begin{equation}
+\label{eq:r-prime-bound}
 \begin{aligned}
 (r'(t))^2
 &\le \E[(\nabla g_\theta(X_t)^\top \dot X_t)^2] \\
 &\le \beta^2 \E\|J_f(X_t)\dot X_t\|^2.
 \end{aligned}
-\]
-Apply Lemma~\ref{lem:poincare}.
+\end{equation}
+Apply Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}.
 \end{proof}
 
-Theorem~\ref{thm:jv} isolates a single instability mechanism. Deployment volatility is driven by accumulated tangent amplification along the realized motion of the data stream. Figure~\ref{fig:geometry} is a geometric rendering of that statement. In that sense, the theorem turns Jacobian-based sensitivity control \cite{sokolic-jacobian,novak-sensitivity,kim-jacobian} into a statement about temporal deployment risk rather than static local robustness. The bound also has a useful operational reading. Volatility requires two ingredients at once, data motion and tangent gain. If either one is small, long-horizon fluctuation remains small.
+Theorem~\ref{thm:jv} isolates a single instability mechanism for the trajectory in \eqref{eq:risk-trajectory}. Deployment volatility is driven by accumulated tangent amplification along the realized motion of the data stream, as captured by \eqref{eq:jv-bound}. Figure~\ref{fig:geometry} is a geometric rendering of that statement. In that sense, the theorem turns Jacobian-based sensitivity control \cite{sokolic-jacobian,novak-sensitivity,kim-jacobian} into a statement about temporal deployment risk rather than static local robustness. The bound also has a useful operational reading. Volatility requires two ingredients at once, data motion and tangent gain. If either one is small, long-horizon fluctuation remains small.
 
 The low-rank regime gives the algorithmic specialization.
 
@@ -170,11 +198,12 @@ Assume the hypotheses of Theorem~\ref{thm:jv}. If
 V\in\R^{d\times k},
 \]
 with $V^\top V=I_k$ and $V^\top \rho_t=0$, then
-\[
+\begin{equation}
+\label{eq:lowrank-bound}
 \Var_U(r(U))
 \le
 \frac{2\beta^2 T}{\pi^2}(B_V+B_\rho),
-\]
+\end{equation}
 where
 \begin{align*}
 B_V &:= \int_0^T \E[\|J_f(X_t)V\|_F^2\|a_t\|^2]dt, \\
@@ -183,7 +212,7 @@ B_\rho &:= \int_0^T \E\|J_f(X_t)\rho_t\|^2dt.
 \end{corollary}
 
 \begin{proof}
-By Theorem~\ref{thm:jv},
+By Theorem~\ref{thm:jv} and \eqref{eq:jv-bound},
 \[
 \begin{aligned}
 \|J_f(X_t)\dot X_t\|^2
@@ -200,7 +229,7 @@ Since $V$ has orthonormal columns,
 Integrate over $t$.
 \end{proof}
 
-Corollary~\ref{cor:lowrank} is the paper's main reduction. When $B_\rho$ is small, the leading stability term is governed by the directional Jacobian energy in the drift subspace rather than by isotropic smoothness. This is precisely the regime in which low-dimensional temporal drift and low-rank change models are empirically plausible \cite{yao-wildtime,xie-lowrank-allerton2016}.
+Corollary~\ref{cor:lowrank} is the paper's main reduction. When $B_\rho$ is small, the leading stability term in \eqref{eq:lowrank-bound} is governed by the directional Jacobian energy in the drift subspace rather than by isotropic smoothness. This is precisely the regime in which low-dimensional temporal drift and low-rank change models are empirically plausible \cite{yao-wildtime,xie-lowrank-allerton2016}.
 
 \section{Method}
 The theorem package suggests a simple design principle. If instability is created by motion through steep directions, then regularization should flatten the model only where deployment is expected to move, not everywhere at once.
@@ -215,30 +244,33 @@ v_t=\frac{\Delta\mu_t}{\|\Delta\mu_t\|},
 or the top-$k$ principal directions of the difference cloud $\{X_t-X_{t-\Delta}\}$ over a rolling window.
 
 With a fixed subspace estimate $V$, we train using
-\[
+\begin{equation}
+\label{eq:dtr-objective}
 \mathcal L_{\mathrm{DTR}}(\theta)
 =
 \E_{(X,Y)}\ell(f_\theta(X),Y)
 \;+\;
 \lambda\E_X\|J_f(X)V\|_F^2.
-\]
-This is not global Jacobian smoothing. It is a directional motion constraint. The model is flattened only along directions expected to dominate future drift. Corollary~\ref{cor:lowrank} explains why this is the quantity worth shrinking, and it distinguishes DTR from isotropic Jacobian penalties that aim at broader smoothness or margin control \cite{sokolic-jacobian,novak-sensitivity,kim-jacobian}.
+\end{equation}
+The objective in \eqref{eq:dtr-objective} is not global Jacobian smoothing. It is a directional motion constraint. The model is flattened only along directions expected to dominate future drift. Corollary~\ref{cor:lowrank} explains why this is the quantity worth shrinking, and it distinguishes DTR from isotropic Jacobian penalties that aim at broader smoothness or margin control \cite{sokolic-jacobian,novak-sensitivity,kim-jacobian}.
 In other words, DTR tries to buy smoothness exactly where the future trajectory is expected to travel, rather than spending regularization budget uniformly over directions the deployment path may never visit.
 
 \subsection{Monitoring score}
-The same geometry yields a matched deployment diagnostic. Let
-\[
-s_t:=\|\Delta\mu_t\|/\Delta,
-\qquad
-g_t:=\E\|J_f(X_t)V_t\|_F^2,
-\qquad
-h_t:=s_t^2g_t.
-\]
-When residual drift energy is small and $V_t$ tracks the dominant motion, $h_t$ is a model-aware hazard proxy. It becomes large only when the stream is moving quickly \emph{and} the predictor is steep along that motion. Relative to generic shift alarms \cite{rabanser-shift,ovadia-shift} and sequential detection procedures \cite{wu-rscusum,cao-xie-allerton2015,cooper-allerton2024}, the point of $h_t$ is alignment rather than optimality. It monitors exactly the directional mechanism singled out by the theory.
+The same geometry yields a matched deployment diagnostic, now at the level of a theorem-motivated proxy rather than the literal corollary integrand. Let
+\begin{equation}
+\label{eq:hazard-score}
+\begin{aligned}
+s_t&:=\|\Delta\mu_t\|/\Delta,
+&
+g_t&:=\E\|J_f(X_t)V_t\|_F^2, \\
+h_t&:=s_t^2g_t.
+\end{aligned}
+\end{equation}
+When residual drift energy is small and $V_t$ tracks the dominant motion, the hazard proxy in \eqref{eq:hazard-score} tracks the leading directional term from Corollary~\ref{cor:lowrank} up to subspace-estimation error and the approximation that a finite-window drift magnitude stands in for the latent coefficient norm. It becomes large only when the stream is moving quickly \emph{and} the predictor is steep along that motion. Relative to generic shift alarms \cite{rabanser-shift,ovadia-shift} and sequential detection procedures \cite{wu-rscusum,cao-xie-allerton2015,cooper-allerton2024}, the point of $h_t$ is alignment rather than optimality. It monitors the same directional mechanism singled out by the theory without claiming to reproduce the theorem's integrand exactly.
 This symmetry between training and monitoring is deliberate. The same geometry used to suppress future instability is reused to measure when future instability is likely.
 
 \section{Experiments}
-\subsection{Synthetic theorem sanity check}
+\subsection{Synthetic time-domain sanity check}
 The synthetic study is kept compact but fully specified. It uses the smallest setup that exposes the paper's mechanism. There is one stable signal coordinate, one drifting nuisance coordinate, and a frozen classifier whose tangent geometry can either amplify or suppress that drift. This kind of temporally evolving evaluation is consistent with recent temporal-shift benchmarks, but here the drift direction is deliberately known so the theorem-to-method link can be read cleanly \cite{yao-wildtime,han-temporal}. Labels are sampled as $Y\sim\mathrm{Bernoulli}(1/2)$ and we write $S=2Y-1\in\{-1,+1\}$. Conditional on $S$, features are generated as
 \[
 x_1\sim\mathcal N(1.05S,0.90^2),
@@ -259,19 +291,19 @@ The drift schedule is monotone and smooth, with speed
 \end{align*}
 so the stream contains two periods of rapid motion. We train a one-hidden-layer ReLU classifier with $12$ hidden units, binary cross-entropy loss, Adam with learning rate $0.02$, and $140$ epochs. Each training set has $1024$ examples drawn at $t=0$, each deployment time uses a fresh sample of $2048$ points, and we sweep $\lambda\in\{0,0.01,0.03,0.08\}$ over two random seeds. DTR uses the true drift direction $V=e_2$ so that this experiment isolates the theorem-to-method link rather than subspace-estimation error.
 
-Figure~\ref{fig:theory} plays the theorem-linked role. Each point is one trained model, plotted by empirical risk volatility versus the derivative-energy quantity from Lemma~\ref{lem:poincare}. The points sit below the diagonal, as they should, and DTR moves the cloud toward the lower-left corner. Across all eight models, mean volatility falls from $3.13\times10^{-3}$ to $2.62\times10^{-4}$, while mean directional gain falls from $44.9$ to $1.91$.
+Figure~\ref{fig:theory} plays the lemma-linked role in the paper's narrative arc. Each point is one trained model, plotted by empirical risk volatility in \eqref{eq:temporal-volatility} versus the derivative-energy quantity from Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}. The points sit below the diagonal, as they should, and DTR moves the cloud toward the lower-left corner. The saved summaries also respect the full Jacobian-velocity upper bound from Theorem~\ref{thm:jv}, but that bound is numerically looser, so the figure emphasizes the sharper temporal step that anchors the rest of the pipeline. Across all eight models, mean volatility falls from $3.13\times10^{-3}$ to $2.62\times10^{-4}$, while mean directional gain falls from $44.9$ to $1.91$.
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=\columnwidth]{figures/figure_2_synthetic_theorem.png}
-  \caption{Synthetic theorem sanity check. Each point is one trained model evaluated over the drifting deployment path. The horizontal axis is the derivative-energy quantity from Lemma~\ref{lem:poincare}, and the vertical axis is empirical volatility $\Var_U(r(U))$. DTR shifts models toward lower energy and lower volatility.}
+  \caption{Synthetic time-domain sanity check. Each point is one trained model evaluated over the drifting deployment path. The horizontal axis is the derivative-energy quantity from Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}, and the vertical axis is empirical volatility $\Var_U(r(U))$. DTR shifts models toward lower energy and lower volatility.}
   \label{fig:theory}
 \end{figure}
 
 \subsection{Directional versus isotropic smoothing}
 The theorem suggests a sharper empirical question than whether ``Jacobian regularization helps.'' When drift is concentrated in one known direction, does directional smoothing beat isotropic smoothing? This is the paper's main algorithmic comparison, because it asks whether the low-rank reduction is merely descriptive or whether it really changes the design choice. We answer that question in the same synthetic environment by replacing the DTR penalty with an isotropic Jacobian penalty
 \[
-\lambda\E\|\nabla f_\theta(X)\|^2
+\lambda\E\|\nabla f_\theta(X)\|^2,
 \]
 while keeping the directional penalty
 \[
@@ -281,7 +313,9 @@ for DTR, with the same architecture, optimizer, seeds, and sweep $\lambda\in\{0.
 
 \begin{table}[t]
 \caption{Directional comparison showing the mean over the nonzero-$\lambda$ sweep. Lower is better on all metrics.}
-\centering\small
+\centering
+\setlength{\tabcolsep}{4pt}
+\small
 \begin{tabular}{lcccc}
 \toprule
 Method & Deriv.\ energy & Volatility & Dir.\ gain & Term.\ risk \\
@@ -310,11 +344,12 @@ its alignment with the true drift direction $e_2$ is $\cos\alpha$. With the corr
 \subsection{Air Quality field deployment}
 We next test whether the same directional story survives on a real field dataset with documented drift. The role of this experiment is different from the synthetic studies. It is not a clean theorem check or a controlled comparison, but a test of whether the same geometry still leaves a measurable trace once the drift subspace must be estimated from data. The UCI Air Quality dataset records hourly outputs of a five-sensor gas array together with temperature and humidity in an Italian city, and the associated field-study paper explicitly notes both concept drift and sensor drift \cite{de-vito-airquality}. We predict the reference CO concentration $\mathrm{CO(GT)}$ from the five sensor channels $\mathrm{PT08.S1}$--$\mathrm{PT08.S5}$ together with $T$, $RH$, and $AH$. Rows with the dataset's $-200$ missing-value marker are removed, leaving $1573$ training points from the first $12$ weeks, $580$ validation points from the next $4$ weeks, and $5191$ deployment points from the remaining horizon, grouped into $20$ biweekly deployment blocks.
 
-To keep the protocol aligned with the theorem, the predictor is frozen after training and deployment risk is the blockwise mean-squared error trajectory. We estimate a fixed two-dimensional drift subspace $V$ from unlabeled deployment covariates by taking the top singular vectors of consecutive biweekly mean-shift vectors. We then train a two-hidden-layer ReLU regressor with width $32$, Adam with learning rate $0.01$, and $\lambda\in\{0,0.003,0.01,0.03,0.08\}$ over three random seeds. Monitoring uses the same geometry as the method. If $\mu_t$ is the standardized covariate mean in block $t$, then
+To keep the protocol aligned with the theorem, the predictor is frozen after training and deployment risk is the blockwise mean-squared error trajectory. We estimate a fixed two-dimensional drift subspace $V$ from unlabeled deployment covariates by taking the top singular vectors of consecutive biweekly mean-shift vectors. We then train a two-hidden-layer ReLU regressor with width $32$, Adam with learning rate $0.01$, and $\lambda\in\{0,0.003,0.01,0.03,0.08\}$ over three random seeds. Monitoring uses the same geometry as the method, specialized to a blockwise rank-$1$ proxy. If $\mu_t$ is the standardized covariate mean in block $t$ and $\Delta=1$ block, then
 \begin{align*}
 s_t &= \|\mu_t-\mu_{t-1}\|, & v_t &= \frac{\mu_t-\mu_{t-1}}{\|\mu_t-\mu_{t-1}\|}, \\
 g_t &= \E[(\nabla f_\theta(X_t)^\top v_t)^2], & h_t &= s_t^2 g_t.
 \end{align*}
+Because the block width is fixed, writing $s_t$ without an explicit division by $\Delta$ only rescales the hazard score by a constant and therefore does not change the ranking interpretation used in this section.
 
 The real-data result supports the same mechanism, even though the theorem is not claimed as an exact model of this field dataset. Across the full nonzero-$\lambda$ sweep, mean deployment-risk volatility falls from $9.29\times10^{-2}$ to $8.16\times10^{-2}$, while mean directional gain falls from $8.65\times10^{-2}$ to $6.80\times10^{-2}$. The representative moderate setting $\lambda=0.03$ is stronger. Across three seeds, mean volatility falls to $6.49\times10^{-2}$ and mean directional gain to $6.09\times10^{-2}$, with lower mean terminal risk ($0.149$ versus $0.169$). Figure~\ref{fig:monitoring} shows one representative seed. The standard regressor begins at blockwise MSE $0.363$, peaks at $1.15$, and ends at $0.176$. The DTR regressor begins at $0.342$, peaks at $0.949$, and ends lower at $0.152$. Its mean hazard score also falls from $0.212$ to $0.148$, indicating that the same directional quantity used in training remains informative at monitoring time.
 
@@ -326,9 +361,9 @@ The real-data result supports the same mechanism, even though the theorem is not
 \end{figure*}
 
 \section{Discussion and Limitations}
-The theorem is mathematically narrow, by design. The crucial caution is Assumption A3. Dynamic covariate shift by itself does not imply that the conditional-risk field is controlled by the score Jacobian. We impose that domination explicitly because it is exactly what the theorem uses.
+The theorem is mathematically narrow, by design. The crucial caution is Assumption A3. Dynamic covariate shift by itself does not imply that the conditional-risk field is controlled by the score Jacobian along the realized path. We impose that domination explicitly because it is exactly what the theorem uses. The result is also not tied to ReLU networks in particular. ReLU models are one admissible class when deployment avoids kink sets almost surely for almost every deployment time, but smooth models fit the same theorem just as well.
 
-The three empirical pieces play different roles. The theorem sanity check asks whether the time-domain inequality is visible in trained models at all. The isotropic-versus-directional comparison asks whether the low-rank specialization has real design content. The Air Quality study asks whether the same directional quantities still matter once the setting becomes noisy and the drift subspace must be estimated. That progression is narrower than a benchmark paper, but it is also the right level of evidence for the claim being made here.
+The three empirical pieces play different roles. The time-domain sanity check asks whether the Poincare step is visible in trained models at all. The isotropic-versus-directional comparison asks whether the low-rank specialization has real design content. The Air Quality study asks whether the same directional quantities still matter once the setting becomes noisy and the drift subspace must be estimated. That progression is narrower than a benchmark paper, but it is also the right level of evidence for the claim being made here.
 
 The low-rank story also depends on estimating a drift subspace. The synthetic misspecification study suggests that moderate angular error is tolerable but large misalignment is not. In the Air Quality study we estimate a fixed subspace from unlabeled future covariates, which is more realistic than the aligned synthetic setting but still retrospective. A real online deployment would require rolling estimation of $V_t$, and the quality of the monitoring score would then depend on residual drift energy and subspace-estimation error. Finally, the Jacobian-velocity bound is an upper bound. It is useful because it is actionable, not because it is tight in every regime, and it is best interpreted as a design guide for regularization and monitoring rather than as a complete description of all failure modes.
 

@@ -169,11 +169,49 @@
     .kicker { color: var(--accent); font-size: .68rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .theorem h2 { font-size: 1.55rem; margin: .5rem 0 .7rem; }
     .math {
-      margin: .75rem 0; padding: .72rem .85rem; overflow: hidden; border-radius: 14px;
+      position: relative;
+      margin: .75rem 0;
+      padding: .78rem .9rem .82rem;
+      overflow-x: auto;
+      overflow-y: hidden;
+      text-align: center;
+      border-radius: 16px;
       background: linear-gradient(135deg, rgba(179,107,66,.08), rgba(47,68,88,.06));
       border: 1px solid rgba(16,21,34,.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.42);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(47,68,88,.42) rgba(255,255,255,.58);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x pinch-zoom;
     }
-    .math mjx-container { font-size: 92% !important; max-width: 100% !important; }
+    .math mjx-container {
+      font-size: 92% !important;
+      max-width: none !important;
+    }
+    .math mjx-container[display="true"] {
+      display: inline-block !important;
+      width: auto !important;
+      min-width: 100%;
+      margin: 0 auto !important;
+      padding-inline-end: .18rem;
+      text-align: center !important;
+    }
+    .math::-webkit-scrollbar {
+      height: 9px;
+    }
+    .math::-webkit-scrollbar-track {
+      background: rgba(255,255,255,.58);
+      border-radius: 999px;
+    }
+    .math::-webkit-scrollbar-thumb {
+      background: linear-gradient(90deg, rgba(179,107,66,.56), rgba(47,68,88,.58));
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.58);
+    }
+    .math::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(90deg, rgba(179,107,66,.7), rgba(47,68,88,.72));
+    }
     .microgrid, .card-grid, .highlights, .figure-grid { display: grid; gap: 1rem; }
     .microgrid { display: flex; flex-direction: column; margin-top: .8rem; gap: .7rem; }
     .micro, .highlight {
@@ -314,6 +352,16 @@
       .figure-copy h3 { font-size: 1.35rem; }
       .frame { padding: .65rem .65rem 0; }
       .frame-inner img { max-height: 180px; }
+      .math {
+        padding: .7rem .72rem .8rem;
+        border-radius: 15px;
+      }
+      .math mjx-container {
+        font-size: 88% !important;
+      }
+      .math::-webkit-scrollbar {
+        height: 7px;
+      }
       .result-list li {
         flex-direction: column;
         gap: .2rem;
@@ -361,6 +409,7 @@
       <nav class="nav" aria-label="Primary">
         <a href="#context">Context</a>
         <a href="#math">Mathematics</a>
+        <a href="#verification">Verification</a>
         <a href="#experiments">Experiments</a>
         <a href="#repo">Repository</a>
         <a href="https://github.com/jonland82/jacobian-velocity-bounds">GitHub</a>
@@ -387,11 +436,15 @@
             <p>
               The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time hazard assessment through one coherent mechanism.
             </p>
+            <p>
+              The repository now includes a dedicated proof-verification suite as well: symbolic identities, numerical stress tests, and cached-summary checks are collected into an HTML report that follows the same visual language as this site.
+            </p>
           </div>
           <div class="hero-bottom">
             <div class="actions">
               <a class="btn secondary" href="https://github.com/jonland82/jacobian-velocity-bounds">Repository Home</a>
               <a class="btn primary" href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">Open the Paper</a>
+              <a class="btn secondary" href="./proof_verification/verification_report.html">Verification Report</a>
               <a class="btn secondary" href="#experiments">Explore Results</a>
             </div>
             <div class="stats">
@@ -534,8 +587,66 @@
         <div class="highlights">
           <div class="highlight"><strong>A1</strong><span>Deployment paths are absolutely continuous with finite velocity energy.</span></div>
           <div class="highlight"><strong>A2</strong><span>The performance field admits a valid chain rule along the trajectory.</span></div>
-          <div class="highlight"><strong>A3</strong><span>Directional changes in the performance field are dominated by score-Jacobian changes.</span></div>
+          <div class="highlight"><strong>A3</strong><span>Directional changes in the performance field are dominated by score-Jacobian changes along deployment.</span></div>
           <div class="highlight"><strong>Operational view</strong><span>Flatten the predictor where future motion is likely, then monitor the same directional mechanism during deployment.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="verification">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Proof Verification</h2>
+          <p>
+            The mathematical claims are now paired with an explicit verification layer: exact symbolic checks for the theorem chain, numerical stress tests for the low-rank inequalities, and consistency checks against the cached synthetic summaries used by the plotting code.
+          </p>
+        </div>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Exact Identities</h3>
+            <div class="math">\[
+            \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2dt
+            \]</div>
+            <p>
+              SymPy checks the core algebra exactly rather than numerically: the Poincare sharpness example, a deterministic equality case for the Jacobian-velocity theorem, the composition-chain identity behind A3, and the Bernoulli cross-entropy derivative bound.
+            </p>
+            <ul>
+              <li>Equality case for the temporal bound</li>
+              <li>Exact chain-rule factorization in the composition setting</li>
+              <li>Closed-form derivative bound for soft-target cross-entropy</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Numerical Stress Tests</h3>
+            <div class="math">\[
+            \begin{aligned}
+            \|M(Va+\rho)\|^2 &\le 2\|MV\|_F^2\|a\|^2 \\
+            &\quad + 2\|M\rho\|^2
+            \end{aligned}
+            \]</div>
+            <p>
+              Some parts of the argument are more naturally checked by dense quadrature or randomized linear-algebra trials. The verification suite therefore stress-tests the low-rank corollary and a smooth expectation-based example of the full theorem chain.
+            </p>
+            <ul>
+              <li>Randomized orthonormal-basis checks for the corollary inequalities</li>
+              <li>Smooth expectation example verifying \(\mathrm{Var} \le\) chain bound \(\le\) Jacobian-velocity bound</li>
+              <li>Tolerance-aware validation for cached numerical summaries</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Styled HTML Report</h3>
+            <div class="command-block" aria-label="Verification command">
+              <div class="command-line">python proof_verification/generate_report.py</div>
+            </div>
+            <p>
+              Running the verifier writes a machine-readable JSON summary and an HTML report that reuses this site's fonts, palette, card layout, and MathJax setup.
+            </p>
+            <ul>
+              <li><a href="./proof_verification/verification_report.html">Open the HTML verification report</a></li>
+              <li><a href="./proof_verification/verification_results.json">Open the JSON results</a></li>
+              <li><code>proof_verification/</code> keeps the checks separate from the training scripts</li>
+            </ul>
+          </article>
         </div>
       </div>
     </section>
@@ -545,7 +656,7 @@
         <div class="section-head">
           <h2>Experimental Results</h2>
           <p>
-            The experiments mirror the theorem-to-method pipeline: visualize the geometry, verify the theorem in a clean synthetic benchmark, compare directional and isotropic smoothing, then test the same story on a real field deployment.
+            The experiments mirror the theorem-to-method pipeline: visualize the geometry, verify the time-domain step in a clean synthetic benchmark, compare directional and isotropic smoothing, then test the same story on a real field deployment.
           </p>
         </div>
         <div class="figure-grid">
@@ -566,10 +677,10 @@
           </article>
 
           <article class="figure-card">
-            <div class="frame"><div class="frame-inner"><img src="./figures/figure_2_synthetic_theorem.png" alt="Synthetic theorem sanity check figure."></div></div>
+            <div class="frame"><div class="frame-inner"><img src="./figures/figure_2_synthetic_theorem.png" alt="Synthetic time-domain sanity check figure."></div></div>
             <div class="figure-copy">
               <div class="kicker">Figure 2</div>
-              <h3>Synthetic theorem sanity check</h3>
+              <h3>Synthetic time-domain sanity check</h3>
               <p>
                 Each point is one trained model evaluated over the drifting synthetic path. DTR moves the cloud toward lower derivative energy and lower volatility.
               </p>
@@ -624,7 +735,7 @@
         <div class="section-head">
           <h2>Repository</h2>
           <p>
-            The repo is organized to be readable both as a paper companion and as a reproducible experiment package: manuscript, cached summaries, figures, and training scripts are all included.
+            The repo is organized to be readable both as a paper companion and as a reproducible verification package: manuscript, cached summaries, figures, proof checks, and training scripts are all included.
           </p>
         </div>
         <div class="repo-grid">
@@ -633,18 +744,20 @@
             <ul class="repo-list">
               <li><strong>Manuscript</strong><span><a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">PDF</a> and <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.tex">LaTeX source</a> for the paper.</span></li>
               <li><strong><code>scripts/</code></strong><span>Training, evaluation, and plotting code for the synthetic theorem benchmark, directional ablation, and Air Quality study.</span></li>
+              <li><strong><code>proof_verification/</code></strong><span>SymPy-based checks, numerical stress tests, and the generated HTML/JSON verification reports.</span></li>
               <li><strong><code>figures/</code></strong><span>Rendered figure assets plus cached CSV/JSON summaries consumed by the plotting scripts.</span></li>
               <li><strong><code>data/</code></strong><span>Cached Air Quality dataset used by the field deployment experiment.</span></li>
             </ul>
           </article>
           <article class="repo-card">
             <h3>Quick Start</h3>
-            <p>Install the Python dependencies, regenerate the figure assets, and build the manuscript if you want a full local rebuild.</p>
+            <p>Install the Python dependencies, regenerate the figure assets, run the verification suite, and build the manuscript if you want a full local rebuild.</p>
             <div class="command-block" aria-label="Quick start commands">
               <div class="command-line">python -m venv .venv</div>
               <div class="command-line">.venv\Scripts\Activate.ps1</div>
               <div class="command-line">pip install -r requirements.txt</div>
               <div class="command-line">python scripts/generate_all_figures.py</div>
+              <div class="command-line">python proof_verification/generate_report.py</div>
               <div class="command-line">latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</div>
             </div>
             <div class="linkbox"><strong>License</strong><span>This repository is released under the <a href="./LICENSE">MIT License</a>.</span></div>

@@ -1,0 +1,216 @@
+{
+  "generated_at_utc": "2026-04-15T18:09:13.961944+00:00",
+  "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.22631-SP0",
+  "results": [
+    {
+      "slug": "poincare-sharpness",
+      "title": "Poincare / Wirtinger sharpness",
+      "category": "exact symbolic",
+      "method": "sympy",
+      "passed": true,
+      "summary": "The first cosine eigenfunction attains equality in the time-domain bound.",
+      "details": [
+        "Used r(t) = cos(pi t / T), the first zero-mean eigenfunction on [0, T].",
+        "Verified the temporal mean is exactly zero.",
+        "Verified Var_U(r(U)) and (T / pi^2) int_0^T (r'(t))^2 dt simplify to the same closed form."
+      ],
+      "metrics": {
+        "mean": "0",
+        "variance": "1/2",
+        "rhs": "1/2",
+        "gap": "0"
+      },
+      "math_blocks": [
+        "\\bar r = \\frac{1}{T}\\int_0^T \\cos\\!\\left(\\frac{\\pi t}{T}\\right) dt = 0",
+        "\\mathrm{Var}_U(r(U)) = \\frac{1}{T}\\int_0^T \\cos^2\\!\\left(\\frac{\\pi t}{T}\\right) dt = \\frac{1}{2}",
+        "\\frac{T}{\\pi^2}\\int_0^T (r'(t))^2 dt = \\frac{1}{2}"
+      ]
+    },
+    {
+      "slug": "jv-equality",
+      "title": "Jacobian-velocity theorem on a deterministic path",
+      "category": "exact symbolic",
+      "method": "sympy",
+      "passed": true,
+      "summary": "For X_t = t, g = f, and f(x) = cos(pi x / T), the theorem is exact with beta = 1.",
+      "details": [
+        "The deployment path is deterministic, so the expectation operators collapse exactly.",
+        "Because g = f, Assumption A3 holds with beta = 1 and |grad g dot Xdot| = |J_f Xdot|.",
+        "The Jacobian-velocity right-hand side equals the exact volatility from the lemma-sharp example."
+      ],
+      "metrics": {
+        "variance": "1/2",
+        "jv_rhs": "1/2",
+        "gap": "0"
+      },
+      "math_blocks": [
+        "X_t = t,\\qquad \\dot X_t = 1,\\qquad f(x) = g(x) = \\cos\\!\\left(\\frac{\\pi x}{T}\\right)",
+        "J_f(X_t)\\dot X_t = -\\frac{\\pi}{T}\\sin\\!\\left(\\frac{\\pi t}{T}\\right)",
+        "\\mathrm{Var}_U(r(U)) = \\frac{T}{\\pi^2}\\int_0^T \\left\\|J_f(X_t)\\dot X_t\\right\\|^2 dt = \\frac{1}{2}"
+      ]
+    },
+    {
+      "slug": "composition-chain-rule",
+      "title": "Composition case in Remark A3",
+      "category": "exact symbolic",
+      "method": "sympy",
+      "passed": true,
+      "summary": "Directional derivatives of g = h o f factor exactly into h'(f) and the score Jacobian term.",
+      "details": [
+        "Used a nontrivial smooth score field f(x1, x2) = x1^2 + x1 x2 + sin(x2).",
+        "Used h(z) = atan(z), so g(x1, x2) = atan(f(x1, x2)).",
+        "Simplified grad g dot v - h'(f) grad f dot v to zero exactly."
+      ],
+      "metrics": {
+        "difference": "0"
+      },
+      "math_blocks": [
+        "g(x) = h(f(x)),\\qquad h(z) = \\arctan(z)",
+        "\\nabla g(x)\\cdot v = h'(f(x))\\, \\nabla f(x)\\cdot v"
+      ]
+    },
+    {
+      "slug": "cross-entropy-derivative",
+      "title": "Bernoulli cross-entropy derivative bound",
+      "category": "exact symbolic",
+      "method": "sympy + dense numeric sweep",
+      "passed": true,
+      "summary": "The soft-target Bernoulli cross-entropy derivative is sigma(z) - q, so its magnitude never exceeds 1.",
+      "details": [
+        "Differentiated the scalar loss h(z) = -q log sigma(z) - (1-q) log(1-sigma(z)) exactly.",
+        "Verified the closed form h'(z) = sigma(z) - q symbolically.",
+        "Checked the beta = 1 bound over a dense grid in z and q."
+      ],
+      "metrics": {
+        "identity_gap": "0",
+        "max_abs_derivative_on_grid": 0.9999938558253978
+      },
+      "math_blocks": [
+        "h(z) = -q \\log \\sigma(z) - (1-q)\\log(1-\\sigma(z))",
+        "h'(z) = \\sigma(z) - q,\\qquad |h'(z)| \\le 1 \\text{ for } q \\in [0,1]"
+      ]
+    },
+    {
+      "slug": "corollary-randomized",
+      "title": "Low-rank corollary inequalities",
+      "category": "numerical",
+      "method": "numpy randomized stress test",
+      "passed": true,
+      "summary": "The triangle and Frobenius inequalities used in the low-rank corollary hold across randomized orthonormal decompositions.",
+      "details": [
+        "Generated random orthonormal drift bases V with QR factorization.",
+        "Projected residual drift rho into the orthogonal complement of span(V).",
+        "Checked the split inequality, the Frobenius inequality, and the combined corollary bound trial by trial."
+      ],
+      "metrics": {
+        "trials": 5000,
+        "max_split_violation": -0.5533667361070016,
+        "max_frobenius_violation": -0.04947205657132647,
+        "max_combined_violation": -0.9995369035779569,
+        "min_combined_slack": 0.9995369035779569,
+        "max_orthogonality_error": 3.02715132833159e-15
+      },
+      "math_blocks": [
+        "\\|u+w\\|^2 \\le 2\\|u\\|^2 + 2\\|w\\|^2",
+        "\\|MVa\\|^2 \\le \\|MV\\|_F^2 \\|a\\|^2",
+        "\\begin{aligned} \\|M(Va+\\rho)\\|^2 &\\le 2\\|MV\\|_F^2\\|a\\|^2 \\\\ &\\quad + 2\\|M\\rho\\|^2 \\end{aligned}"
+      ]
+    },
+    {
+      "slug": "theorem-numeric-expectation",
+      "title": "Jacobian-velocity theorem with a nontrivial expectation",
+      "category": "numerical",
+      "method": "dense quadrature on a smooth finite-mixture path",
+      "passed": true,
+      "summary": "A smooth mixture path satisfies the full inequality chain Var <= derivative-energy bound <= Jacobian-velocity bound.",
+      "details": [
+        "Used X_t = t + Z with a three-point discrete random offset Z and deterministic velocity Xdot = 1.",
+        "Used f(x) = cos(pi x) and g(x) = atan(f(x)), so A3 holds with beta <= 1.",
+        "Integrated the continuous-time quantities on a dense grid to verify the theorem in a genuine expectation setting."
+      ],
+      "metrics": {
+        "beta_upper": 1.0,
+        "volatility": 0.2965336847373633,
+        "chain_bound": 0.2988423861194997,
+        "jv_bound": 0.5,
+        "chain_minus_volatility": 0.002308701382136402,
+        "jv_minus_chain": 0.2011576138805003
+      },
+      "math_blocks": [
+        "X_t = t + Z,\\qquad Z \\in \\{-0.2, 0, 0.15\\}",
+        "f(x) = \\cos(\\pi x),\\qquad g(x) = \\arctan(f(x)),\\qquad \\beta \\le 1",
+        "\\begin{aligned} \\mathrm{Var}_U(r(U)) &\\le \\frac{T}{\\pi^2}\\int_0^T (r'(t))^2 dt \\\\ &\\le \\frac{T}{\\pi^2}\\int_0^T \\mathbb{E}\\!\\left[\\|J_f(X_t)\\dot X_t\\|^2\\right] dt \\end{aligned}"
+      ]
+    },
+    {
+      "slug": "synthetic_theorem_summary",
+      "title": "Synthetic theorem summary bounds",
+      "category": "artifact consistency",
+      "method": "pandas cached-summary validation",
+      "passed": true,
+      "summary": "Every cached synthetic theorem run satisfies the finite-difference, chain-rule, and Jacobian-velocity bounds.",
+      "details": [
+        "Loaded 8 rows from figures/synthetic_theorem_summary.csv.",
+        "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
+        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
+      ],
+      "metrics": {
+        "rows": 8,
+        "absolute_tolerance": 5e-05,
+        "min_slack_bound_fd": 0.0010709632679066,
+        "min_slack_bound_chain": -3.7282962486202026e-05,
+        "min_slack_bound_jv": 0.04799647955220326
+      },
+      "math_blocks": [
+        "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"
+      ]
+    },
+    {
+      "slug": "synthetic_directional_comparison_summary",
+      "title": "Directional comparison bounds",
+      "category": "artifact consistency",
+      "method": "pandas cached-summary validation",
+      "passed": true,
+      "summary": "Every cached directional-comparison run preserves the volatility upper bounds used in the paper.",
+      "details": [
+        "Loaded 14 rows from figures/synthetic_directional_comparison_summary.csv.",
+        "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
+        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
+      ],
+      "metrics": {
+        "rows": 14,
+        "absolute_tolerance": 5e-05,
+        "min_slack_bound_fd": 0.0009716017719803,
+        "min_slack_bound_chain": -3.7282962486202026e-05,
+        "min_slack_bound_jv": 0.04799647955220326
+      },
+      "math_blocks": [
+        "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"
+      ]
+    },
+    {
+      "slug": "synthetic_directional_misspecification_summary",
+      "title": "Misspecification bounds",
+      "category": "artifact consistency",
+      "method": "pandas cached-summary validation",
+      "passed": true,
+      "summary": "Every cached misspecification run preserves the volatility upper bounds under subspace rotation.",
+      "details": [
+        "Loaded 6 rows from figures/synthetic_directional_misspecification_summary.csv.",
+        "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
+        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
+      ],
+      "metrics": {
+        "rows": 6,
+        "absolute_tolerance": 5e-05,
+        "min_slack_bound_fd": 0.0009976574387242,
+        "min_slack_bound_chain": 4.106839609179999e-05,
+        "min_slack_bound_jv": 0.1231395756441917
+      },
+      "math_blocks": [
+        "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"
+      ]
+    }
+  ]
+}

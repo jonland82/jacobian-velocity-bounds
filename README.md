@@ -8,6 +8,8 @@ Professional package for the manuscript, experiments, and figures accompanying:
 
 **[Read the manuscript (PDF)](./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf)**
 
+**[Open the proof verification report](./proof_verification/verification_report.html)**
+
 This repository studies a frozen predictor deployed under dynamic covariate drift. The central claim is that long-horizon deployment instability is governed not just by how much the environment moves, but by how that motion aligns with the model's local tangent geometry. The dangerous quantity is the Jacobian-velocity interaction
 
 $$ J_f(X_t)\dot X_t. $$
@@ -17,7 +19,8 @@ That geometric view yields:
 - a time-domain bound on deployment-risk volatility,
 - a low-rank drift specialization,
 - a drift-aligned tangent regularizer (DTR),
-- and a matched monitoring score for deployment.
+- a matched monitoring score for deployment,
+- and a proof-verification suite that checks the theorem chain symbolically and numerically.
 
 An expanded project page for GitHub Pages lives at [`index.html`](./index.html).
 
@@ -65,11 +68,26 @@ The same geometry yields the monitoring score
 
 $$ h_t = s_t^2 g_t, \qquad s_t := \|\Delta \mu_t\|/\Delta, \qquad g_t := \mathbb{E}\|J_f(X_t)V_t\|_F^2. $$
 
+## Proof Verification Suite
+
+The repository also includes a dedicated verification package in [`proof_verification/`](./proof_verification/) that checks the paper's main mathematics independently of the prose presentation and experiment plots.
+
+The verifier covers:
+
+- exact symbolic checks for the Poincare/Wirtinger step, a deterministic equality case for the Jacobian-velocity theorem, the composition case behind A3, and the Bernoulli cross-entropy derivative bound;
+- numerical stress tests for the low-rank corollary inequalities and for the full inequality chain in a smooth expectation-based example;
+- artifact checks against the cached synthetic CSV summaries already committed under [`figures/`](./figures/).
+
+Running the verifier generates:
+
+- [`proof_verification/verification_report.html`](./proof_verification/verification_report.html), an HTML report that reuses the same styling as [`index.html`](./index.html);
+- [`proof_verification/verification_results.json`](./proof_verification/verification_results.json), a machine-readable dump of the check results.
+
 ## Experimental Results
 
 The repository contains three experiments mirroring the theorem-to-method pipeline.
 
-### Synthetic theorem sanity check
+### Synthetic time-domain sanity check
 
 This experiment verifies the time-domain inequality in the smallest controlled setting with one stable signal coordinate and one drifting nuisance coordinate.
 
@@ -82,7 +100,7 @@ This experiment verifies the time-domain inequality in the smallest controlled s
 
 Figure:
 
-<img src="./figures/figure_2_synthetic_theorem.png" alt="Synthetic theorem sanity check" width="420" style="max-width: 420px; width: 100%;">
+<img src="./figures/figure_2_synthetic_theorem.png" alt="Synthetic time-domain sanity check" width="420" style="max-width: 420px; width: 100%;">
 
 ### Directional vs isotropic Jacobian smoothing
 
@@ -138,6 +156,12 @@ Figure:
 |-- requirements.txt
 |-- jacobian_velocity_bounds_deployment_risk_covariate_drift.tex
 |-- jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf
+|-- proof_verification/
+|   |-- generate_report.py
+|   |-- checks.py
+|   |-- report.py
+|   |-- verification_report.html
+|   `-- verification_results.json
 |-- references.bib
 |-- data/
 |   `-- air_quality.csv
@@ -176,6 +200,12 @@ Regenerate all experiment summaries and manuscript figures:
 python scripts/generate_all_figures.py
 ```
 
+Generate the proof verification report:
+
+```powershell
+python proof_verification/generate_report.py
+```
+
 Build the manuscript:
 
 ```powershell
@@ -187,6 +217,7 @@ Notes:
 - The Air Quality experiment caches the UCI dataset to [`data/air_quality.csv`](./data/air_quality.csv).
 - The scripts are CPU-oriented and use PyTorch for the training loops.
 - The `figures/*.json` and `figures/*.csv` files are cached summaries consumed by the plotting scripts.
+- The proof verifier adds `sympy` on top of the experiment dependencies and emits both HTML and JSON outputs under [`proof_verification/`](./proof_verification/).
 
 ## Citation
 
