@@ -227,6 +227,7 @@
     .section-head h2 { font-size: clamp(1.65rem, 2.8vw, 2.45rem); }
     .section-head p { margin: 0; max-width: 54ch; }
     .card-grid { grid-template-columns: repeat(3, 1fr); }
+    .math-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .card { padding: 1.05rem; }
     .card h3 { font-size: 1.35rem; margin-bottom: .45rem; }
     .card ul, .repo-list, .result-list {
@@ -437,7 +438,10 @@
               The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time hazard assessment through one coherent mechanism.
             </p>
             <p>
-              The repository now includes a dedicated proof-verification suite as well: symbolic identities, numerical stress tests, and cached-summary checks are collected into an HTML report that follows the same visual language as this site.
+              The monitoring story is stated explicitly as well: in the rank-1 setting, a short bookkeeping proposition shows exactly how block averaging, residual drift, and angular misalignment make the hazard proxy depart from the leading low-rank term.
+            </p>
+            <p>
+              The repository also includes a dedicated proof-verification suite: symbolic identities, numerical stress tests, and cached-summary checks are collected into an HTML report that follows the same visual language as this site.
             </p>
           </div>
           <div class="hero-bottom">
@@ -479,7 +483,7 @@
             </div>
             <div class="micro">
               <strong>Matched monitor</strong>
-              <div>\(h_t=s_t^2 g_t\), large only when drift is fast and tangent gain is high</div>
+              <div>\(h_t=s_t^2 g_t\), with rank-1 bookkeeping for block averaging, residual drift, and angular error</div>
             </div>
           </div>
         </aside>
@@ -549,12 +553,12 @@
         <div class="section-head">
           <h2>Main Mathematical Results</h2>
           <p>
-            The formal story is compact: first control temporal volatility by derivative energy, then control derivative energy by Jacobian-velocity energy, then specialize to low-rank drift.
+            The formal story is compact: first control temporal volatility by derivative energy, then control derivative energy by Jacobian-velocity energy, then specialize to low-rank drift. A short bookkeeping proposition also quantifies the rank-1 monitoring proxy gap.
           </p>
         </div>
-        <div class="card-grid">
+        <div class="card-grid math-grid">
           <article class="card">
-            <h3>Lemma</h3>
+            <h3>Lemma 1</h3>
             <div class="math">\[
             \begin{multline*}
             \mathrm{Var}_U(r(U)) \le \\
@@ -564,7 +568,7 @@
             <p>Large volatility requires large derivative energy somewhere along deployment time.</p>
           </article>
           <article class="card">
-            <h3>Theorem</h3>
+            <h3>Theorem 1</h3>
             <div class="math">\[
             \begin{multline*}
             \mathrm{Var}_U(r(U)) \le \\
@@ -574,7 +578,7 @@
             <p>Deployment instability is driven by accumulated tangent amplification of realized motion.</p>
           </article>
           <article class="card">
-            <h3>Corollary</h3>
+            <h3>Corollary 1</h3>
             <div class="math">\[
             \begin{multline*}
             \dot X_t = \\
@@ -582,6 +586,20 @@
             \end{multline*}
             \]</div>
             <p>In low-rank regimes, the leading term is directional Jacobian energy in the drift subspace.</p>
+          </article>
+          <article class="card">
+            <h3>Proposition 1</h3>
+            <div class="math">\[
+            \begin{aligned}
+            s_t^2 &= |\bar a_t|^2 + \|\bar\rho_t\|^2, \\
+            g_t &= \cos^2\theta_t\,G_{\parallel,t}
+            + \sin^2\theta_t\,G_{\perp,t}
+            + 2\sin\theta_t\cos\theta_t\,C_t.
+            \end{aligned}
+            \]</div>
+            <p>
+              In the rank-1 monitoring setting, the hazard proxy gap is explicit: block averaging contributes residual drift energy, while angular misalignment mixes aligned, orthogonal, and overlap energies. This is the bookkeeping result behind the monitoring score.
+            </p>
           </article>
         </div>
         <div class="highlights">
@@ -598,7 +616,7 @@
         <div class="section-head">
           <h2>Proof Verification</h2>
           <p>
-            The mathematical claims are now paired with an explicit verification layer: exact symbolic checks for the theorem chain, numerical stress tests for the low-rank inequalities, and consistency checks against the cached synthetic summaries used by the plotting code.
+            The mathematical claims are paired with an explicit verification layer: exact symbolic checks for the theorem chain and hazard-score bookkeeping, numerical stress tests for the low-rank inequalities, and consistency checks against the cached synthetic summaries used by the plotting code.
           </p>
         </div>
         <div class="card-grid">
@@ -608,11 +626,12 @@
             \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2dt
             \]</div>
             <p>
-              SymPy checks the core algebra exactly rather than numerically: the Poincare sharpness example, a deterministic equality case for the Jacobian-velocity theorem, the composition-chain identity behind A3, and the Bernoulli cross-entropy derivative bound.
+              SymPy checks the core algebra exactly rather than numerically: the Poincare sharpness example, a deterministic equality case for the Jacobian-velocity theorem, the composition-chain identity behind A3, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </p>
             <ul>
               <li>Equality case for the temporal bound</li>
               <li>Exact chain-rule factorization in the composition setting</li>
+              <li>Pointwise rank-1 bookkeeping underlying the monitoring proposition</li>
               <li>Closed-form derivative bound for soft-target cross-entropy</li>
             </ul>
           </article>

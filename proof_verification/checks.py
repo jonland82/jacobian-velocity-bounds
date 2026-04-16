@@ -135,6 +135,56 @@ def check_composition_chain_rule() -> CheckResult:
     )
 
 
+def check_hazard_rank1_bookkeeping() -> CheckResult:
+    a, r, c, s = sp.symbols("a r c s", real=True)
+    m11, m12, m21, m22 = sp.symbols("m11 m12 m21 m22", real=True)
+
+    matrix = sp.Matrix([[m11, m12], [m21, m22]])
+    v = sp.Matrix([1, 0])
+    u = sp.Matrix([0, 1])
+    delta = sp.Matrix([a, r])
+    v_t = c * v + s * u
+
+    s_sq_gap = sp.simplify(delta.dot(delta) - (a**2 + r**2))
+
+    aligned = sp.simplify((matrix * v).dot(matrix * v))
+    orthogonal = sp.simplify((matrix * u).dot(matrix * u))
+    overlap = sp.simplify((matrix * v).dot(matrix * u))
+    g_gap = sp.simplify(
+        sp.expand((matrix * v_t).dot(matrix * v_t))
+        - sp.expand(c**2 * aligned + s**2 * orthogonal + 2 * c * s * overlap)
+    )
+    h_gap = sp.simplify(
+        sp.expand(delta.dot(delta) * (matrix * v_t).dot(matrix * v_t))
+        - sp.expand((a**2 + r**2) * (c**2 * aligned + s**2 * orthogonal + 2 * c * s * overlap))
+    )
+
+    passed = s_sq_gap == 0 and g_gap == 0 and h_gap == 0
+    return CheckResult(
+        slug="hazard-rank1-bookkeeping",
+        title="Rank-1 hazard-score bookkeeping",
+        category="exact symbolic",
+        method="sympy",
+        passed=passed,
+        summary="The pointwise algebra behind Proposition 1 is exact; the expectation form follows by averaging these identities.",
+        details=[
+            "Worked in an orthonormal basis with v = e1, u = e2, Delta mu / Delta = (a, r), and a generic 2 x 2 Jacobian matrix.",
+            "Verified s_t^2 = |a|^2 + |r|^2 from the orthogonal block-drift decomposition.",
+            "Verified the directional energy splits into aligned, orthogonal, and overlap terms with coefficients c^2, s^2, and 2cs.",
+        ],
+        metrics={
+            "s_sq_gap": sp.sstr(s_sq_gap),
+            "g_gap": sp.sstr(g_gap),
+            "h_gap": sp.sstr(h_gap),
+        },
+        math_blocks=[
+            r"\frac{\Delta \mu_t}{\Delta} = a v + r u,\qquad v_t = c v + s u,\qquad v^\top u = 0",
+            r"s_t^2 = \left\|\frac{\Delta \mu_t}{\Delta}\right\|^2 = |a|^2 + |r|^2",
+            r"\|J_f v_t\|^2 = c^2\|J_f v\|^2 + s^2\|J_f u\|^2 + 2cs\langle J_f v, J_f u\rangle",
+        ],
+    )
+
+
 def check_cross_entropy_derivative_bound() -> CheckResult:
     z, q = sp.symbols("z q", real=True)
     sigmoid = 1 / (1 + sp.exp(-z))
@@ -356,6 +406,7 @@ def run_all_checks(repo_root: Path) -> list[CheckResult]:
         check_poincare_sharpness(),
         check_jacobian_velocity_equality(),
         check_composition_chain_rule(),
+        check_hazard_rank1_bookkeeping(),
         check_cross_entropy_derivative_bound(),
         check_corollary_randomized(),
         check_theorem_numeric_expectation(),

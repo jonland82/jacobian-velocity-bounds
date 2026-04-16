@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-15T18:09:13.961944+00:00",
+  "generated_at_utc": "2026-04-16T19:47:48.038573+00:00",
   "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
   "platform": "Windows-11-10.0.22631-SP0",
   "results": [
@@ -68,6 +68,29 @@
       "math_blocks": [
         "g(x) = h(f(x)),\\qquad h(z) = \\arctan(z)",
         "\\nabla g(x)\\cdot v = h'(f(x))\\, \\nabla f(x)\\cdot v"
+      ]
+    },
+    {
+      "slug": "hazard-rank1-bookkeeping",
+      "title": "Rank-1 hazard-score bookkeeping",
+      "category": "exact symbolic",
+      "method": "sympy",
+      "passed": true,
+      "summary": "The pointwise algebra behind Proposition 1 is exact; the expectation form follows by averaging these identities.",
+      "details": [
+        "Worked in an orthonormal basis with v = e1, u = e2, Delta mu / Delta = (a, r), and a generic 2 x 2 Jacobian matrix.",
+        "Verified s_t^2 = |a|^2 + |r|^2 from the orthogonal block-drift decomposition.",
+        "Verified the directional energy splits into aligned, orthogonal, and overlap terms with coefficients c^2, s^2, and 2cs."
+      ],
+      "metrics": {
+        "s_sq_gap": "0",
+        "g_gap": "0",
+        "h_gap": "0"
+      },
+      "math_blocks": [
+        "\\frac{\\Delta \\mu_t}{\\Delta} = a v + r u,\\qquad v_t = c v + s u,\\qquad v^\\top u = 0",
+        "s_t^2 = \\left\\|\\frac{\\Delta \\mu_t}{\\Delta}\\right\\|^2 = |a|^2 + |r|^2",
+        "\\|J_f v_t\\|^2 = c^2\\|J_f v\\|^2 + s^2\\|J_f u\\|^2 + 2cs\\langle J_f v, J_f u\\rangle"
       ]
     },
     {

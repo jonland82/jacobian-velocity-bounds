@@ -546,14 +546,14 @@
         <div class="hero-copy">
           <div class="hero-top">
             <div class="eyebrow">Symbolic and Numerical Checks</div>
-            <h1>Formal verification for the theorem chain and cached experiment bounds.</h1>
+            <h1>Formal verification for the theorem chain, monitoring bookkeeping, and cached experiment bounds.</h1>
             <div class="hero-meta">
-              Generated 2026-04-15 14:09:14 Eastern Daylight Time<br>
+              Generated 2026-04-16 15:47:48 Eastern Daylight Time<br>
               Python 3.13.5 on Windows-11-10.0.22631-SP0
             </div>
             <p>
               This report verifies the paper's main mathematical steps in three ways: exact symbolic identities
-              for the theorem package, numerical stress tests for the low-rank inequalities, and direct consistency
+              for the theorem package and the rank-1 hazard-score proposition, numerical stress tests for the low-rank inequalities, and direct consistency
               checks against the cached experiment summaries already committed in the repository.
             </p>
           </div>
@@ -565,17 +565,17 @@
             <div class="summary-grid">
               
         <div class="summary-card">
-          <strong>9</strong>
+          <strong>10</strong>
           <span>Total</span>
         </div>
         
         <div class="summary-card">
-          <strong>9</strong>
+          <strong>10</strong>
           <span>Passed</span>
         </div>
         
         <div class="summary-card">
-          <strong>4</strong>
+          <strong>5</strong>
           <span>Exact Symbolic</span>
         </div>
         
@@ -604,7 +604,7 @@
             <li>
               <strong>Exact symbolic checks</strong>
               Sharpness of the Poincare bound, a deterministic equality case for the Jacobian-velocity theorem,
-              the composition-chain identity, and the Bernoulli cross-entropy derivative bound.
+              the composition-chain identity, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </li>
             <li>
               <strong>Numerical checks</strong>
@@ -627,7 +627,7 @@
               <div class="kicker">Verification Block</div>
               <h2>Exact Symbolic Checks</h2>
             </div>
-            <p>These checks use SymPy to simplify the main algebraic identities and sharp examples exactly.</p>
+            <p>These checks use SymPy to simplify the main algebraic identities and sharp examples exactly, including the rank-1 hazard-score bookkeeping proposition.</p>
           </div>
           <div class="check-grid">
             
@@ -665,6 +665,18 @@
         <div class="math">\[g(x) = h(f(x)),\qquad h(z) = \arctan(z)\]</div><div class="math">\[\nabla g(x)\cdot v = h'(f(x))\, \nabla f(x)\cdot v\]</div>
         <ul class="detail-list"><li>Used a nontrivial smooth score field f(x1, x2) = x1^2 + x1 x2 + sin(x2).</li><li>Used h(z) = atan(z), so g(x1, x2) = atan(f(x1, x2)).</li><li>Simplified grad g dot v - h&#x27;(f) grad f dot v to zero exactly.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>difference</td><td><code>0</code></td></tr></tbody></table></div>
+      </article>
+    
+      <article class="check-card">
+        <div class="check-meta">
+          <span class="pill">sympy</span>
+          <span class="badge pass">Pass</span>
+        </div>
+        <h3>Rank-1 hazard-score bookkeeping</h3>
+        <p>The pointwise algebra behind Proposition 1 is exact; the expectation form follows by averaging these identities.</p>
+        <div class="math">\[\frac{\Delta \mu_t}{\Delta} = a v + r u,\qquad v_t = c v + s u,\qquad v^\top u = 0\]</div><div class="math">\[s_t^2 = \left\|\frac{\Delta \mu_t}{\Delta}\right\|^2 = |a|^2 + |r|^2\]</div><div class="math">\[\|J_f v_t\|^2 = c^2\|J_f v\|^2 + s^2\|J_f u\|^2 + 2cs\langle J_f v, J_f u\rangle\]</div>
+        <ul class="detail-list"><li>Worked in an orthonormal basis with v = e1, u = e2, Delta mu / Delta = (a, r), and a generic 2 x 2 Jacobian matrix.</li><li>Verified s_t^2 = |a|^2 + |r|^2 from the orthogonal block-drift decomposition.</li><li>Verified the directional energy splits into aligned, orthogonal, and overlap terms with coefficients c^2, s^2, and 2cs.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>s sq gap</td><td><code>0</code></td></tr><tr><td>g gap</td><td><code>0</code></td></tr><tr><td>h gap</td><td><code>0</code></td></tr></tbody></table></div>
       </article>
     
       <article class="check-card">
