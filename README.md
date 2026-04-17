@@ -20,6 +20,7 @@ That geometric view yields:
 - a low-rank drift specialization,
 - a drift-aligned tangent regularizer (DTR),
 - a matched monitoring score together with a rank-1 bookkeeping proposition,
+- two real frozen-deployment studies on UCI Air Quality and Tetouan City power consumption,
 - and a proof-verification suite that checks the theorem chain and monitoring bookkeeping symbolically and numerically.
 
 An expanded project page for GitHub Pages lives at [`index.html`](./index.html).
@@ -101,7 +102,7 @@ Running the verifier generates:
 
 ## Experimental Results
 
-The repository contains three experiments mirroring the theorem-to-method pipeline.
+The repository contains four experiments mirroring the theorem-to-method pipeline.
 
 ### Synthetic time-domain sanity check
 
@@ -162,6 +163,30 @@ Figure:
 
 <img src="./figures/figure_3_air_quality_monitoring.png" alt="Air Quality deployment monitoring" width="420" style="max-width: 420px; width: 100%;">
 
+### Second real benchmark on UCI Tetouan City power consumption
+
+The manuscript now adds a second real frozen-deployment study on the UCI Tetouan City power-consumption dataset. This benchmark predicts `Zone 1 Power Consumption` from weather and diffuse-flow covariates, trains on January-April 2017, validates on May-June, and deploys on July-December over 6 monthly blocks.
+
+- Training / validation / deployment rows: `17280 / 8784 / 26352`
+- Deployment blocks: `6`
+- Selected DTR setting: $\lambda = 3 \times 10^{-4}$
+- Standard deploy MSE: $1.161 \times 10^8$
+- Isotropic deploy MSE: $9.314 \times 10^7$
+- DTR deploy MSE: $6.838 \times 10^7$
+- DTR deploy-MSE reduction vs standard: **41.1%**
+- DTR deploy-MSE reduction vs isotropic: **26.6%**
+- Standard volatility: $1.092 \times 10^{16}$
+- Isotropic volatility: $4.887 \times 10^{15}$
+- DTR volatility: $1.769 \times 10^{15}$
+- DTR volatility reduction vs standard: **83.8%**
+- DTR volatility reduction vs isotropic: **63.8%**
+
+The Tetouan scripts and outputs live under [`benchmark_package/`](./benchmark_package/), which now contains only the retained follow-on benchmark used by the paper and keeps that path isolated from the original figure pipeline.
+
+Figure:
+
+<img src="./figures/figure_5_tetouan_deployment.png" alt="Tetouan deployment risk trajectory" width="420" style="max-width: 420px; width: 100%;">
+
 ## Repository Layout
 
 ```text
@@ -172,6 +197,11 @@ Figure:
 |-- requirements.txt
 |-- jacobian_velocity_bounds_deployment_risk_covariate_drift.tex
 |-- jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf
+|-- benchmark_package/
+|   |-- README.md
+|   |-- data/
+|   |-- scripts/
+|   `-- tetouan_city_power_consumption/
 |-- proof_verification/
 |   |-- generate_report.py
 |   |-- checks.py
@@ -186,6 +216,7 @@ Figure:
 |   |-- figure_2_synthetic_theorem.png
 |   |-- figure_3_air_quality_monitoring.png
 |   |-- figure_4_directional_ablation.png
+|   |-- figure_5_tetouan_deployment.png
 |   |-- synthetic_theorem_summary.json
 |   |-- synthetic_directional_summary.json
 |   `-- air_quality_summary.json
@@ -197,7 +228,8 @@ Figure:
     |-- plot_figure_1_geometry.py
     |-- plot_figure_2_synthetic_theorem.py
     |-- plot_figure_3_air_quality_monitoring.py
-    `-- plot_figure_4_directional_ablation.py
+    |-- plot_figure_4_directional_ablation.py
+    `-- plot_figure_5_tetouan_deployment.py
 ```
 
 ## Reproduction
@@ -216,6 +248,12 @@ Regenerate all experiment summaries and manuscript figures:
 python scripts/generate_all_figures.py
 ```
 
+Run the isolated Tetouan benchmark package used for the second real deployment study:
+
+```powershell
+python benchmark_package/scripts/run_tetouan_power_benchmark.py --force
+```
+
 Generate the proof verification report:
 
 ```powershell
@@ -231,6 +269,7 @@ latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex
 Notes:
 
 - The Air Quality experiment caches the UCI dataset to [`data/air_quality.csv`](./data/air_quality.csv).
+- The Tetouan follow-on benchmark lives under [`benchmark_package/`](./benchmark_package/) so it stays clearly separated from the original figure-generation path and no longer carries the discarded benchmark branches.
 - The scripts are CPU-oriented and use PyTorch for the training loops.
 - The `figures/*.json` and `figures/*.csv` files are cached summaries consumed by the plotting scripts.
 - The proof verifier adds `sympy` on top of the experiment dependencies and emits both HTML and JSON outputs under [`proof_verification/`](./proof_verification/).

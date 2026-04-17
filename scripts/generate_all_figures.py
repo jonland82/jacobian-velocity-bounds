@@ -9,6 +9,7 @@ from plot_figure_1_geometry import main as run_figure_1
 from plot_figure_2_synthetic_theorem import main as run_figure_2
 from plot_figure_3_air_quality_monitoring import main as run_figure_3
 from plot_figure_4_directional_ablation import main as run_figure_4
+from plot_figure_5_tetouan_deployment import main as run_figure_5
 
 
 def main() -> None:
@@ -20,6 +21,7 @@ def main() -> None:
     run_figure_2()
     run_figure_3()
     run_figure_4()
+    run_figure_5()
 
 
 if __name__ == "__main__":
