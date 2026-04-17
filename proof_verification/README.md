@@ -13,4 +13,4 @@ The command writes:
 - `proof_verification/verification_results.json`
 - `proof_verification/verification_report.html`
 
-The HTML report reuses the visual styling from the repo's `index.html` and includes exact symbolic checks for the monitoring-bookkeeping identity in addition to the main theorem chain.
+The HTML report reuses the visual styling from the repo's `index.html` and includes exact symbolic checks for the hazard-score bookkeeping identity in addition to the main theorem chain.

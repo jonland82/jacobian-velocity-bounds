@@ -19,7 +19,7 @@ That geometric view yields:
 - a time-domain bound on deployment-risk volatility,
 - a low-rank drift specialization,
 - a drift-aligned tangent regularizer (DTR),
-- a matched monitoring score for deployment together with an explicit rank-1 bookkeeping proposition,
+- a matched monitoring score together with a rank-1 bookkeeping proposition,
 - and a proof-verification suite that checks the theorem chain and monitoring bookkeeping symbolically and numerically.
 
 An expanded project page for GitHub Pages lives at [`index.html`](./index.html).
@@ -70,7 +70,7 @@ $$ h_t = s_t^2 g_t, \qquad s_t := \|\Delta \mu_t\|/\Delta, \qquad g_t := \mathbb
 
 ### 4. Rank-1 hazard-score bookkeeping
 
-In the rank-1 monitoring setting, the manuscript makes the proxy gap explicit. If
+In the rank-1 monitoring setting, the proxy gap is explicit. If
 
 $$ \frac{\Delta \mu_t}{\Delta} = v \bar a_t + \bar \rho_t, \qquad v^\top \bar \rho_t = 0, \qquad v_t = \cos\theta_t\,v + \sin\theta_t\,u_t, $$
 
@@ -82,11 +82,11 @@ and
 
 $$ g_t = \cos^2\theta_t\,G_{\parallel,t} + \sin^2\theta_t\,G_{\perp,t} + 2\sin\theta_t\cos\theta_t\,C_t. $$
 
-This is the bookkeeping statement behind the monitoring proxy: block averaging, residual drift, and angular misalignment determine how \(h_t\) departs from the leading low-rank term.
+This bookkeeping statement shows how block averaging, residual drift, and angular misalignment determine how \(h_t\) departs from the leading low-rank term.
 
 ## Proof Verification Suite
 
-The repository also includes a dedicated verification package in [`proof_verification/`](./proof_verification/) that checks the paper's main mathematics, including the monitoring-bookkeeping proposition, independently of the prose presentation and experiment plots.
+The repository also includes a dedicated verification package in [`proof_verification/`](./proof_verification/) that checks the paper's main mathematics, including the hazard-score bookkeeping proposition, independently of the prose presentation and experiment plots.
 
 The verifier covers:
 

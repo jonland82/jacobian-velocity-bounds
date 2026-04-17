@@ -438,7 +438,7 @@
               The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time hazard assessment through one coherent mechanism.
             </p>
             <p>
-              The monitoring story is stated explicitly as well: in the rank-1 setting, a short bookkeeping proposition shows exactly how block averaging, residual drift, and angular misalignment make the hazard proxy depart from the leading low-rank term.
+              In the rank-1 setting, a short bookkeeping proposition makes the monitoring proxy gap explicit: block averaging, residual drift, and angular misalignment determine how the hazard proxy departs from the leading low-rank term.
             </p>
             <p>
               The repository also includes a dedicated proof-verification suite: symbolic identities, numerical stress tests, and cached-summary checks are collected into an HTML report that follows the same visual language as this site.
@@ -495,7 +495,7 @@
         <div class="section-head">
           <h2>Context</h2>
           <p>
-            The paper focuses on a narrow but important regime: the predictor is frozen, the environment drifts continuously, and the object of interest is a deployment-risk trajectory rather than a single train-test shift gap.
+            The paper is deliberately scoped to frozen-model deployment under continuous covariate drift: the predictor is frozen, the environment drifts continuously, and the object of interest is a deployment-risk trajectory rather than a single train-test shift gap.
           </p>
         </div>
         <div class="card-grid">
@@ -553,7 +553,7 @@
         <div class="section-head">
           <h2>Main Mathematical Results</h2>
           <p>
-            The formal story is compact: first control temporal volatility by derivative energy, then control derivative energy by Jacobian-velocity energy, then specialize to low-rank drift. A short bookkeeping proposition also quantifies the rank-1 monitoring proxy gap.
+            The formal story is compact: control temporal volatility by derivative energy, control derivative energy by Jacobian-velocity energy, then specialize to low-rank drift. A short bookkeeping proposition quantifies the rank-1 monitoring proxy gap.
           </p>
         </div>
         <div class="card-grid math-grid">
@@ -598,7 +598,7 @@
             \end{aligned}
             \]</div>
             <p>
-              In the rank-1 monitoring setting, the hazard proxy gap is explicit: block averaging contributes residual drift energy, while angular misalignment mixes aligned, orthogonal, and overlap energies. This is the bookkeeping result behind the monitoring score.
+              In the rank-1 monitoring setting, block averaging contributes residual drift energy, while angular misalignment mixes aligned, orthogonal, and overlap energies. This bookkeeping result explains how the monitoring proxy departs from the leading low-rank term.
             </p>
           </article>
         </div>
