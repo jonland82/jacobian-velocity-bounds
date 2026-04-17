@@ -38,6 +38,17 @@ EXTRA_CSS = """
       border-color: rgba(125, 38, 48, .16);
     }
     .check-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .check-grid > *,
+    .summary-grid > *,
+    .check-card,
+    .summary-card,
+    .metric-table-wrap,
+    .detail-list,
+    .detail-list li,
+    .status-line {
+      min-width: 0;
+      max-width: 100%;
+    }
     .check-card {
       background: var(--card);
       border: 1px solid var(--line);
@@ -45,6 +56,19 @@ EXTRA_CSS = """
       box-shadow: var(--shadow);
       backdrop-filter: blur(16px);
       padding: 1rem;
+    }
+    .check-card p,
+    .detail-list li,
+    .summary-card strong,
+    .summary-card span,
+    .status-line,
+    .pill,
+    .badge,
+    table.metrics th,
+    table.metrics td,
+    table.metrics code {
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .check-card h3 { font-size: 1.45rem; margin: .45rem 0 .35rem; }
     .check-meta {
@@ -78,6 +102,7 @@ EXTRA_CSS = """
     table.metrics {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
       font-size: .88rem;
     }
     table.metrics th,
@@ -93,6 +118,13 @@ EXTRA_CSS = """
       letter-spacing: .08em;
       text-transform: uppercase;
       background: rgba(255,255,255,.58);
+    }
+    table.metrics th:first-child,
+    table.metrics td:first-child { width: 42%; }
+    table.metrics code {
+      display: inline-block;
+      max-width: 100%;
+      white-space: pre-wrap;
     }
     table.metrics tr:last-child td { border-bottom: 0; }
     .detail-list {
@@ -133,6 +165,11 @@ EXTRA_CSS = """
     .status-line.fail { color: #7d2630; }
     @media (max-width: 1080px) {
       .check-grid, .summary-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .check-card { padding: .95rem; }
+      table.metrics th,
+      table.metrics td { padding: .65rem .7rem; }
     }
 """
 
