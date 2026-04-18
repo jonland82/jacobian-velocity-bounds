@@ -86,7 +86,7 @@ So the main lesson from this dataset is precise:
 
 > DTR can help under drift, but it is a poor match for benchmarks where unlabeled block summaries are strongly contaminated by changing label mix.
 
-Reference: [`allerton_notes/uci_gas_sensor_benchmark_report.md`](../allerton_notes/uci_gas_sensor_benchmark_report.md)
+Reference: [`uci_gas_sensor_benchmark_report.md`](./uci_gas_sensor_benchmark_report.md)
 
 ### 2.2 Beijing Multi-Site Air Quality
 
