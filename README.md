@@ -45,7 +45,7 @@ $$ \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2\,dt, $$
 
 where $U \sim \mathrm{Unif}[0,T]$.
 
-This is the temporal Poincare/Wirtinger step: deployment volatility cannot be large without derivative energy.
+This is the temporal Poincar&eacute;/Wirtinger step: deployment volatility cannot be large without derivative energy.
 
 ### 2. Jacobian-velocity bound
 
@@ -91,7 +91,7 @@ The repository also includes a dedicated verification package in [`proof_verific
 
 The verifier covers:
 
-- exact symbolic checks for the Poincare/Wirtinger step, a deterministic equality case for the Jacobian-velocity theorem, the composition case behind A3, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound;
+- exact symbolic checks for the Poincar&eacute;/Wirtinger step, a deterministic equality case for the Jacobian-velocity theorem, the composition case behind A3, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound;
 - numerical stress tests for the low-rank corollary inequalities and for the full inequality chain in a smooth expectation-based example;
 - artifact checks against the cached synthetic CSV summaries already committed under [`figures/`](./figures/).
 

@@ -387,7 +387,7 @@ def write_html_report(results: list[CheckResult], output_path: Path, repo_root: 
           <ul class="repo-list">
             <li>
               <strong>Exact symbolic checks</strong>
-              Sharpness of the Poincare bound, a deterministic equality case for the Jacobian-velocity theorem,
+              Sharpness of the Poincar\u00e9 bound, a deterministic equality case for the Jacobian-velocity theorem,
               the composition-chain identity, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </li>
             <li>

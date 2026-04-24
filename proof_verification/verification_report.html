@@ -586,7 +586,7 @@
             <div class="eyebrow">Symbolic and Numerical Checks</div>
             <h1>Formal verification for the theorem chain, monitoring bookkeeping, and cached experiment bounds.</h1>
             <div class="hero-meta">
-              Generated 2026-04-17 19:10:42 Eastern Daylight Time<br>
+              Generated 2026-04-23 17:01:58 Eastern Daylight Time<br>
               Python 3.13.5 on Windows-11-10.0.22631-SP0
             </div>
             <p>
@@ -641,7 +641,7 @@
           <ul class="repo-list">
             <li>
               <strong>Exact symbolic checks</strong>
-              Sharpness of the Poincare bound, a deterministic equality case for the Jacobian-velocity theorem,
+              Sharpness of the Poincaré bound, a deterministic equality case for the Jacobian-velocity theorem,
               the composition-chain identity, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </li>
             <li>
@@ -674,7 +674,7 @@
           <span class="pill">sympy</span>
           <span class="badge pass">Pass</span>
         </div>
-        <h3>Poincare / Wirtinger sharpness</h3>
+        <h3>Poincaré / Wirtinger sharpness</h3>
         <p>The first cosine eigenfunction attains equality in the time-domain bound.</p>
         <div class="math">\[\bar r = \frac{1}{T}\int_0^T \cos\!\left(\frac{\pi t}{T}\right) dt = 0\]</div><div class="math">\[\mathrm{Var}_U(r(U)) = \frac{1}{T}\int_0^T \cos^2\!\left(\frac{\pi t}{T}\right) dt = \frac{1}{2}\]</div><div class="math">\[\frac{T}{\pi^2}\int_0^T (r'(t))^2 dt = \frac{1}{2}\]</div>
         <ul class="detail-list"><li>Used r(t) = cos(pi t / T), the first zero-mean eigenfunction on [0, T].</li><li>Verified the temporal mean is exactly zero.</li><li>Verified Var_U(r(U)) and (T / pi^2) int_0^T (r&#x27;(t))^2 dt simplify to the same closed form.</li></ul>

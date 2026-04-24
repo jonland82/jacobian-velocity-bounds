@@ -43,7 +43,7 @@ def check_poincare_sharpness() -> CheckResult:
     passed = mean == 0 and gap == 0
     return CheckResult(
         slug="poincare-sharpness",
-        title="Poincare / Wirtinger sharpness",
+        title="Poincar\u00e9 / Wirtinger sharpness",
         category="exact symbolic",
         method="sympy",
         passed=passed,
