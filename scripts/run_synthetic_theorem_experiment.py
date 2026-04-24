@@ -19,7 +19,7 @@ from torch.utils.data import DataLoader, TensorDataset
 TIME_HORIZON = 1.0
 TIME_GRID = np.linspace(0.0, TIME_HORIZON, 41)
 SWEEP_LAMBDAS = [0.0, 0.01, 0.03, 0.08]
-SWEEP_SEEDS = [0, 1]
+SWEEP_SEEDS = list(range(20))
 SELECTED_DTR_LAMBDA = 0.03
 SELECTED_SEED = 0
 TRAIN_SIZE = 1024

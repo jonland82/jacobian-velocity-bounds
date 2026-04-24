@@ -198,15 +198,15 @@ $$
 
 with a small number of dominant directions than the discarded mixed-shift benchmarks.
 
-The retained paper numbers reflect that fit:
+The validation-selected matched-seed numbers are mixed:
 
-- Selected DTR setting: $\lambda = 0.03$.
-- Mean volatility falls from $9.29 \times 10^{-2}$ to $6.49 \times 10^{-2}$.
-- Mean directional gain falls from $8.65 \times 10^{-2}$ to $6.09 \times 10^{-2}$.
-- Mean terminal risk falls from $0.169$ to $0.149$.
-- In the representative deployment trajectory, the risk peak falls from `1.152` to `0.949`.
+- Validation-selected DTR setting: $\lambda = 0.08$.
+- Mean directional gain falls from $0.079 \pm 0.008$ to $0.044 \pm 0.004$.
+- Mean volatility rises from $0.073 \pm 0.023$ to $0.112 \pm 0.031$.
+- Mean deployment MSE rises from $0.449 \pm 0.069$ to $0.485 \pm 0.077$.
+- In paired seed comparisons, DTR improves directional gain in `10 / 10` seeds but volatility in only `2 / 10` seeds.
 
-This is exactly the kind of benchmark where the DTR story is intuitive: the environment moves in a structured way, the model can be over-sensitive along that motion, and directional smoothing reduces the resulting deployment instability.
+Air Quality remains useful because it checks the directional-gain mechanism in a sensor-drift setting, but it is no longer presented as a validation-selected deployment-risk win.
 
 ### 3.2 UCI Tetouan City power consumption
 
@@ -221,11 +221,12 @@ Why it is well suited:
 
 In other words, Tetouan looks much closer to a setting where a small estimated $V$ genuinely captures the deployment path the model will traverse.
 
-The retained numbers were strong:
+The validation-selected numbers are strong:
 
-- Selected DTR setting: $\lambda = 3 \times 10^{-4}$.
-- Deployment MSE: `standard` $1.161 \times 10^8$, `isotropic` $9.314 \times 10^7$, `DTR` $6.838 \times 10^7$.
-- Volatility: `standard` $1.092 \times 10^{16}$, `isotropic` $4.887 \times 10^{15}$, `DTR` $1.769 \times 10^{15}$.
+- Validation-selected DTR setting: $\lambda = 10^{-2}$.
+- Deployment MSE: `standard` $(1.08 \pm 1.11) \times 10^8$, `isotropic` $(1.01 \pm 0.81) \times 10^8$, `DTR` $(6.82 \pm 4.87) \times 10^7$.
+- Volatility: `standard` $(1.07 \pm 1.66) \times 10^{16}$, `isotropic` $(7.20 \pm 10.24) \times 10^{15}$, `DTR` $(3.07 \pm 4.32) \times 10^{15}$.
+- DTR improves volatility in `8 / 10` paired seeds against both standard training and isotropic smoothing.
 
 So Tetouan is not just directionally favorable in theory. It is a case where the directional bias was materially better than both plain ERM and isotropic Jacobian smoothing on the main deployment metrics.
 

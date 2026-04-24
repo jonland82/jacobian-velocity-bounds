@@ -16,6 +16,7 @@ def main() -> None:
     standard_color = "#a8b0bb"
     dtr_color = "#334155"
     label_color = "#000000"
+    mean_edge = "#111827"
 
     standard = summary[summary["lambda"] == 0.0]
     dtr = summary[summary["lambda"] > 0.0]
@@ -37,21 +38,25 @@ def main() -> None:
     ax.scatter(
         standard["bound_fd"],
         standard["volatility"],
-        s=110,
+        s=78,
         c=standard_color,
         edgecolor="black",
-        linewidth=0.6,
+        linewidth=0.45,
+        alpha=0.62,
         label="standard",
+        zorder=2,
     )
     ax.scatter(
         dtr["bound_fd"],
         dtr["volatility"],
-        s=122,
+        s=86,
         c=dtr_color,
         edgecolor="black",
-        linewidth=0.6,
+        linewidth=0.45,
+        alpha=0.68,
         marker="^",
         label="DTR",
+        zorder=2,
     )
 
     # Use a monotone display transform so the near-zero cluster is legible in print.
@@ -100,29 +105,56 @@ def main() -> None:
     ax.annotate(
         "standard mean",
         xy=standard_center,
-        xytext=(-16, 18),
+        xytext=(-70, 34),
         textcoords="offset points",
         fontsize=12,
         color=label_color,
         ha="right",
         va="bottom",
         bbox={"facecolor": "white", "edgecolor": "#d1d5db", "alpha": 0.94, "pad": 2.0},
-        arrowprops={"arrowstyle": "-", "color": label_color},
+        arrowprops={"arrowstyle": "->", "color": mean_edge, "linewidth": 1.4},
+        zorder=6,
     )
     ax.annotate(
         "DTR mean",
         xy=dtr_center,
-        xytext=(2, 30),
+        xytext=(24, 46),
         textcoords="offset points",
         fontsize=12,
         color=label_color,
         ha="left",
         va="bottom",
         bbox={"facecolor": "white", "edgecolor": "#d1d5db", "alpha": 0.94, "pad": 2.0},
-        arrowprops={"arrowstyle": "-", "color": label_color},
+        arrowprops={"arrowstyle": "->", "color": mean_edge, "linewidth": 1.4},
+        zorder=6,
     )
-    ax.scatter(*standard_center, s=150, c=standard_color, marker="X")
-    ax.scatter(*dtr_center, s=150, c=dtr_color, marker="X")
+    ax.scatter(
+        *standard_center,
+        s=390,
+        c="white",
+        edgecolor=mean_edge,
+        linewidth=2.1,
+        marker="o",
+        zorder=4,
+    )
+    ax.scatter(
+        *standard_center,
+        s=230,
+        c=standard_color,
+        edgecolor=mean_edge,
+        linewidth=1.4,
+        marker="o",
+        zorder=5,
+    )
+    ax.scatter(
+        *dtr_center,
+        s=470,
+        c="white",
+        edgecolor=dtr_color,
+        linewidth=3.0,
+        marker="^",
+        zorder=5,
+    )
 
     fig.savefig(out_path, dpi=220, bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)

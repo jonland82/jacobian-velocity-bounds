@@ -1,0 +1,17 @@
+dataset_key,dataset,comparison,metric,n_seeds,wins,losses,ties,mean_difference,bootstrap_ci_low,bootstrap_ci_high
+air_quality,Air Quality,dtr_minus_standard,deploy_mse,10,9,1,0,-0.016996571421623242,-0.02637838937342167,-0.008851188123226196
+air_quality,Air Quality,dtr_minus_standard,volatility,10,9,1,0,-0.004591038839775619,-0.009459476113455321,-0.0011685085635403385
+air_quality,Air Quality,dtr_minus_standard,mean_gain,10,6,4,0,-3.9564754115402335e-05,-0.0011304775758471703,0.0012753908120794568
+air_quality,Air Quality,dtr_minus_standard,terminal_risk,10,7,3,0,-0.004275585711002355,-0.011470262669026876,0.002137249596416971
+air_quality,Air Quality,dtr_minus_isotropic,deploy_mse,10,3,7,0,0.017445269227027903,-0.01395640373229982,0.048890997022390366
+air_quality,Air Quality,dtr_minus_isotropic,volatility,10,6,4,0,-0.00838885678896222,-0.020231138373698082,0.0034254499182224665
+air_quality,Air Quality,dtr_minus_isotropic,mean_gain,10,0,10,0,0.02580558251414914,0.021715995226331847,0.030135410281160176
+air_quality,Air Quality,dtr_minus_isotropic,terminal_risk,10,6,4,0,-0.01607358157634737,-0.053741754665970816,0.015341393984854186
+tetouan_zone1_power,Tetouan,dtr_minus_standard,deploy_mse,10,8,2,0,-39496139.8,-85434226.59,101098.82499999809
+tetouan_zone1_power,Tetouan,dtr_minus_standard,volatility,10,8,2,0,-7623240082190882.0,-1.5703596047447238e+16,-214655525688193.34
+tetouan_zone1_power,Tetouan,dtr_minus_standard,mean_gain,10,8,2,0,-0.011536922327165158,-0.023749849733818933,-0.0012819726560458573
+tetouan_zone1_power,Tetouan,dtr_minus_standard,terminal_risk,10,5,5,0,-1167809.8,-3327013.13,616424.9624999999
+tetouan_zone1_power,Tetouan,dtr_minus_isotropic,deploy_mse,10,8,2,0,-32507905.9,-62293225.205000006,-4139465.897500001
+tetouan_zone1_power,Tetouan,dtr_minus_isotropic,volatility,10,8,2,0,-4126602095549425.5,-8766382307476569.0,-748138297385165.6
+tetouan_zone1_power,Tetouan,dtr_minus_isotropic,mean_gain,10,9,1,0,-0.00968911126644041,-0.01892407485846587,-0.0018726840021554424
+tetouan_zone1_power,Tetouan,dtr_minus_isotropic,terminal_risk,10,6,4,0,-1535012.5,-3792983.8825,416185.9574999986

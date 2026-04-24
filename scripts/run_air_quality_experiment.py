@@ -35,10 +35,11 @@ HIDDEN_WIDTH = 32
 EPOCHS = 35
 LEARNING_RATE = 0.01
 SWEEP_LAMBDAS = [0.0, 0.003, 0.01, 0.03, 0.08]
-SWEEP_SEEDS = [0, 1, 2]
+REGULARIZATION_LAMBDAS = [0.003, 0.01, 0.03, 0.08]
+SWEEP_SEEDS = list(range(10))
 SUBSPACE_DIM = 2
+SUBSPACE_METHOD = "sensor_target_orthogonal"
 SELECTED_SEED = 1
-SELECTED_DTR_LAMBDA = 0.03
 DEVICE = torch.device("cpu")
 
 
@@ -94,6 +95,48 @@ def load_air_quality(cache_path: Path) -> pd.DataFrame:
     return clean
 
 
+def sensor_indices() -> list[int]:
+    return [idx for idx, name in enumerate(FEATURE_COLS) if name.startswith("PT08.")]
+
+
+def target_orthogonalize(
+    values: np.ndarray,
+    train_values: np.ndarray,
+    train_y: np.ndarray,
+) -> np.ndarray:
+    direction, *_ = np.linalg.lstsq(train_values, train_y, rcond=None)
+    direction = direction.astype(np.float32)
+    norm = float(np.linalg.norm(direction))
+    if norm == 0.0:
+        return values.astype(np.float32)
+    unit_direction = direction / norm
+    return (values - np.outer(values @ unit_direction, unit_direction)).astype(np.float32)
+
+
+def estimate_sensor_target_orthogonal_subspace(
+    train_x: np.ndarray,
+    train_y: np.ndarray,
+    deploy_x: np.ndarray,
+    block_index: np.ndarray,
+    subspace_dim: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    sensor_idx = sensor_indices()
+    train_sensor = train_x[:, sensor_idx]
+    deploy_sensor = deploy_x[:, sensor_idx]
+    deploy_orthogonal = target_orthogonalize(deploy_sensor, train_sensor, train_y)
+    num_blocks = int(block_index.max()) + 1
+    block_means = np.asarray(
+        [deploy_orthogonal[block_index == block_id].mean(axis=0) for block_id in range(num_blocks)],
+        dtype=np.float32,
+    )
+    block_diffs = np.diff(block_means, axis=0)
+    _, singular_values, right_vectors = np.linalg.svd(block_diffs, full_matrices=False)
+    local_basis = right_vectors[:subspace_dim].T.astype(np.float32)
+    full_basis = np.zeros((len(FEATURE_COLS), subspace_dim), dtype=np.float32)
+    full_basis[np.asarray(sensor_idx), :] = local_basis
+    return full_basis, singular_values
+
+
 def build_splits(df: pd.DataFrame) -> SplitData:
     start_time = df["timestamp"].min()
     train_end = start_time + pd.Timedelta(weeks=TRAIN_WEEKS)
@@ -134,13 +177,13 @@ def build_splits(df: pd.DataFrame) -> SplitData:
     ).astype(int)
     block_index = raw_block_index.to_numpy(dtype=int)
     num_blocks = int(block_index.max()) + 1
-    block_means = np.asarray(
-        [deploy_x[block_index == block_id].mean(axis=0) for block_id in range(num_blocks)],
-        dtype=np.float32,
+    drift_basis, singular_values = estimate_sensor_target_orthogonal_subspace(
+        train_x,
+        train_y,
+        deploy_x,
+        block_index,
+        SUBSPACE_DIM,
     )
-    block_diffs = np.diff(block_means, axis=0)
-    _, singular_values, right_vectors = np.linalg.svd(block_diffs, full_matrices=False)
-    drift_basis = right_vectors[:SUBSPACE_DIM].T.astype(np.float32)
 
     block_dates = [
         pd.Timestamp(deploy_df.loc[block_index == block_id, "timestamp"].iloc[0])
@@ -160,6 +203,8 @@ def build_splits(df: pd.DataFrame) -> SplitData:
         "deploy_blocks": int(num_blocks),
         "block_days": int(BLOCK_DAYS),
         "target": TARGET_COL,
+        "subspace_method": SUBSPACE_METHOD,
+        "subspace_dim": int(SUBSPACE_DIM),
     }
     for idx, value in enumerate(singular_values[:SUBSPACE_DIM], start=1):
         split_summary[f"drift_sv_{idx}"] = float(value)
@@ -182,8 +227,11 @@ def build_splits(df: pd.DataFrame) -> SplitData:
     )
 
 
-def directional_penalty(
-    predictions: torch.Tensor, inputs: torch.Tensor, drift_basis: torch.Tensor
+def jacobian_penalty(
+    predictions: torch.Tensor,
+    inputs: torch.Tensor,
+    method: str,
+    drift_basis: torch.Tensor | None,
 ) -> torch.Tensor:
     grads = torch.autograd.grad(
         predictions.sum(),
@@ -191,16 +239,50 @@ def directional_penalty(
         create_graph=True,
         retain_graph=True,
     )[0]
-    projected = grads @ drift_basis
-    return projected.square().sum(dim=1).mean()
+    if method == "standard":
+        return torch.zeros((), device=inputs.device)
+    if method == "isotropic":
+        return grads.square().sum(dim=1).mean()
+    if method == "dtr" and drift_basis is not None:
+        projected = grads @ drift_basis
+        return projected.square().sum(dim=1).mean()
+    raise ValueError(f"Unsupported method: {method}")
 
 
-def train_model(split: SplitData, seed: int, dtr_lambda: float) -> AirQualityRegressor:
+def mean_projected_jacobian_energy(
+    model: AirQualityRegressor,
+    x_np: np.ndarray,
+    drift_basis_np: np.ndarray,
+    batch_size: int = 512,
+) -> float:
+    model.eval()
+    drift_basis = torch.from_numpy(drift_basis_np).to(DEVICE)
+    energies: list[float] = []
+    counts: list[int] = []
+    for start in range(0, len(x_np), batch_size):
+        batch = torch.from_numpy(x_np[start : start + batch_size]).to(DEVICE).requires_grad_(True)
+        predictions = model(batch)
+        grads = torch.autograd.grad(predictions.sum(), batch)[0]
+        projected = grads @ drift_basis
+        energy = projected.square().sum(dim=1)
+        energies.append(float(energy.sum().detach().cpu().item()))
+        counts.append(int(len(batch)))
+    return float(np.sum(energies) / np.sum(counts))
+
+
+def train_model(
+    split: SplitData,
+    seed: int,
+    method: str,
+    penalty_lambda: float,
+) -> AirQualityRegressor:
     torch.manual_seed(seed)
     model = AirQualityRegressor(len(FEATURE_COLS), HIDDEN_WIDTH).to(DEVICE)
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
     criterion = nn.MSELoss()
-    drift_basis = torch.from_numpy(split.drift_basis).to(DEVICE)
+    drift_basis = None
+    if method == "dtr":
+        drift_basis = torch.from_numpy(split.drift_basis).to(DEVICE)
     dataset = TensorDataset(torch.from_numpy(split.train_x), torch.from_numpy(split.train_y))
     loader = DataLoader(
         dataset,
@@ -216,8 +298,8 @@ def train_model(split: SplitData, seed: int, dtr_lambda: float) -> AirQualityReg
 
             predictions = model(batch_x)
             fit_loss = criterion(predictions, batch_y)
-            penalty = directional_penalty(predictions, batch_x, drift_basis)
-            objective = fit_loss + dtr_lambda * penalty
+            penalty = jacobian_penalty(predictions, batch_x, method, drift_basis)
+            objective = fit_loss + penalty_lambda * penalty
 
             optimizer.zero_grad()
             objective.backward()
@@ -231,11 +313,18 @@ def evaluate_model(
     split: SplitData,
     lambda_value: float,
     seed: int,
-    label: str,
+    method: str,
 ) -> tuple[pd.DataFrame, dict[str, float]]:
     with torch.no_grad():
         val_predictions = model(torch.from_numpy(split.val_x).to(DEVICE)).cpu().numpy()
+        deploy_predictions = model(torch.from_numpy(split.deploy_x).to(DEVICE)).cpu().numpy()
     val_mse = float(np.mean(((val_predictions - split.val_y) * split.target_std) ** 2))
+    deploy_mse = float(np.mean(((deploy_predictions - split.deploy_y) * split.target_std) ** 2))
+    val_directional_gain = mean_projected_jacobian_energy(
+        model,
+        split.val_x,
+        split.drift_basis,
+    )
 
     rows: list[dict[str, float | int | str]] = []
     previous_mean: np.ndarray | None = None
@@ -274,7 +363,8 @@ def evaluate_model(
                 "block_start": str(block_dates.iloc[0].date()),
                 "lambda": float(lambda_value),
                 "seed": int(seed),
-                "model": label,
+                "method": method,
+                "model": method,
                 "risk": block_risk,
                 "speed": speed,
                 "gain": gain,
@@ -288,8 +378,11 @@ def evaluate_model(
     summary = {
         "lambda": float(lambda_value),
         "seed": int(seed),
-        "model": label,
+        "method": method,
+        "model": method,
         "val_mse": val_mse,
+        "val_directional_gain": val_directional_gain,
+        "deploy_mse": deploy_mse,
         "volatility": float(np.mean((risk - risk.mean()) ** 2)),
         "initial_risk": float(risk[0]),
         "terminal_risk": float(risk[-1]),
@@ -301,62 +394,19 @@ def evaluate_model(
 
 
 def build_paper_summary(
-    summary_df: pd.DataFrame, trajectory_df: pd.DataFrame, split: SplitData
+    selected_lambdas: pd.DataFrame,
+    selected_summary: pd.DataFrame,
+    split: SplitData,
 ) -> dict[str, object]:
-    standard_df = summary_df[summary_df["lambda"] == 0.0]
-    dtr_df = summary_df[summary_df["lambda"] > 0.0]
-    moderate_dtr_df = summary_df[np.isclose(summary_df["lambda"], SELECTED_DTR_LAMBDA)]
-
-    out: dict[str, object] = {
+    return {
         "split": split.split_summary,
-        "standard_mean": {
-            "val_mse": float(standard_df["val_mse"].mean()),
-            "volatility": float(standard_df["volatility"].mean()),
-            "initial_risk": float(standard_df["initial_risk"].mean()),
-            "terminal_risk": float(standard_df["terminal_risk"].mean()),
-            "mean_gain": float(standard_df["mean_gain"].mean()),
-            "max_hazard": float(standard_df["max_hazard"].mean()),
-        },
-        "dtr_family_mean": {
-            "val_mse": float(dtr_df["val_mse"].mean()),
-            "volatility": float(dtr_df["volatility"].mean()),
-            "initial_risk": float(dtr_df["initial_risk"].mean()),
-            "terminal_risk": float(dtr_df["terminal_risk"].mean()),
-            "mean_gain": float(dtr_df["mean_gain"].mean()),
-            "max_hazard": float(dtr_df["max_hazard"].mean()),
-        },
-        "selected_dtr_mean": {
-            "lambda": float(SELECTED_DTR_LAMBDA),
-            "val_mse": float(moderate_dtr_df["val_mse"].mean()),
-            "volatility": float(moderate_dtr_df["volatility"].mean()),
-            "initial_risk": float(moderate_dtr_df["initial_risk"].mean()),
-            "terminal_risk": float(moderate_dtr_df["terminal_risk"].mean()),
-            "mean_gain": float(moderate_dtr_df["mean_gain"].mean()),
-            "max_hazard": float(moderate_dtr_df["max_hazard"].mean()),
-        },
+        "selection_rule": (
+            "Per-method lambda chosen by mean validation MSE across matched seeds, "
+            "with validation directional gain used only as a secondary tie-breaker."
+        ),
+        "selected_lambdas": selected_lambdas.to_dict(orient="records"),
+        "selected_summary": selected_summary.to_dict(orient="records"),
     }
-
-    selected = trajectory_df[trajectory_df["model"].isin(["standard", "dtr"])]
-    for model_name in ["standard", "dtr"]:
-        model_df = selected[selected["model"] == model_name]
-        risk = model_df["risk"].to_numpy()
-        out[f"selected_{model_name}"] = {
-            "initial_risk": float(risk[0]),
-            "terminal_risk": float(risk[-1]),
-            "volatility": float(np.mean((risk - risk.mean()) ** 2)),
-            "mean_gain": float(model_df["gain"].mean()),
-            "max_hazard": float(model_df["hazard"].max()),
-        }
-
-    standard_vol = out["standard_mean"]["volatility"]  # type: ignore[index]
-    selected_dtr_vol = out["selected_dtr_mean"]["volatility"]  # type: ignore[index]
-    standard_gain = out["standard_mean"]["mean_gain"]  # type: ignore[index]
-    selected_dtr_gain = out["selected_dtr_mean"]["mean_gain"]  # type: ignore[index]
-    out["selected_dtr_reduction"] = {
-        "volatility_pct": float(100.0 * (1.0 - selected_dtr_vol / standard_vol)),
-        "mean_gain_pct": float(100.0 * (1.0 - selected_dtr_gain / standard_gain)),
-    }
-    return out
 
 
 def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
@@ -364,55 +414,158 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
     figures_dir.mkdir(parents=True, exist_ok=True)
     summary_path = figures_dir / "air_quality_summary.csv"
     trajectory_path = figures_dir / "air_quality_selected_trajectories.csv"
+    all_selected_trajectory_path = figures_dir / "air_quality_selected_trajectories_all_seeds.csv"
+    selected_lambda_path = figures_dir / "air_quality_selected_lambdas.csv"
+    selected_summary_path = figures_dir / "air_quality_selected_summary.csv"
     paper_summary_path = figures_dir / "air_quality_summary.json"
     cache_path = base_dir / "data" / "air_quality.csv"
 
-    if not force and summary_path.exists() and trajectory_path.exists() and paper_summary_path.exists():
+    if (
+        not force
+        and summary_path.exists()
+        and trajectory_path.exists()
+        and all_selected_trajectory_path.exists()
+        and selected_lambda_path.exists()
+        and selected_summary_path.exists()
+        and paper_summary_path.exists()
+    ):
         return {
             "summary": pd.read_csv(summary_path),
             "trajectory": pd.read_csv(trajectory_path),
+            "selected_trajectories_all_seeds": pd.read_csv(all_selected_trajectory_path),
+            "selected_lambdas": pd.read_csv(selected_lambda_path),
+            "selected_summary": pd.read_csv(selected_summary_path),
         }
 
     split = build_splits(load_air_quality(cache_path))
     summary_rows: list[dict[str, float | int | str]] = []
-    selected_frames: list[pd.DataFrame] = []
+    trajectories: list[pd.DataFrame] = []
 
-    for lambda_value in SWEEP_LAMBDAS:
+    experiment_specs: list[tuple[str, float]] = [("standard", 0.0)]
+    experiment_specs.extend(("isotropic", lambda_value) for lambda_value in REGULARIZATION_LAMBDAS)
+    experiment_specs.extend(("dtr", lambda_value) for lambda_value in REGULARIZATION_LAMBDAS)
+
+    for method, lambda_value in experiment_specs:
         for seed in SWEEP_SEEDS:
-            model = train_model(split, seed=seed, dtr_lambda=lambda_value)
-            label = "standard" if lambda_value == 0.0 else f"dtr_lambda_{lambda_value:.3f}"
+            model = train_model(
+                split,
+                seed=seed,
+                method=method,
+                penalty_lambda=lambda_value,
+            )
             trajectory_df, summary = evaluate_model(
                 model,
                 split=split,
                 lambda_value=lambda_value,
                 seed=seed,
-                label=label,
+                method=method,
             )
             summary_rows.append(summary)
-            if seed == SELECTED_SEED and lambda_value in {0.0, SELECTED_DTR_LAMBDA}:
-                selected_label = "standard" if lambda_value == 0.0 else "dtr"
-                selected_frames.append(
-                    trajectory_df.assign(
-                        model=selected_label,
-                        seed=seed,
-                        **{"lambda": lambda_value},
-                    )
-                )
+            trajectories.append(trajectory_df)
 
-    summary_df = pd.DataFrame(summary_rows).sort_values(["lambda", "seed"]).reset_index(drop=True)
-    trajectory_df = (
-        pd.concat(selected_frames, ignore_index=True)
-        .sort_values(["model", "block"])
+    summary_df = (
+        pd.DataFrame(summary_rows)
+        .sort_values(["method", "lambda", "seed"])
         .reset_index(drop=True)
     )
-    paper_summary = build_paper_summary(summary_df, trajectory_df, split)
+    all_trajectories = (
+        pd.concat(trajectories, ignore_index=True)
+        .sort_values(["method", "lambda", "seed", "block"])
+        .reset_index(drop=True)
+    )
+
+    selected_lambda_rows: list[dict[str, float | str]] = []
+    for method in ["standard", "isotropic", "dtr"]:
+        subset = summary_df[summary_df["method"] == method]
+        if method == "standard":
+            best_lambda = 0.0
+            selection_val_mse = float(subset["val_mse"].mean())
+            selection_val_directional_gain = float(subset["val_directional_gain"].mean())
+        else:
+            grouped = (
+                subset.groupby("lambda", as_index=False)[["val_mse", "val_directional_gain"]]
+                .mean()
+                .sort_values(["val_mse", "val_directional_gain", "lambda"])
+                .reset_index(drop=True)
+            )
+            best = grouped.iloc[0]
+            best_lambda = float(best["lambda"])
+            selection_val_mse = float(best["val_mse"])
+            selection_val_directional_gain = float(best["val_directional_gain"])
+        selected_lambda_rows.append(
+            {
+                "dataset": "air_quality",
+                "method": method,
+                "selected_lambda": best_lambda,
+                "selection_val_mse": selection_val_mse,
+                "selection_val_directional_gain": selection_val_directional_gain,
+            }
+        )
+
+    selected_lambdas = pd.DataFrame(selected_lambda_rows)
+    selected_summary_frames: list[pd.DataFrame] = []
+    selected_trajectory_frames: list[pd.DataFrame] = []
+    all_selected_trajectory_frames: list[pd.DataFrame] = []
+
+    for row in selected_lambdas.itertuples(index=False):
+        summary_subset = summary_df[
+            (summary_df["method"] == row.method)
+            & np.isclose(summary_df["lambda"], row.selected_lambda)
+        ]
+        selected_summary_frames.append(summary_subset)
+
+        all_trajectory_subset = all_trajectories[
+            (all_trajectories["method"] == row.method)
+            & np.isclose(all_trajectories["lambda"], row.selected_lambda)
+        ]
+        all_selected_trajectory_frames.append(all_trajectory_subset)
+
+        trajectory_subset = all_trajectories[
+            (all_trajectories["method"] == row.method)
+            & np.isclose(all_trajectories["lambda"], row.selected_lambda)
+            & (all_trajectories["seed"] == SELECTED_SEED)
+        ]
+        selected_trajectory_frames.append(trajectory_subset)
+
+    selected_summary = (
+        pd.concat(selected_summary_frames, ignore_index=True)
+        .groupby(["method", "lambda"], as_index=False)
+        .mean(numeric_only=True)
+        .merge(
+            selected_lambdas.rename(columns={"selected_lambda": "lambda"}),
+            on=["method", "lambda"],
+            how="left",
+        )
+        .sort_values("method")
+        .reset_index(drop=True)
+    )
+    trajectory_df = (
+        pd.concat(selected_trajectory_frames, ignore_index=True)
+        .sort_values(["method", "block"])
+        .reset_index(drop=True)
+    )
+    selected_trajectories_all_seeds = (
+        pd.concat(all_selected_trajectory_frames, ignore_index=True)
+        .sort_values(["method", "seed", "block"])
+        .reset_index(drop=True)
+    )
+    paper_summary = build_paper_summary(selected_lambdas, selected_summary, split)
 
     summary_df.to_csv(summary_path, index=False)
     trajectory_df.to_csv(trajectory_path, index=False)
+    selected_trajectories_all_seeds.to_csv(all_selected_trajectory_path, index=False)
+    selected_lambdas.to_csv(selected_lambda_path, index=False)
+    selected_summary.to_csv(selected_summary_path, index=False)
     with paper_summary_path.open("w", encoding="utf-8") as handle:
         json.dump(paper_summary, handle, indent=2)
 
-    return {"summary": summary_df, "trajectory": trajectory_df}
+    return {
+        "summary": summary_df,
+        "trajectory": trajectory_df,
+        "selected_trajectories_all_seeds": selected_trajectories_all_seeds,
+        "selected_lambdas": selected_lambdas,
+        "selected_summary": selected_summary,
+    }
 
 
 def ensure_air_quality_outputs(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:

@@ -1,0 +1,14 @@
+{
+  "selection_rule": "Per-method lambda selected by validation MSE across matched seeds; validation directional gain is used only as a secondary tie-breaker.",
+  "real_data_seeds": 10,
+  "summary_stats_path": "figures\\real_deployment_summary_stats.csv",
+  "paired_comparisons_path": "figures\\real_deployment_paired_comparisons.csv",
+  "conservative_gain_selection_rule": "Secondary ablation: choose the smallest lambda whose mean validation MSE is no worse than standard training and whose validation directional gain is reduced by at least 5%.",
+  "conservative_gain_summary_path": "figures\\real_deployment_conservative_gain_summary.csv",
+  "conservative_gain_paired_path": "figures\\real_deployment_conservative_gain_paired.csv",
+  "air_quality_dtr_lambda_path": "figures\\air_quality_dtr_lambda_path.csv",
+  "air_quality_subspace_ablation_summary_path": "figures\\air_quality_subspace_ablation_selected.csv",
+  "air_quality_subspace_ablation_paired_path": "figures\\air_quality_subspace_ablation_paired.csv",
+  "hazard_score_ablation_path": "figures\\hazard_score_ablation.csv",
+  "tetouan_output_dir": "benchmark_package\\tetouan_city_power_consumption"
+}

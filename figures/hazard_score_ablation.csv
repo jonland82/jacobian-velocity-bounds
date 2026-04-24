@@ -1,0 +1,10 @@
+dataset_key,dataset,score,same_block_corr,next_block_corr,n_same_block,n_next_block
+air_quality,Air Quality,drift_only,-0.06677478256679821,0.2371832570594815,190,180
+air_quality,Air Quality,gain_only,-0.05836184051417607,0.05590799891772763,190,180
+air_quality,Air Quality,matched,0.09682812485378596,0.17207365517547657,190,180
+tetouan_zone1_power,Tetouan,drift_only,-0.2712248030316136,0.12490785392515312,50,40
+tetouan_zone1_power,Tetouan,gain_only,0.15858783095630336,-0.01899966022265761,50,40
+tetouan_zone1_power,Tetouan,matched,0.022642236350422812,0.04996144254252037,50,40
+mean_real_data,Mean,drift_only,-0.1689997927992059,0.18104555549231732,240,220
+mean_real_data,Mean,gain_only,0.05011299522106365,0.01845416934753501,240,220
+mean_real_data,Mean,matched,0.059735180602104386,0.11101754885899848,240,220

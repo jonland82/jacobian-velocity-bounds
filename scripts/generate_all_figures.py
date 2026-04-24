@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
-from run_air_quality_experiment import run_suite as run_air_quality_experiment
+from run_air_quality_subspace_ablation import run_suite as run_air_quality_subspace_ablation
+from run_real_deployment_reporting import run_suite as run_real_deployment_reporting
 from run_synthetic_directional_ablation import run_suite as run_directional_ablation
 from run_synthetic_theorem_experiment import run_suite as run_synthetic_experiment
 from plot_figure_1_geometry import main as run_figure_1
@@ -13,10 +15,15 @@ from plot_figure_5_tetouan_deployment import main as run_figure_5
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--force", action="store_true")
+    args = parser.parse_args()
+
     base_dir = Path(__file__).resolve().parents[1]
-    run_synthetic_experiment(base_dir / "figures")
-    run_directional_ablation(base_dir / "figures")
-    run_air_quality_experiment(base_dir)
+    run_synthetic_experiment(base_dir / "figures", force=args.force)
+    run_directional_ablation(base_dir / "figures", force=args.force)
+    run_real_deployment_reporting(base_dir, force=args.force)
+    run_air_quality_subspace_ablation(base_dir, force=args.force)
     run_figure_1()
     run_figure_2()
     run_figure_3()

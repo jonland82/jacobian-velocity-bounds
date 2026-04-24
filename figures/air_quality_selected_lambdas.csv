@@ -1,0 +1,4 @@
+dataset,method,selected_lambda,selection_val_mse,selection_val_directional_gain
+air_quality,standard,0.0,0.5185703635215759,0.04776595477400155
+air_quality,isotropic,0.08,0.235380919277668,0.09518408438255047
+air_quality,dtr,0.003,0.515467643737793,0.04112901340270865

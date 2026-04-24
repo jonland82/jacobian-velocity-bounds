@@ -1,4 +1,4 @@
-dataset,method,selected_lambda,selection_val_mse
-tetouan_zone1_power,standard,0.0,60226009.333333336
-tetouan_zone1_power,isotropic,0.0003,50550508.0
-tetouan_zone1_power,dtr,0.0003,42748678.666666664
+dataset,method,selected_lambda,selection_val_mse,selection_val_directional_gain
+tetouan_zone1_power,standard,0.0,54364579.6,0.04689803203815537
+tetouan_zone1_power,isotropic,0.0003,51833239.6,0.04231729607330211
+tetouan_zone1_power,dtr,0.01,44632117.0,0.030272699326941765

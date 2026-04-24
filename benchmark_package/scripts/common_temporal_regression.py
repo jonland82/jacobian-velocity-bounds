@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader, TensorDataset
 torch.set_num_threads(1)
 
 DEVICE = torch.device("cpu")
-SEEDS = [0, 1, 2]
+SEEDS = list(range(10))
 LAMBDA_GRID = [3e-4, 1e-3, 3e-3, 1e-2]
 
 
@@ -276,6 +276,27 @@ def evaluate_regression_predictions(
     return {"mse": mse, "mae": mae}
 
 
+def mean_projected_jacobian_energy(
+    model: RegressionMLP,
+    x_np: np.ndarray,
+    drift_basis_np: np.ndarray,
+    batch_size: int,
+) -> float:
+    model.eval()
+    drift_basis = torch.from_numpy(drift_basis_np).to(DEVICE)
+    energies: list[float] = []
+    counts: list[int] = []
+    for start in range(0, len(x_np), batch_size):
+        batch = torch.from_numpy(x_np[start : start + batch_size]).to(DEVICE).requires_grad_(True)
+        predictions = model(batch)
+        grads = torch.autograd.grad(predictions.sum(), batch)[0]
+        projected = grads @ drift_basis
+        energy = projected.square().sum(dim=1)
+        energies.append(float(energy.sum().detach().cpu().item()))
+        counts.append(int(len(batch)))
+    return float(np.sum(energies) / np.sum(counts))
+
+
 def evaluate_model(
     model: RegressionMLP,
     split: PreparedRegressionSplit,
@@ -299,6 +320,12 @@ def evaluate_model(
         split.deploy_y,
         split.target_mean,
         split.target_std,
+    )
+    val_directional_gain = mean_projected_jacobian_energy(
+        model,
+        split.val_x,
+        split.drift_basis,
+        split.config.batch_size,
     )
 
     rows: list[dict[str, float | int | str]] = []
@@ -358,6 +385,7 @@ def evaluate_model(
         "seed": int(seed),
         "val_mse": val_metrics["mse"],
         "val_mae": val_metrics["mae"],
+        "val_directional_gain": val_directional_gain,
         "deploy_mse": deploy_metrics["mse"],
         "deploy_mae": deploy_metrics["mae"],
         "volatility": float(np.mean((risk - risk.mean()) ** 2)),
@@ -382,6 +410,7 @@ def run_temporal_regression_benchmark(
     output_dir.mkdir(parents=True, exist_ok=True)
     sweep_path = output_dir / "sweep_summary.csv"
     trajectory_path = output_dir / "selected_trajectories.csv"
+    all_selected_trajectory_path = output_dir / "selected_trajectories_all_seeds.csv"
     selected_lambda_path = output_dir / "selected_lambdas.csv"
     selected_summary_path = output_dir / "selected_summary.csv"
     summary_json_path = output_dir / "summary.json"
@@ -390,6 +419,7 @@ def run_temporal_regression_benchmark(
         not force
         and sweep_path.exists()
         and trajectory_path.exists()
+        and all_selected_trajectory_path.exists()
         and selected_lambda_path.exists()
         and selected_summary_path.exists()
         and summary_json_path.exists()
@@ -397,6 +427,7 @@ def run_temporal_regression_benchmark(
         return {
             "sweep_summary": pd.read_csv(sweep_path),
             "selected_trajectories": pd.read_csv(trajectory_path),
+            "selected_trajectories_all_seeds": pd.read_csv(all_selected_trajectory_path),
             "selected_lambdas": pd.read_csv(selected_lambda_path),
             "selected_summary": pd.read_csv(selected_summary_path),
         }
@@ -441,27 +472,32 @@ def run_temporal_regression_benchmark(
             selection_val_mse = float(subset["val_mse"].mean())
         else:
             grouped = (
-                subset.groupby("lambda", as_index=False)["val_mse"]
+                subset.groupby("lambda", as_index=False)[["val_mse", "val_directional_gain"]]
                 .mean()
-                .sort_values(["val_mse", "lambda"])
+                .sort_values(["val_mse", "val_directional_gain", "lambda"])
                 .reset_index(drop=True)
             )
             best = grouped.iloc[0]
             best_lambda = float(best["lambda"])
             selection_val_mse = float(best["val_mse"])
+            selection_val_directional_gain = float(best["val_directional_gain"])
+        if method == "standard":
+            selection_val_directional_gain = float(subset["val_directional_gain"].mean())
         selected_lambda_rows.append(
             {
                 "dataset": config.name,
                 "method": method,
                 "selected_lambda": best_lambda,
                 "selection_val_mse": selection_val_mse,
+                "selection_val_directional_gain": selection_val_directional_gain,
             }
         )
 
     selected_lambdas = pd.DataFrame(selected_lambda_rows)
     selected_summary_frames: list[pd.DataFrame] = []
     selected_trajectory_frames: list[pd.DataFrame] = []
-    representative_seed = SEEDS[1]
+    all_selected_trajectory_frames: list[pd.DataFrame] = []
+    display_seed = SEEDS[1]
 
     for row in selected_lambdas.itertuples(index=False):
         summary_subset = sweep_summary[
@@ -470,10 +506,16 @@ def run_temporal_regression_benchmark(
         ]
         selected_summary_frames.append(summary_subset)
 
+        all_trajectory_subset = all_trajectories[
+            (all_trajectories["method"] == row.method)
+            & np.isclose(all_trajectories["lambda"], row.selected_lambda)
+        ]
+        all_selected_trajectory_frames.append(all_trajectory_subset)
+
         trajectory_subset = all_trajectories[
             (all_trajectories["method"] == row.method)
             & np.isclose(all_trajectories["lambda"], row.selected_lambda)
-            & (all_trajectories["seed"] == representative_seed)
+            & (all_trajectories["seed"] == display_seed)
         ]
         selected_trajectory_frames.append(trajectory_subset)
 
@@ -494,17 +536,26 @@ def run_temporal_regression_benchmark(
         .sort_values(["method", "block"])
         .reset_index(drop=True)
     )
+    selected_trajectories_all_seeds = (
+        pd.concat(all_selected_trajectory_frames, ignore_index=True)
+        .sort_values(["method", "seed", "block"])
+        .reset_index(drop=True)
+    )
 
     summary_json = {
         "dataset": config.name,
         "description": config.description,
         "split_summary": split.split_summary,
-        "selection_rule": "Per-method lambda chosen by mean validation MSE across seeds.",
+        "selection_rule": (
+            "Per-method lambda chosen by mean validation MSE across matched seeds, "
+            "with validation directional gain used only as a secondary tie-breaker."
+        ),
         "selected_summary": selected_summary.to_dict(orient="records"),
     }
 
     sweep_summary.to_csv(sweep_path, index=False)
     selected_trajectories.to_csv(trajectory_path, index=False)
+    selected_trajectories_all_seeds.to_csv(all_selected_trajectory_path, index=False)
     selected_lambdas.to_csv(selected_lambda_path, index=False)
     selected_summary.to_csv(selected_summary_path, index=False)
     with summary_json_path.open("w", encoding="utf-8") as handle:
@@ -513,6 +564,7 @@ def run_temporal_regression_benchmark(
     return {
         "sweep_summary": sweep_summary,
         "selected_trajectories": selected_trajectories,
+        "selected_trajectories_all_seeds": selected_trajectories_all_seeds,
         "selected_lambdas": selected_lambdas,
         "selected_summary": selected_summary,
     }

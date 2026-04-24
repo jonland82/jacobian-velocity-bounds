@@ -12,50 +12,86 @@
     "deploy_blocks": 20,
     "block_days": 14,
     "target": "CO(GT)",
-    "drift_sv_1": 6.921904563903809,
-    "drift_sv_2": 3.3510241508483887
+    "subspace_method": "sensor_target_orthogonal",
+    "subspace_dim": 2,
+    "drift_sv_1": 3.914243698120117,
+    "drift_sv_2": 1.173756718635559
   },
-  "standard_mean": {
-    "val_mse": 0.5624943176905314,
-    "volatility": 0.09291448811525889,
-    "initial_risk": 0.4192654490470886,
-    "terminal_risk": 0.16898536185423532,
-    "mean_gain": 0.08647120810346677,
-    "max_hazard": 0.8244456899925598
-  },
-  "dtr_family_mean": {
-    "val_mse": 0.4931647703051567,
-    "volatility": 0.08160938568144159,
-    "initial_risk": 0.3708520159125328,
-    "terminal_risk": 0.16938850035270056,
-    "mean_gain": 0.06795858495364275,
-    "max_hazard": 0.748499127848275
-  },
-  "selected_dtr_mean": {
-    "lambda": 0.03,
-    "val_mse": 0.495313157637914,
-    "volatility": 0.06487136746139095,
-    "initial_risk": 0.3679014543692271,
-    "terminal_risk": 0.14910920957724252,
-    "mean_gain": 0.06093567511998118,
-    "max_hazard": 0.6462030924877479
-  },
-  "selected_standard": {
-    "initial_risk": 0.3633093535900116,
-    "terminal_risk": 0.17603157460689545,
-    "volatility": 0.08649754307718685,
-    "mean_gain": 0.08767702484037727,
-    "max_hazard": 0.7907218189751611
-  },
-  "selected_dtr": {
-    "initial_risk": 0.34193387627601624,
-    "terminal_risk": 0.15155097842216492,
-    "volatility": 0.0625787736819644,
-    "mean_gain": 0.06086084195412696,
-    "max_hazard": 0.7265809054823478
-  },
-  "selected_dtr_reduction": {
-    "volatility_pct": 30.181644674273954,
-    "mean_gain_pct": 29.530676792362097
-  }
+  "selection_rule": "Per-method lambda chosen by mean validation MSE across matched seeds, with validation directional gain used only as a secondary tie-breaker.",
+  "selected_lambdas": [
+    {
+      "dataset": "air_quality",
+      "method": "standard",
+      "selected_lambda": 0.0,
+      "selection_val_mse": 0.5185703635215759,
+      "selection_val_directional_gain": 0.04776595477400155
+    },
+    {
+      "dataset": "air_quality",
+      "method": "isotropic",
+      "selected_lambda": 0.08,
+      "selection_val_mse": 0.235380919277668,
+      "selection_val_directional_gain": 0.09518408438255047
+    },
+    {
+      "dataset": "air_quality",
+      "method": "dtr",
+      "selected_lambda": 0.003,
+      "selection_val_mse": 0.515467643737793,
+      "selection_val_directional_gain": 0.04112901340270865
+    }
+  ],
+  "selected_summary": [
+    {
+      "method": "dtr",
+      "lambda": 0.003,
+      "seed": 4.5,
+      "val_mse": 0.515467643737793,
+      "val_directional_gain": 0.04112901340270865,
+      "deploy_mse": 0.43245209455490113,
+      "volatility": 0.06852251252657682,
+      "initial_risk": 0.37044658958911897,
+      "terminal_risk": 0.16104124933481218,
+      "mean_gain": 0.07906691463664174,
+      "mean_hazard": 0.18825219813314803,
+      "max_hazard": 0.7841148909225578,
+      "dataset": "air_quality",
+      "selection_val_mse": 0.515467643737793,
+      "selection_val_directional_gain": 0.04112901340270865
+    },
+    {
+      "method": "isotropic",
+      "lambda": 0.08,
+      "seed": 4.5,
+      "val_mse": 0.235380919277668,
+      "val_directional_gain": 0.09518408438255047,
+      "deploy_mse": 0.41500682532787325,
+      "volatility": 0.07691136931553907,
+      "initial_risk": 0.16902814507484437,
+      "terminal_risk": 0.1771148309111595,
+      "mean_gain": 0.0532613321224926,
+      "mean_hazard": 0.1284567026297608,
+      "max_hazard": 0.572879392064088,
+      "dataset": "air_quality",
+      "selection_val_mse": 0.235380919277668,
+      "selection_val_directional_gain": 0.09518408438255047
+    },
+    {
+      "method": "standard",
+      "lambda": 0.0,
+      "seed": 4.5,
+      "val_mse": 0.5185703635215759,
+      "val_directional_gain": 0.04776595477400155,
+      "deploy_mse": 0.44944866597652433,
+      "volatility": 0.07311355136635246,
+      "initial_risk": 0.3756957173347473,
+      "terminal_risk": 0.16531683504581451,
+      "mean_gain": 0.07910647939075716,
+      "mean_hazard": 0.18878525973326216,
+      "max_hazard": 0.7799711708434987,
+      "dataset": "air_quality",
+      "selection_val_mse": 0.5185703635215759,
+      "selection_val_directional_gain": 0.04776595477400155
+    }
+  ]
 }

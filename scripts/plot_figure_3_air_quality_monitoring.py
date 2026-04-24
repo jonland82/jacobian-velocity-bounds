@@ -13,8 +13,19 @@ def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
     out_path = base_dir / "figures" / "figure_3_air_quality_monitoring.png"
     results = ensure_air_quality_outputs(base_dir)
-    trajectory = results["trajectory"].copy()
+    trajectory = results["selected_trajectories_all_seeds"].copy()
     trajectory["block_start"] = pd.to_datetime(trajectory["block_start"])
+    trajectory = (
+        trajectory.groupby(["method", "model", "block"], as_index=False)
+        .agg(
+            block_start=("block_start", "first"),
+            risk=("risk", "mean"),
+            hazard=("hazard", "mean"),
+            speed=("speed", "mean"),
+        )
+        .sort_values(["method", "block"])
+        .reset_index(drop=True)
+    )
     standard_color = "#a8b0bb"
     dtr_color = "#334155"
 
@@ -61,7 +72,7 @@ def main() -> None:
     axes[0].set_axisbelow(True)
     axes[0].set_ylabel("deployment MSE")
     axes[0].set_xlabel("deployment block start")
-    axes[0].set_title("Air Quality deployment: DTR flattens risk")
+    axes[0].set_title("Air Quality mean deployment risk")
     axes[0].legend(frameon=False, loc="upper right")
 
     axes[1].plot(
@@ -106,7 +117,7 @@ def main() -> None:
     axes[1].set_ylabel(r"$h_t = s_t^2 g_t$")
     speed_axis.set_ylabel(r"block drift $s_t$")
     axes[1].set_xlabel("deployment block start")
-    axes[1].set_title("Matched hazard score under block drift")
+    axes[1].set_title("Mean hazard score under block drift")
     axes[1].legend(frameon=False, loc="upper right")
 
     locator = mdates.MonthLocator(interval=2)

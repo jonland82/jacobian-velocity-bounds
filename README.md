@@ -21,6 +21,7 @@ That geometric view yields:
 - a drift-aligned tangent regularizer (DTR),
 - a matched monitoring score together with a rank-1 bookkeeping proposition,
 - two real frozen-deployment studies on UCI Air Quality and Tetouan City power consumption,
+- validation-selected matched-seed real-data summaries, paired seed comparisons, an Air Quality subspace ablation, and a small hazard-score ablation,
 - and a proof-verification suite that checks the theorem chain and monitoring bookkeeping symbolically and numerically.
 
 An expanded project page for GitHub Pages lives at [`index.html`](./index.html).
@@ -108,12 +109,13 @@ The repository contains four experiments mirroring the theorem-to-method pipelin
 
 This experiment verifies the time-domain inequality in the smallest controlled setting with one stable signal coordinate and one drifting nuisance coordinate.
 
-- Standard mean risk volatility: $3.13 \times 10^{-3}$
-- DTR mean risk volatility: $2.62 \times 10^{-4}$
-- Relative volatility reduction: **91.6%**
-- Standard mean directional gain: $44.9$
-- DTR mean directional gain: $1.91$
-- Relative directional-gain reduction: **95.8%**
+- Standard mean risk volatility: $3.25 \times 10^{-3}$
+- DTR mean risk volatility: $2.39 \times 10^{-4}$
+- Relative volatility reduction: **92.6%**
+- Standard mean directional gain: $41.5$
+- DTR mean directional gain: $1.85$
+- Relative directional-gain reduction: **95.5%**
+- Seeds: `20`
 
 Figure:
 
@@ -125,17 +127,18 @@ Under rank-1 drift, the right empirical question is not whether Jacobian regular
 
 At the matched $\lambda = 0.03$ comparison:
 
-- Standard volatility: $3.13 \times 10^{-3}$
-- Isotropic volatility: $4.17 \times 10^{-4}$
-- DTR volatility: $2.12 \times 10^{-4}$
-- Standard terminal risk: $0.171$
-- Isotropic terminal risk: $0.161$
-- DTR terminal risk: $0.127$
+- Standard volatility: $3.25 \times 10^{-3}$
+- Isotropic volatility: $4.09 \times 10^{-4}$
+- DTR volatility: $1.91 \times 10^{-4}$
+- Standard terminal risk: $0.189$
+- Isotropic terminal risk: $0.165$
+- DTR terminal risk: $0.131$
 
 The misspecification study shows the expected directional behavior:
 
-- A $20^\circ$ rotation raises volatility by a factor of **1.43** relative to aligned DTR.
-- A wrong orthogonal subspace raises volatility by a factor of **23.9**.
+- A $20^\circ$ rotation raises volatility by a factor of **1.39** relative to aligned DTR.
+- A wrong orthogonal subspace raises volatility by a factor of **29.6**.
+- Seeds: `20`
 
 Figure:
 
@@ -143,21 +146,27 @@ Figure:
 
 ### Field deployment on UCI Air Quality
 
-The real-data study freezes a regressor after training, estimates a 2D drift subspace from unlabeled deployment covariates, and evaluates blockwise deployment MSE over 20 biweekly blocks.
+The real-data study freezes a regressor after training and evaluates blockwise deployment MSE over 20 biweekly blocks. Hyperparameters are selected on training/validation windows only, and deployment metrics are reported after selection over matched seeds. The primary DTR run estimates a 2D target-orthogonal sensor-drift subspace: the supervised linear target direction is removed from the five sensor channels using training data, then the drift basis is estimated from unlabeled deployment covariate motion in the remaining sensor space.
 
 - Training / validation / deployment rows: `1573 / 580 / 5191`
 - Deployment blocks: `20`
-- Selected DTR setting: $\lambda = 0.03$
-- Standard mean volatility: $9.29 \times 10^{-2}$
-- Selected DTR mean volatility: $6.49 \times 10^{-2}$
-- Relative volatility reduction: **30.2%**
-- Standard mean directional gain: $8.65 \times 10^{-2}$
-- Selected DTR mean directional gain: $6.09 \times 10^{-2}$
-- Relative directional-gain reduction: **29.5%**
-- Standard mean terminal risk: $0.169$
-- Selected DTR mean terminal risk: $0.149$
+- Seeds: `10`
+- Validation-selected isotropic setting: $\lambda = 0.08$
+- Validation-selected DTR setting: $\lambda = 0.003$
+- Standard deploy MSE: $0.449 \pm 0.069$
+- Isotropic deploy MSE: $0.415 \pm 0.030$
+- DTR deploy MSE: $0.432 \pm 0.058$
+- Standard volatility: $0.073 \pm 0.023$
+- Isotropic volatility: $0.077 \pm 0.008$
+- DTR volatility: $0.069 \pm 0.020$
+- Standard directional gain: $0.079 \pm 0.008$
+- DTR directional gain: $0.079 \pm 0.008$
+- Paired DTR-vs-standard deploy-MSE wins: `9 / 10`
+- Paired DTR-vs-standard volatility wins: `9 / 10`
 
-For the representative seed shown in the figure, the standard regressor peaks at deployment MSE `1.152`, while the DTR regressor peaks at `0.949`.
+The subspace ablation shows why this choice matters. An all-covariate drift subspace selects DTR `lambda = 0.08` and over-regularizes deployment risk (`0.485 +/- 0.077` MSE, `0.112 +/- 0.031` volatility). The target-orthogonal sensor subspace selects `lambda = 0.003` and improves MSE and volatility in `9 / 10` paired seeds against standard training. A weather-residualized sensor subspace at `lambda = 0.03` gives the strongest Air Quality mean point (`0.411 +/- 0.050` MSE, `0.061 +/- 0.010` volatility), but it is kept as a sensitivity result rather than the primary validation-selected setting.
+
+In the mean selected trajectory shown in the figure, standard training peaks at deployment MSE `0.947`, while validation-MSE-selected DTR peaks at `0.896`.
 
 Figure:
 
@@ -169,17 +178,17 @@ The manuscript now adds a second real frozen-deployment study on the UCI Tetouan
 
 - Training / validation / deployment rows: `17280 / 8784 / 26352`
 - Deployment blocks: `6`
-- Selected DTR setting: $\lambda = 3 \times 10^{-4}$
-- Standard deploy MSE: $1.161 \times 10^8$
-- Isotropic deploy MSE: $9.314 \times 10^7$
-- DTR deploy MSE: $6.838 \times 10^7$
-- DTR deploy-MSE reduction vs standard: **41.1%**
-- DTR deploy-MSE reduction vs isotropic: **26.6%**
-- Standard volatility: $1.092 \times 10^{16}$
-- Isotropic volatility: $4.887 \times 10^{15}$
-- DTR volatility: $1.769 \times 10^{15}$
-- DTR volatility reduction vs standard: **83.8%**
-- DTR volatility reduction vs isotropic: **63.8%**
+- Seeds: `10`
+- Validation-selected isotropic setting: $\lambda = 3 \times 10^{-4}$
+- Validation-selected DTR setting: $\lambda = 10^{-2}$
+- Standard deploy MSE: $(1.08 \pm 1.11) \times 10^8$
+- Isotropic deploy MSE: $(1.01 \pm 0.81) \times 10^8$
+- DTR deploy MSE: $(6.82 \pm 4.87) \times 10^7$
+- Standard volatility: $(1.07 \pm 1.66) \times 10^{16}$
+- Isotropic volatility: $(7.20 \pm 10.24) \times 10^{15}$
+- DTR volatility: $(3.07 \pm 4.32) \times 10^{15}$
+- Paired DTR-vs-standard volatility wins: `8 / 10`
+- Paired DTR-vs-isotropic volatility wins: `8 / 10`
 
 The Tetouan scripts and outputs live under [`benchmark_package/`](./benchmark_package/), which now contains only the retained follow-on benchmark used by the paper and keeps that path isolated from the original figure pipeline.
 
@@ -219,12 +228,23 @@ Figure:
 |   |-- figure_5_tetouan_deployment.png
 |   |-- synthetic_theorem_summary.json
 |   |-- synthetic_directional_summary.json
-|   `-- air_quality_summary.json
+|   |-- air_quality_summary.json
+|   |-- real_deployment_summary_stats.csv
+|   |-- real_deployment_paired_comparisons.csv
+|   |-- real_deployment_conservative_gain_summary.csv
+|   |-- real_deployment_conservative_gain_paired.csv
+|   |-- air_quality_dtr_lambda_path.csv
+|   |-- air_quality_subspace_ablation_summary.csv
+|   |-- air_quality_subspace_ablation_selected.csv
+|   |-- air_quality_subspace_ablation_paired.csv
+|   `-- hazard_score_ablation.csv
 `-- scripts/
     |-- generate_all_figures.py
     |-- run_synthetic_theorem_experiment.py
     |-- run_synthetic_directional_ablation.py
     |-- run_air_quality_experiment.py
+    |-- run_air_quality_subspace_ablation.py
+    |-- run_real_deployment_reporting.py
     |-- plot_figure_1_geometry.py
     |-- plot_figure_2_synthetic_theorem.py
     |-- plot_figure_3_air_quality_monitoring.py
@@ -245,7 +265,19 @@ pip install -r requirements.txt
 Regenerate all experiment summaries and manuscript figures:
 
 ```powershell
-python scripts/generate_all_figures.py
+python scripts/generate_all_figures.py --force
+```
+
+Regenerate only the real-data uncertainty, paired-seed, conservative gain-target, and hazard-ablation reports:
+
+```powershell
+python scripts/run_real_deployment_reporting.py --force
+```
+
+Regenerate only the Air Quality subspace ablation:
+
+```powershell
+python scripts/run_air_quality_subspace_ablation.py --force
 ```
 
 Run the isolated Tetouan benchmark package used for the second real deployment study:
@@ -269,7 +301,7 @@ latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex
 Notes:
 
 - The Air Quality experiment caches the UCI dataset to [`data/air_quality.csv`](./data/air_quality.csv).
-- The Tetouan follow-on benchmark lives under [`benchmark_package/`](./benchmark_package/) so it stays clearly separated from the original figure-generation path and no longer carries the discarded benchmark branches.
+- The Tetouan follow-on benchmark lives under [`benchmark_package/`](./benchmark_package/) and is included in the real-deployment reporting suite.
 - The scripts are CPU-oriented and use PyTorch for the training loops.
 - The `figures/*.json` and `figures/*.csv` files are cached summaries consumed by the plotting scripts.
 - The proof verifier adds `sympy` on top of the experiment dependencies and emits both HTML and JSON outputs under [`proof_verification/`](./proof_verification/).

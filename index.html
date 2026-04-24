@@ -455,9 +455,9 @@
               <a class="btn secondary" href="#experiments">Explore Results</a>
             </div>
             <div class="stats">
-              <div class="stat"><strong>91.6%</strong><span>Synthetic volatility reduction with DTR</span></div>
-              <div class="stat"><strong>30.2%</strong><span>Air Quality volatility reduction at \(\lambda=0.03\)</span></div>
-              <div class="stat"><strong>63.8%</strong><span>Tetouan volatility reduction vs isotropic</span></div>
+              <div class="stat"><strong>92.6%</strong><span>Synthetic volatility reduction with DTR</span></div>
+              <div class="stat"><strong>9/10</strong><span>Air Quality DTR MSE and volatility wins vs standard</span></div>
+              <div class="stat"><strong>8/10</strong><span>Tetouan DTR volatility wins vs isotropic</span></div>
             </div>
           </div>
         </div>
@@ -707,10 +707,10 @@
                 Each point is one trained model evaluated over the drifting synthetic path. DTR moves the cloud toward lower derivative energy and lower volatility.
               </p>
               <ul class="result-list">
-                <li><span>Standard volatility</span><span>\(3.13\times10^{-3}\)</span></li>
-                <li><span>DTR volatility</span><span>\(2.62\times10^{-4}\)</span></li>
-                <li><span>Volatility reduction</span><span>91.6%</span></li>
-                <li><span>Directional-gain reduction</span><span>95.8%</span></li>
+                <li><span>Standard volatility</span><span>\(3.25\times10^{-3}\)</span></li>
+                <li><span>DTR volatility</span><span>\(2.39\times10^{-4}\)</span></li>
+                <li><span>Volatility reduction</span><span>92.6%</span></li>
+                <li><span>Directional-gain reduction</span><span>95.5%</span></li>
               </ul>
             </div>
           </article>
@@ -724,10 +724,10 @@
                 At matched \(\lambda=0.03\), DTR improves on both the standard model and isotropic Jacobian regularization across derivative energy, volatility, directional gain, and terminal risk.
               </p>
               <ul class="result-list">
-                <li><span>Standard terminal risk</span><span>0.171</span></li>
-                <li><span>Isotropic terminal risk</span><span>0.161</span></li>
-                <li><span>DTR terminal risk</span><span>0.127</span></li>
-                <li><span>Wrong-subspace volatility inflation</span><span>23.9x</span></li>
+                <li><span>Standard terminal risk</span><span>0.189</span></li>
+                <li><span>Isotropic terminal risk</span><span>0.165</span></li>
+                <li><span>DTR terminal risk</span><span>0.131</span></li>
+                <li><span>Wrong-subspace volatility inflation</span><span>29.6x</span></li>
               </ul>
             </div>
           </article>
@@ -738,13 +738,14 @@
               <div class="kicker">Figure 4</div>
               <h3>Field deployment on UCI Air Quality</h3>
               <p>
-                The real-data study freezes the regressor, estimates a 2D drift subspace from unlabeled deployment covariates, and evaluates blockwise MSE over 20 biweekly deployment blocks.
+                The real-data study freezes the regressor, estimates a target-orthogonal sensor-drift subspace from unlabeled deployment covariates, and evaluates blockwise MSE over 20 biweekly deployment blocks. With that more focused nuisance-drift subspace, validation-selected DTR improves deployment MSE and volatility against standard training.
               </p>
               <ul class="result-list">
-                <li><span>Selected DTR volatility</span><span>\(6.49\times10^{-2}\)</span></li>
-                <li><span>Standard volatility</span><span>\(9.29\times10^{-2}\)</span></li>
-                <li><span>Volatility reduction</span><span>30.2%</span></li>
-                <li><span>Peak MSE, standard vs DTR</span><span>1.152 vs 0.949</span></li>
+                <li><span>Standard volatility</span><span>\(0.073\pm0.023\)</span></li>
+                <li><span>Validation-selected DTR volatility</span><span>\(0.069\pm0.020\)</span></li>
+                <li><span>DTR MSE wins vs standard</span><span>9/10 seeds</span></li>
+                <li><span>DTR volatility wins vs standard</span><span>9/10 seeds</span></li>
+                <li><span>All-covariate subspace check</span><span>over-regularizes</span></li>
               </ul>
             </div>
           </article>
@@ -755,13 +756,13 @@
               <div class="kicker">Figure 5</div>
               <h3>Second real benchmark: Tetouan power</h3>
               <p>
-                The paper now adds a second real frozen-deployment study on the UCI Tetouan City power-consumption dataset, predicting Zone 1 load from weather and diffuse-flow covariates across six monthly deployment blocks in late 2017. The figure shows the same risk-trajectory view used in the paper: DTR stays below both baselines throughout deployment.
+                The paper adds a second real frozen-deployment study on the UCI Tetouan City power-consumption dataset, predicting Zone 1 load from weather and diffuse-flow covariates across six monthly deployment blocks in late 2017. Validation-selected DTR gives the strongest real-data stability result.
               </p>
               <ul class="result-list">
-                <li><span>Deploy MSE, standard / isotropic / DTR</span><span>1.16e8 / 9.31e7 / 6.84e7</span></li>
-                <li><span>Volatility, standard / isotropic / DTR</span><span>1.09e16 / 4.89e15 / 1.77e15</span></li>
-                <li><span>DTR MSE reduction vs isotropic</span><span>26.6%</span></li>
-                <li><span>DTR volatility reduction vs isotropic</span><span>63.8%</span></li>
+                <li><span>Deploy MSE, standard / isotropic / DTR</span><span>1.08e8 / 1.01e8 / 6.82e7</span></li>
+                <li><span>Volatility, standard / isotropic / DTR</span><span>1.07e16 / 7.20e15 / 3.07e15</span></li>
+                <li><span>DTR volatility wins vs standard</span><span>8/10 seeds</span></li>
+                <li><span>DTR volatility wins vs isotropic</span><span>8/10 seeds</span></li>
               </ul>
             </div>
           </article>
@@ -782,8 +783,8 @@
             <h3>What lives where</h3>
             <ul class="repo-list">
               <li><strong>Manuscript</strong><span><a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">PDF</a> and <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.tex">LaTeX source</a> for the paper.</span></li>
-              <li><strong><code>scripts/</code></strong><span>Training, evaluation, and plotting code for the synthetic theorem benchmark, directional ablation, Air Quality study, and the Tetouan manuscript figure.</span></li>
-              <li><strong><code>benchmark_package/</code></strong><span>Isolated Tetouan benchmark package used for the paper's second real deployment study, with its cached outputs and dedicated runner kept separate from the main figure pipeline.</span></li>
+              <li><strong><code>scripts/</code></strong><span>Training, evaluation, reporting, and plotting code for the synthetic theorem benchmark, directional ablation, Air Quality study and subspace ablation, Tetouan figure, real-data paired comparisons, and hazard-score ablation.</span></li>
+              <li><strong><code>benchmark_package/</code></strong><span>Isolated Tetouan benchmark package used for the paper's second real deployment study, with cached matched-seed outputs and a dedicated runner.</span></li>
               <li><strong><code>proof_verification/</code></strong><span>SymPy-based checks, numerical stress tests, and the generated HTML/JSON verification reports.</span></li>
               <li><strong><code>figures/</code></strong><span>Rendered manuscript figure assets, now including the Tetouan deployment plot, plus cached CSV/JSON summaries consumed by the plotting scripts.</span></li>
               <li><strong><code>data/</code></strong><span>Cached Air Quality dataset used by the main field-deployment experiment.</span></li>
@@ -791,12 +792,13 @@
           </article>
           <article class="repo-card">
             <h3>Quick Start</h3>
-            <p>Install the Python dependencies, regenerate the manuscript figure assets, run the verification suite, and use the isolated Tetouan benchmark package to reproduce the paper's second real deployment study.</p>
+            <p>Install the Python dependencies, regenerate the manuscript figure assets and real-data reports, run the verification suite, and use the isolated Tetouan benchmark package to reproduce the paper's second real deployment study.</p>
             <div class="command-block" aria-label="Quick start commands">
               <div class="command-line">python -m venv .venv</div>
               <div class="command-line">.venv\Scripts\Activate.ps1</div>
               <div class="command-line">pip install -r requirements.txt</div>
-              <div class="command-line">python scripts/generate_all_figures.py</div>
+              <div class="command-line">python scripts/generate_all_figures.py --force</div>
+              <div class="command-line">python scripts/run_real_deployment_reporting.py --force</div>
               <div class="command-line">python proof_verification/generate_report.py</div>
               <div class="command-line">python benchmark_package/scripts/run_tetouan_power_benchmark.py --force</div>
               <div class="command-line">latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</div>
@@ -812,7 +814,7 @@
     <div class="wrap footer-line">
       <div>
         <h3>Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift</h3>
-        <p>A formal and empirical case for drift-aligned tangent control in frozen-model deployment, now anchored by Air Quality and Tetouan real benchmarks.</p>
+        <p>A formal and empirical case for drift-aligned tangent control in frozen-model deployment, with validation-selected Air Quality and Tetouan real benchmarks.</p>
       </div>
       <div class="actions">
         <a class="btn secondary" href="#repo">Repository</a>
