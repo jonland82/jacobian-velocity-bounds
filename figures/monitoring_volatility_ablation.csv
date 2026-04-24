@@ -1,0 +1,97 @@
+dataset_key,dataset,target,score,score_label,spearman,n
+air_quality,Air Quality,sq_change_same,s2,Drift $s_t^2$,0.17332324766296803,190
+air_quality,Air Quality,sq_change_same,gain,Gain $g_t$,0.1045169643130514,190
+air_quality,Air Quality,sq_change_same,h_raw,Product $h_t$,0.15249729909415774,190
+air_quality,Air Quality,sq_change_same,h_roll2,Roll-2 $h_t$,0.12796897023570686,180
+air_quality,Air Quality,sq_change_same,h_roll3,Roll-3 $h_t$,0.32090302330835796,170
+air_quality,Air Quality,sq_change_same,log_h,Log product,0.15249729909415774,190
+air_quality,Air Quality,sq_change_same,log_h_roll2,Roll-2 log product,0.0027758058376287334,180
+air_quality,Air Quality,sq_change_same,log_h_roll3,Roll-3 log product,0.30190460488150417,170
+air_quality,Air Quality,sq_change_next,s2,Drift $s_t^2$,0.1692969930974593,180
+air_quality,Air Quality,sq_change_next,gain,Gain $g_t$,-0.09934874533164605,180
+air_quality,Air Quality,sq_change_next,h_raw,Product $h_t$,0.04409601119376113,180
+air_quality,Air Quality,sq_change_next,h_roll2,Roll-2 $h_t$,0.30688503367712705,170
+air_quality,Air Quality,sq_change_next,h_roll3,Roll-3 $h_t$,0.3529356615492793,160
+air_quality,Air Quality,sq_change_next,log_h,Log product,0.04409601119376113,180
+air_quality,Air Quality,sq_change_next,log_h_roll2,Roll-2 log product,0.285641880545429,170
+air_quality,Air Quality,sq_change_next,log_h_roll3,Roll-3 log product,0.34921774288058127,160
+air_quality,Air Quality,abs_change_same,s2,Drift $s_t^2$,0.17332324766296803,190
+air_quality,Air Quality,abs_change_same,gain,Gain $g_t$,0.1045169643130514,190
+air_quality,Air Quality,abs_change_same,h_raw,Product $h_t$,0.15249729909415774,190
+air_quality,Air Quality,abs_change_same,h_roll2,Roll-2 $h_t$,0.12796897023570686,180
+air_quality,Air Quality,abs_change_same,h_roll3,Roll-3 $h_t$,0.32090302330835796,170
+air_quality,Air Quality,abs_change_same,log_h,Log product,0.15249729909415774,190
+air_quality,Air Quality,abs_change_same,log_h_roll2,Roll-2 log product,0.0027758058376287334,180
+air_quality,Air Quality,abs_change_same,log_h_roll3,Roll-3 log product,0.30190460488150417,170
+air_quality,Air Quality,abs_change_next,s2,Drift $s_t^2$,0.1692969930974593,180
+air_quality,Air Quality,abs_change_next,gain,Gain $g_t$,-0.09934874533164605,180
+air_quality,Air Quality,abs_change_next,h_raw,Product $h_t$,0.04409601119376113,180
+air_quality,Air Quality,abs_change_next,h_roll2,Roll-2 $h_t$,0.30688503367712705,170
+air_quality,Air Quality,abs_change_next,h_roll3,Roll-3 $h_t$,0.3529356615492793,160
+air_quality,Air Quality,abs_change_next,log_h,Log product,0.04409601119376113,180
+air_quality,Air Quality,abs_change_next,log_h_roll2,Roll-2 log product,0.285641880545429,170
+air_quality,Air Quality,abs_change_next,log_h_roll3,Roll-3 log product,0.34921774288058127,160
+air_quality,Air Quality,risk,s2,Drift $s_t^2$,0.11415892871443441,190
+air_quality,Air Quality,risk,gain,Gain $g_t$,-0.11172696138251388,190
+air_quality,Air Quality,risk,h_raw,Product $h_t$,-0.10251195178172308,190
+air_quality,Air Quality,risk,h_roll2,Roll-2 $h_t$,0.07562167556611829,180
+air_quality,Air Quality,risk,h_roll3,Roll-3 $h_t$,0.13406488724421567,170
+air_quality,Air Quality,risk,log_h,Log product,-0.10251195178172308,190
+air_quality,Air Quality,risk,log_h_roll2,Roll-2 log product,-0.02036894142823338,180
+air_quality,Air Quality,risk,log_h_roll3,Roll-3 log product,0.06319575478899128,170
+air_quality,Air Quality,risk_next,s2,Drift $s_t^2$,-0.01601263099655823,180
+air_quality,Air Quality,risk_next,gain,Gain $g_t$,0.097803430147021,180
+air_quality,Air Quality,risk_next,h_raw,Product $h_t$,0.09771700772657592,180
+air_quality,Air Quality,risk_next,h_roll2,Roll-2 $h_t$,0.17249650405163622,170
+air_quality,Air Quality,risk_next,h_roll3,Roll-3 $h_t$,0.33779151529356616,160
+air_quality,Air Quality,risk_next,log_h,Log product,0.09771700772657592,180
+air_quality,Air Quality,risk_next,log_h_roll2,Roll-2 log product,0.09931912970731738,170
+air_quality,Air Quality,risk_next,log_h_roll3,Roll-3 log product,0.28789405836165477,160
+tetouan_zone1_power,Tetouan,sq_change_same,s2,Drift $s_t^2$,-0.1587586902462082,50
+tetouan_zone1_power,Tetouan,sq_change_same,gain,Gain $g_t$,0.3610564225690276,50
+tetouan_zone1_power,Tetouan,sq_change_same,h_raw,Product $h_t$,0.2883553421368547,50
+tetouan_zone1_power,Tetouan,sq_change_same,h_roll2,Roll-2 $h_t$,0.29699812382739216,40
+tetouan_zone1_power,Tetouan,sq_change_same,h_roll3,Roll-3 $h_t$,0.5114571746384872,30
+tetouan_zone1_power,Tetouan,sq_change_same,log_h,Log product,0.2883553421368547,50
+tetouan_zone1_power,Tetouan,sq_change_same,log_h_roll2,Roll-2 log product,0.26829268292682934,40
+tetouan_zone1_power,Tetouan,sq_change_same,log_h_roll3,Roll-3 log product,0.48120133481646277,30
+tetouan_zone1_power,Tetouan,sq_change_next,s2,Drift $s_t^2$,-0.3389919943489011,40
+tetouan_zone1_power,Tetouan,sq_change_next,gain,Gain $g_t$,0.32795497185741096,40
+tetouan_zone1_power,Tetouan,sq_change_next,h_raw,Product $h_t$,0.2176360225140713,40
+tetouan_zone1_power,Tetouan,sq_change_next,h_roll2,Roll-2 $h_t$,0.3045606229143492,30
+tetouan_zone1_power,Tetouan,sq_change_next,h_roll3,Roll-3 $h_t$,0.33533834586466166,20
+tetouan_zone1_power,Tetouan,sq_change_next,log_h,Log product,0.2176360225140713,40
+tetouan_zone1_power,Tetouan,sq_change_next,log_h_roll2,Roll-2 log product,0.24849833147942155,30
+tetouan_zone1_power,Tetouan,sq_change_next,log_h_roll3,Roll-3 log product,0.37293233082706767,20
+tetouan_zone1_power,Tetouan,abs_change_same,s2,Drift $s_t^2$,-0.1587586902462082,50
+tetouan_zone1_power,Tetouan,abs_change_same,gain,Gain $g_t$,0.3610564225690276,50
+tetouan_zone1_power,Tetouan,abs_change_same,h_raw,Product $h_t$,0.2883553421368547,50
+tetouan_zone1_power,Tetouan,abs_change_same,h_roll2,Roll-2 $h_t$,0.29699812382739216,40
+tetouan_zone1_power,Tetouan,abs_change_same,h_roll3,Roll-3 $h_t$,0.5114571746384872,30
+tetouan_zone1_power,Tetouan,abs_change_same,log_h,Log product,0.2883553421368547,50
+tetouan_zone1_power,Tetouan,abs_change_same,log_h_roll2,Roll-2 log product,0.26829268292682934,40
+tetouan_zone1_power,Tetouan,abs_change_same,log_h_roll3,Roll-3 log product,0.48120133481646277,30
+tetouan_zone1_power,Tetouan,abs_change_next,s2,Drift $s_t^2$,-0.3389919943489011,40
+tetouan_zone1_power,Tetouan,abs_change_next,gain,Gain $g_t$,0.32795497185741096,40
+tetouan_zone1_power,Tetouan,abs_change_next,h_raw,Product $h_t$,0.2176360225140713,40
+tetouan_zone1_power,Tetouan,abs_change_next,h_roll2,Roll-2 $h_t$,0.3045606229143492,30
+tetouan_zone1_power,Tetouan,abs_change_next,h_roll3,Roll-3 $h_t$,0.33533834586466166,20
+tetouan_zone1_power,Tetouan,abs_change_next,log_h,Log product,0.2176360225140713,40
+tetouan_zone1_power,Tetouan,abs_change_next,log_h_roll2,Roll-2 log product,0.24849833147942155,30
+tetouan_zone1_power,Tetouan,abs_change_next,log_h_roll3,Roll-3 log product,0.37293233082706767,20
+tetouan_zone1_power,Tetouan,risk,s2,Drift $s_t^2$,-0.5958350843808308,50
+tetouan_zone1_power,Tetouan,risk,gain,Gain $g_t$,0.16091236494597838,50
+tetouan_zone1_power,Tetouan,risk,h_raw,Product $h_t$,-0.08600240096038414,50
+tetouan_zone1_power,Tetouan,risk,h_roll2,Roll-2 $h_t$,-0.0525328330206379,40
+tetouan_zone1_power,Tetouan,risk,h_roll3,Roll-3 $h_t$,0.03181312569521691,30
+tetouan_zone1_power,Tetouan,risk,log_h,Log product,-0.08600240096038414,50
+tetouan_zone1_power,Tetouan,risk,log_h_roll2,Roll-2 log product,-0.10900562851782367,40
+tetouan_zone1_power,Tetouan,risk,log_h_roll3,Roll-3 log product,0.02246941045606229,30
+tetouan_zone1_power,Tetouan,risk_next,s2,Drift $s_t^2$,-0.14528228329238618,40
+tetouan_zone1_power,Tetouan,risk_next,gain,Gain $g_t$,-0.01707317073170732,40
+tetouan_zone1_power,Tetouan,risk_next,h_raw,Product $h_t$,0.019136960600375237,40
+tetouan_zone1_power,Tetouan,risk_next,h_roll2,Roll-2 $h_t$,0.13770856507230256,30
+tetouan_zone1_power,Tetouan,risk_next,h_roll3,Roll-3 $h_t$,0.22255639097744356,20
+tetouan_zone1_power,Tetouan,risk_next,log_h,Log product,0.019136960600375237,40
+tetouan_zone1_power,Tetouan,risk_next,log_h_roll2,Roll-2 log product,0.13236929922135707,30
+tetouan_zone1_power,Tetouan,risk_next,log_h_roll3,Roll-3 log product,0.23759398496240602,20

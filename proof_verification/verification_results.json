@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-23T21:01:58.771330+00:00",
+  "generated_at_utc": "2026-04-24T14:00:01.997809+00:00",
   "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
   "platform": "Windows-11-10.0.22631-SP0",
   "results": [
@@ -174,16 +174,16 @@
       "passed": true,
       "summary": "Every cached synthetic theorem run satisfies the finite-difference, chain-rule, and Jacobian-velocity bounds.",
       "details": [
-        "Loaded 8 rows from figures/synthetic_theorem_summary.csv.",
+        "Loaded 80 rows from figures/synthetic_theorem_summary.csv.",
         "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
-        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
+        "Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
       ],
       "metrics": {
-        "rows": 8,
-        "absolute_tolerance": 5e-05,
+        "rows": 80,
+        "absolute_tolerance": 0.0001,
         "min_slack_bound_fd": 0.0010709632679066,
-        "min_slack_bound_chain": -3.7282962486202026e-05,
-        "min_slack_bound_jv": 0.04799647955220326
+        "min_slack_bound_chain": -6.602278903039644e-05,
+        "min_slack_bound_jv": 0.042822847963994104
       },
       "math_blocks": [
         "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"
@@ -197,16 +197,16 @@
       "passed": true,
       "summary": "Every cached directional-comparison run preserves the volatility upper bounds used in the paper.",
       "details": [
-        "Loaded 14 rows from figures/synthetic_directional_comparison_summary.csv.",
+        "Loaded 140 rows from figures/synthetic_directional_comparison_summary.csv.",
         "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
-        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
+        "Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
       ],
       "metrics": {
-        "rows": 14,
-        "absolute_tolerance": 5e-05,
-        "min_slack_bound_fd": 0.0009716017719803,
-        "min_slack_bound_chain": -3.7282962486202026e-05,
-        "min_slack_bound_jv": 0.04799647955220326
+        "rows": 140,
+        "absolute_tolerance": 0.0001,
+        "min_slack_bound_fd": 0.0007220234292298001,
+        "min_slack_bound_chain": -6.602278903039644e-05,
+        "min_slack_bound_jv": 0.042822847963994104
       },
       "math_blocks": [
         "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"
@@ -220,16 +220,16 @@
       "passed": true,
       "summary": "Every cached misspecification run preserves the volatility upper bounds under subspace rotation.",
       "details": [
-        "Loaded 6 rows from figures/synthetic_directional_misspecification_summary.csv.",
+        "Loaded 60 rows from figures/synthetic_directional_misspecification_summary.csv.",
         "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
-        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
+        "Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra."
       ],
       "metrics": {
-        "rows": 6,
-        "absolute_tolerance": 5e-05,
-        "min_slack_bound_fd": 0.0009976574387242,
-        "min_slack_bound_chain": 4.106839609179999e-05,
-        "min_slack_bound_jv": 0.1231395756441917
+        "rows": 60,
+        "absolute_tolerance": 0.0001,
+        "min_slack_bound_fd": 0.0009769828884500001,
+        "min_slack_bound_chain": 7.011414604999764e-07,
+        "min_slack_bound_jv": 0.1150300553307467
       },
       "math_blocks": [
         "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"

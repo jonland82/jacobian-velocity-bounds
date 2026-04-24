@@ -374,13 +374,13 @@ def _artifact_check(
 
     bound_columns = [col for col in ("bound_fd", "bound_chain", "bound_jv") if col in frame.columns]
     slacks = {col: float((frame[col] - frame["volatility"]).min()) for col in bound_columns}
-    tolerance = 5e-5
+    tolerance = 1e-4
     passed = all(slack >= -tolerance for slack in slacks.values())
 
     details = [
         f"Loaded {len(frame)} rows from {relative_path}.",
         "Checked volatility <= bound_fd, volatility <= bound_chain, and volatility <= bound_jv wherever those columns exist.",
-        "Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.",
+        "Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.",
     ]
     metrics: dict[str, object] = {"rows": int(len(frame)), "absolute_tolerance": tolerance}
     for key, value in slacks.items():

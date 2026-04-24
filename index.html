@@ -436,7 +436,7 @@
               The central object is the Jacobian-velocity interaction \(J_f(X_t)\dot X_t\): environmental motion only becomes dangerous when it passes through directions where the model is locally steep.
             </p>
             <p>
-              The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time hazard assessment through one coherent mechanism.
+              The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time volatility assessment through one coherent mechanism.
             </p>
             <p>
               The empirical arc is deliberately staged: first verify the time-domain bound, then show that directional smoothing beats isotropic smoothing in a controlled low-rank setting, and finally test the same story on two real frozen deployments, UCI Air Quality and Tetouan City power consumption.
@@ -487,7 +487,7 @@
             </div>
             <div class="micro">
               <strong>Matched monitor</strong>
-              <div>\(h_t=s_t^2 g_t\), with rank-1 bookkeeping for block averaging, residual drift, and angular error</div>
+              <div>\(h_t=s_t^2 g_t\), with rolling averages tested against future squared risk movement</div>
             </div>
           </div>
         </aside>
@@ -746,6 +746,7 @@
                 <li><span>Validation-selected DTR volatility</span><span>\(0.069\pm0.020\)</span></li>
                 <li><span>DTR MSE wins vs standard</span><span>9/10 seeds</span></li>
                 <li><span>DTR volatility wins vs standard</span><span>9/10 seeds</span></li>
+                <li><span>Roll-2 monitor vs next \(\Delta r^2\)</span><span>0.307</span></li>
                 <li><span>All-covariate subspace check</span><span>over-regularizes</span></li>
               </ul>
             </div>
@@ -764,6 +765,7 @@
                 <li><span>Volatility, standard / isotropic / DTR</span><span>1.07e16 / 7.20e15 / 3.07e15</span></li>
                 <li><span>DTR volatility wins vs standard</span><span>8/10 seeds</span></li>
                 <li><span>DTR volatility wins vs isotropic</span><span>8/10 seeds</span></li>
+                <li><span>Roll-2 monitor vs next \(\Delta r^2\)</span><span>0.305</span></li>
               </ul>
             </div>
           </article>
@@ -784,7 +786,7 @@
             <h3>What lives where</h3>
             <ul class="repo-list">
               <li><strong>Manuscript</strong><span><a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">PDF</a> and <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.tex">LaTeX source</a> for the paper.</span></li>
-              <li><strong><code>scripts/</code></strong><span>Training, evaluation, reporting, and plotting code for the synthetic theorem benchmark, directional ablation, Air Quality study and subspace ablation, Tetouan figure, real-data paired comparisons, and hazard-score ablation.</span></li>
+              <li><strong><code>scripts/</code></strong><span>Training, evaluation, reporting, and plotting code for the synthetic theorem benchmark, directional ablation, Air Quality study and subspace ablation, Tetouan figure, real-data paired comparisons, and monitoring-volatility ablation.</span></li>
               <li><strong><code>benchmark_package/</code></strong><span>Isolated Tetouan benchmark package used for the paper's second real deployment study, with cached matched-seed outputs and a dedicated runner.</span></li>
               <li><strong><code>proof_verification/</code></strong><span>SymPy-based checks, numerical stress tests, and the generated HTML/JSON verification reports.</span></li>
               <li><strong><code>figures/</code></strong><span>Rendered manuscript figure assets, now including the Tetouan deployment plot, plus cached CSV/JSON summaries consumed by the plotting scripts.</span></li>

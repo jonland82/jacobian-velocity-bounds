@@ -587,7 +587,7 @@
             <div class="eyebrow">Symbolic and Numerical Checks</div>
             <h1>Formal verification for the theorem chain, monitoring bookkeeping, and cached experiment bounds.</h1>
             <div class="hero-meta">
-              Generated 2026-04-23 17:01:58 Eastern Daylight Time<br>
+              Generated 2026-04-24 10:00:02 Eastern Daylight Time<br>
               Python 3.13.5 on Windows-11-10.0.22631-SP0
             </div>
             <p>
@@ -794,8 +794,8 @@
         <h3>Synthetic theorem summary bounds</h3>
         <p>Every cached synthetic theorem run satisfies the finite-difference, chain-rule, and Jacobian-velocity bounds.</p>
         <div class="math">\[\begin{aligned} \mathrm{volatility} &\le \mathrm{bound\_fd} \\ \mathrm{volatility} &\le \mathrm{bound\_chain} \\ \mathrm{volatility} &\le \mathrm{bound\_jv} \end{aligned}\]</div>
-        <ul class="detail-list"><li>Loaded 8 rows from figures/synthetic_theorem_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
-        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>8</code></td></tr><tr><td>absolute tolerance</td><td><code>5.000000e-05</code></td></tr><tr><td>min slack bound fd</td><td><code>0.001071</code></td></tr><tr><td>min slack bound chain</td><td><code>-3.728296e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.047996</code></td></tr></tbody></table></div>
+        <ul class="detail-list"><li>Loaded 80 rows from figures/synthetic_theorem_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>80</code></td></tr><tr><td>absolute tolerance</td><td><code>1.000000e-04</code></td></tr><tr><td>min slack bound fd</td><td><code>0.001071</code></td></tr><tr><td>min slack bound chain</td><td><code>-6.602279e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.042823</code></td></tr></tbody></table></div>
       </article>
     
       <article class="check-card">
@@ -806,8 +806,8 @@
         <h3>Directional comparison bounds</h3>
         <p>Every cached directional-comparison run preserves the volatility upper bounds used in the paper.</p>
         <div class="math">\[\begin{aligned} \mathrm{volatility} &\le \mathrm{bound\_fd} \\ \mathrm{volatility} &\le \mathrm{bound\_chain} \\ \mathrm{volatility} &\le \mathrm{bound\_jv} \end{aligned}\]</div>
-        <ul class="detail-list"><li>Loaded 14 rows from figures/synthetic_directional_comparison_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
-        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>14</code></td></tr><tr><td>absolute tolerance</td><td><code>5.000000e-05</code></td></tr><tr><td>min slack bound fd</td><td><code>9.716018e-04</code></td></tr><tr><td>min slack bound chain</td><td><code>-3.728296e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.047996</code></td></tr></tbody></table></div>
+        <ul class="detail-list"><li>Loaded 140 rows from figures/synthetic_directional_comparison_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>140</code></td></tr><tr><td>absolute tolerance</td><td><code>1.000000e-04</code></td></tr><tr><td>min slack bound fd</td><td><code>7.220234e-04</code></td></tr><tr><td>min slack bound chain</td><td><code>-6.602279e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.042823</code></td></tr></tbody></table></div>
       </article>
     
       <article class="check-card">
@@ -818,8 +818,8 @@
         <h3>Misspecification bounds</h3>
         <p>Every cached misspecification run preserves the volatility upper bounds under subspace rotation.</p>
         <div class="math">\[\begin{aligned} \mathrm{volatility} &\le \mathrm{bound\_fd} \\ \mathrm{volatility} &\le \mathrm{bound\_chain} \\ \mathrm{volatility} &\le \mathrm{bound\_jv} \end{aligned}\]</div>
-        <ul class="detail-list"><li>Loaded 6 rows from figures/synthetic_directional_misspecification_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 5e-5 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
-        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>6</code></td></tr><tr><td>absolute tolerance</td><td><code>5.000000e-05</code></td></tr><tr><td>min slack bound fd</td><td><code>9.976574e-04</code></td></tr><tr><td>min slack bound chain</td><td><code>4.106840e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.12314</code></td></tr></tbody></table></div>
+        <ul class="detail-list"><li>Loaded 60 rows from figures/synthetic_directional_misspecification_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>60</code></td></tr><tr><td>absolute tolerance</td><td><code>1.000000e-04</code></td></tr><tr><td>min slack bound fd</td><td><code>9.769829e-04</code></td></tr><tr><td>min slack bound chain</td><td><code>7.011415e-07</code></td></tr><tr><td>min slack bound jv</td><td><code>0.11503</code></td></tr></tbody></table></div>
       </article>
     
           </div>

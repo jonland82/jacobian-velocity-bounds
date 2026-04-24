@@ -9,6 +9,10 @@
   "air_quality_dtr_lambda_path": "figures\\air_quality_dtr_lambda_path.csv",
   "air_quality_subspace_ablation_summary_path": "figures\\air_quality_subspace_ablation_selected.csv",
   "air_quality_subspace_ablation_paired_path": "figures\\air_quality_subspace_ablation_paired.csv",
-  "hazard_score_ablation_path": "figures\\hazard_score_ablation.csv",
+  "monitoring_target": "next-block squared risk change, (r_{t+1} - r_t)^2",
+  "monitoring_statistic": "Spearman correlation on selected DTR deployment blocks",
+  "monitoring_blockwise_path": "figures\\monitoring_blockwise_selected_dtr.csv",
+  "monitoring_volatility_ablation_path": "figures\\monitoring_volatility_ablation.csv",
+  "monitoring_volatility_bootstrap_path": "figures\\monitoring_volatility_bootstrap.csv",
   "tetouan_output_dir": "benchmark_package\\tetouan_city_power_consumption"
 }

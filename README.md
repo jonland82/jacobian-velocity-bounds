@@ -21,7 +21,7 @@ That geometric view yields:
 - a drift-aligned tangent regularizer (DTR),
 - a matched monitoring score together with a rank-1 bookkeeping proposition,
 - two real frozen-deployment studies on UCI Air Quality and Tetouan City power consumption,
-- validation-selected matched-seed real-data summaries, paired seed comparisons, an Air Quality subspace ablation, and a small hazard-score ablation,
+- validation-selected matched-seed real-data summaries, paired seed comparisons, an Air Quality subspace ablation, and a monitoring-volatility ablation,
 - and a proof-verification suite that checks the theorem chain and monitoring bookkeeping symbolically and numerically.
 
 An expanded project page for GitHub Pages lives at [`index.html`](./index.html).
@@ -69,6 +69,8 @@ $$ \mathcal{L}_{\mathrm{DTR}}(\theta) = \mathbb{E}_{(X,Y)}[\ell(f_\theta(X),Y)] 
 The same geometry yields the monitoring score
 
 $$ h_t = s_t^2 g_t, \qquad s_t := \|\Delta \mu_t\|/\Delta, \qquad g_t := \mathbb{E}\|J_f(X_t)V_t\|_F^2. $$
+
+The real-data monitoring ablation evaluates this score, plus short rolling averages of it, against block-to-block squared risk movement rather than raw risk level.
 
 ### 4. Rank-1 hazard-score bookkeeping
 
@@ -196,6 +198,17 @@ Figure:
 
 <img src="./figures/figure_5_tetouan_deployment.png" alt="Tetouan deployment risk trajectory" width="420" style="max-width: 420px; width: 100%;">
 
+### Monitoring-score volatility ablation
+
+The revised monitoring table tests the theory-aligned target: future block-to-block risk movement. Entries below are Spearman correlations with next-block squared risk change $(r_{t+1} - r_t)^2$ on selected DTR deployments.
+
+| Dataset | Drift $s_t^2$ | Gain $g_t$ | Product $h_t$ | Roll-2 $h_t$ | Roll-3 $h_t$ |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Air Quality | 0.169 | -0.099 | 0.044 | 0.307 | 0.353 |
+| Tetouan | -0.339 | 0.328 | 0.218 | 0.305 | 0.335 |
+
+The intended claim is narrow: rolling theorem-matched hazard is informative for future risk movement. The repository keeps the full correlation grid, the blockwise monitor dataframe, and seed-bootstrap intervals under [`figures/`](./figures/).
+
 ## Repository Layout
 
 ```text
@@ -237,7 +250,9 @@ Figure:
 |   |-- air_quality_subspace_ablation_summary.csv
 |   |-- air_quality_subspace_ablation_selected.csv
 |   |-- air_quality_subspace_ablation_paired.csv
-|   `-- hazard_score_ablation.csv
+|   |-- monitoring_blockwise_selected_dtr.csv
+|   |-- monitoring_volatility_ablation.csv
+|   `-- monitoring_volatility_bootstrap.csv
 `-- scripts/
     |-- generate_all_figures.py
     |-- run_synthetic_theorem_experiment.py
@@ -268,7 +283,7 @@ Regenerate all experiment summaries and manuscript figures:
 python scripts/generate_all_figures.py --force
 ```
 
-Regenerate only the real-data uncertainty, paired-seed, conservative gain-target, and hazard-ablation reports:
+Regenerate only the real-data uncertainty, paired-seed, conservative gain-target, and monitoring-volatility reports:
 
 ```powershell
 python scripts/run_real_deployment_reporting.py --force

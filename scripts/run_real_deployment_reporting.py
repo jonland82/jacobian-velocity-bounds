@@ -25,7 +25,26 @@ DISPLAY_DATASETS = {
     "tetouan_zone1_power": "Tetouan",
 }
 BOOTSTRAP_RESAMPLES = 10000
+MONITORING_BOOTSTRAP_RESAMPLES = 2000
 GAIN_TARGET = 0.05
+MONITORING_SCORE_ORDER = [
+    ("s2", "Drift $s_t^2$"),
+    ("gain", "Gain $g_t$"),
+    ("h_raw", "Product $h_t$"),
+    ("h_roll2", "Roll-2 $h_t$"),
+    ("h_roll3", "Roll-3 $h_t$"),
+    ("log_h", "Log product"),
+    ("log_h_roll2", "Roll-2 log product"),
+    ("log_h_roll3", "Roll-3 log product"),
+]
+MONITORING_TARGET_ORDER = [
+    "sq_change_same",
+    "sq_change_next",
+    "abs_change_same",
+    "abs_change_next",
+    "risk",
+    "risk_next",
+]
 
 
 def _selected_rows(
@@ -184,99 +203,176 @@ def _air_quality_dtr_path(air_summary: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows).sort_values("lambda").reset_index(drop=True)
 
 
-def _corr(x: np.ndarray, y: np.ndarray) -> float:
+def _spearman_corr(x: np.ndarray, y: np.ndarray) -> float:
     mask = np.isfinite(x) & np.isfinite(y)
-    if int(mask.sum()) < 3:
+    if int(mask.sum()) < 4:
         return float("nan")
     x_valid = x[mask]
     y_valid = y[mask]
     if float(np.std(x_valid)) == 0.0 or float(np.std(y_valid)) == 0.0:
         return float("nan")
-    return float(np.corrcoef(x_valid, y_valid)[0, 1])
+    x_rank = pd.Series(x_valid).rank(method="average").to_numpy(dtype=np.float64)
+    y_rank = pd.Series(y_valid).rank(method="average").to_numpy(dtype=np.float64)
+    if float(np.std(x_rank)) == 0.0 or float(np.std(y_rank)) == 0.0:
+        return float("nan")
+    return float(np.corrcoef(x_rank, y_rank)[0, 1])
 
 
-def _hazard_records(dataset_key: str, trajectories: pd.DataFrame) -> pd.DataFrame:
+def _monitoring_blockwise_records(dataset_key: str, trajectories: pd.DataFrame) -> pd.DataFrame:
     dtr = trajectories[trajectories["method"] == "dtr"].copy()
-    dtr["speed_sq"] = dtr["speed"] ** 2
-    records: list[dict[str, object]] = []
-    for seed, seed_df in dtr.groupby("seed"):
-        seed_df = seed_df.sort_values("block").reset_index(drop=True)
-        for idx, row in seed_df.iterrows():
-            if float(row["speed"]) <= 0.0:
-                continue
-            for score_name, column in [
-                ("drift_only", "speed_sq"),
-                ("gain_only", "gain"),
-                ("matched", "hazard"),
-            ]:
-                base = {
-                    "dataset_key": dataset_key,
-                    "dataset": DISPLAY_DATASETS[dataset_key],
-                    "seed": int(seed),
-                    "block": row["block"],
-                    "score": score_name,
-                    "score_value": float(row[column]),
-                    "same_block_risk": float(row["risk"]),
-                }
-                if idx + 1 < len(seed_df):
-                    base["next_block_risk"] = float(seed_df.loc[idx + 1, "risk"])
-                else:
-                    base["next_block_risk"] = float("nan")
-                records.append(base)
-    return pd.DataFrame(records)
+    dtr = dtr.sort_values(["seed", "block"]).reset_index(drop=True)
+    dtr["block_order"] = dtr.groupby("seed").cumcount()
+    out = pd.DataFrame(
+        {
+            "dataset_key": dataset_key,
+            "dataset": DISPLAY_DATASETS[dataset_key],
+            "seed": dtr["seed"].astype(int),
+            "block": dtr["block"],
+            "block_order": dtr["block_order"].astype(int),
+            "risk": dtr["risk"].astype(float),
+            "s2": np.square(dtr["speed"].astype(float)),
+            "gain": dtr["gain"].astype(float),
+        }
+    )
+    out["h_raw"] = out["s2"] * out["gain"]
+    out.loc[out["block_order"].eq(0), ["s2", "gain", "h_raw"]] = np.nan
+    return out
 
 
-def _hazard_ablation(air_trajectories: pd.DataFrame, tetouan_trajectories: pd.DataFrame) -> pd.DataFrame:
-    records = pd.concat(
+def _add_monitoring_targets(blockwise: pd.DataFrame) -> pd.DataFrame:
+    out = blockwise.sort_values(["dataset_key", "seed", "block_order"]).reset_index(drop=True)
+    group_cols = ["dataset_key", "seed"]
+
+    out["risk_prev"] = out.groupby(group_cols)["risk"].shift(1)
+    out["risk_next"] = out.groupby(group_cols)["risk"].shift(-1)
+    out["abs_change_same"] = (out["risk"] - out["risk_prev"]).abs()
+    out["sq_change_same"] = (out["risk"] - out["risk_prev"]) ** 2
+    out["abs_change_next"] = (out["risk_next"] - out["risk"]).abs()
+    out["sq_change_next"] = (out["risk_next"] - out["risk"]) ** 2
+
+    for window in (2, 3):
+        out[f"h_roll{window}"] = out.groupby(group_cols)["h_raw"].transform(
+            lambda values, w=window: values.rolling(w, min_periods=w).mean()
+        )
+
+    eps = 1e-12
+    out["log_s2"] = np.log(out["s2"] + eps)
+    out["log_gain"] = np.log(out["gain"] + eps)
+    out["log_h"] = out["log_s2"] + out["log_gain"]
+    for window in (2, 3):
+        out[f"log_h_roll{window}"] = out.groupby(group_cols)["log_h"].transform(
+            lambda values, w=window: values.rolling(w, min_periods=w).mean()
+        )
+
+    return out
+
+
+def _bootstrap_monitoring_corr(
+    blockwise: pd.DataFrame,
+    dataset_key: str,
+    score: str,
+    target: str,
+    rng: np.random.Generator,
+) -> dict[str, float | int]:
+    dataset_df = blockwise[blockwise["dataset_key"] == dataset_key]
+    seed_arrays = [
+        (
+            seed_df[score].to_numpy(dtype=np.float64),
+            seed_df[target].to_numpy(dtype=np.float64),
+        )
+        for _, seed_df in dataset_df.groupby("seed", sort=True)
+    ]
+    vals: list[float] = []
+    for _ in range(MONITORING_BOOTSTRAP_RESAMPLES):
+        sampled = rng.integers(0, len(seed_arrays), size=len(seed_arrays))
+        x = np.concatenate([seed_arrays[idx][0] for idx in sampled])
+        y = np.concatenate([seed_arrays[idx][1] for idx in sampled])
+        rho = _spearman_corr(x, y)
+        if np.isfinite(rho):
+            vals.append(rho)
+
+    point = _spearman_corr(
+        dataset_df[score].to_numpy(dtype=np.float64),
+        dataset_df[target].to_numpy(dtype=np.float64),
+    )
+    if not vals:
+        return {
+            "point_spearman": point,
+            "bootstrap_mean": float("nan"),
+            "ci_low": float("nan"),
+            "ci_high": float("nan"),
+            "n_bootstrap_finite": 0,
+        }
+
+    values = np.asarray(vals, dtype=np.float64)
+    lo, hi = np.quantile(values, [0.025, 0.975])
+    return {
+        "point_spearman": point,
+        "bootstrap_mean": float(values.mean()),
+        "ci_low": float(lo),
+        "ci_high": float(hi),
+        "n_bootstrap_finite": int(len(values)),
+    }
+
+
+def _monitoring_volatility_reports(
+    air_trajectories: pd.DataFrame,
+    tetouan_trajectories: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    blockwise = pd.concat(
         [
-            _hazard_records("air_quality", air_trajectories),
-            _hazard_records("tetouan_zone1_power", tetouan_trajectories),
+            _monitoring_blockwise_records("air_quality", air_trajectories),
+            _monitoring_blockwise_records("tetouan_zone1_power", tetouan_trajectories),
         ],
         ignore_index=True,
     )
-    rows: list[dict[str, object]] = []
-    for (dataset_key, score_name), subset in records.groupby(["dataset_key", "score"]):
-        rows.append(
-            {
-                "dataset_key": dataset_key,
-                "dataset": DISPLAY_DATASETS[dataset_key],
-                "score": score_name,
-                "same_block_corr": _corr(
-                    subset["score_value"].to_numpy(dtype=np.float64),
-                    subset["same_block_risk"].to_numpy(dtype=np.float64),
-                ),
-                "next_block_corr": _corr(
-                    subset["score_value"].to_numpy(dtype=np.float64),
-                    subset["next_block_risk"].to_numpy(dtype=np.float64),
-                ),
-                "n_same_block": int(subset["same_block_risk"].notna().sum()),
-                "n_next_block": int(subset["next_block_risk"].notna().sum()),
-            }
-        )
+    blockwise = _add_monitoring_targets(blockwise)
 
-    per_dataset = pd.DataFrame(rows)
-    aggregate = (
-        per_dataset.groupby("score", as_index=False)
-        .agg(
-            same_block_corr=("same_block_corr", "mean"),
-            next_block_corr=("next_block_corr", "mean"),
-            n_same_block=("n_same_block", "sum"),
-            n_next_block=("n_next_block", "sum"),
-        )
-        .assign(dataset_key="mean_real_data", dataset="Mean")
-    )
-    out = pd.concat([per_dataset, aggregate], ignore_index=True)
-    score_order = {"drift_only": 0, "gain_only": 1, "matched": 2}
-    dataset_order = {"air_quality": 0, "tetouan_zone1_power": 1, "mean_real_data": 2}
-    return (
-        out.assign(
-            _dataset_order=lambda df: [dataset_order[key] for key in df["dataset_key"]],
-            _score_order=lambda df: [score_order[key] for key in df["score"]],
-        )
-        .sort_values(["_dataset_order", "_score_order"])
-        .drop(columns=["_dataset_order", "_score_order"])
-        .reset_index(drop=True)
-    )
+    corr_rows: list[dict[str, object]] = []
+    for dataset_key, dataset_df in blockwise.groupby("dataset_key", sort=False):
+        for target in MONITORING_TARGET_ORDER:
+            for score, score_label in MONITORING_SCORE_ORDER:
+                x = dataset_df[score].to_numpy(dtype=np.float64)
+                y = dataset_df[target].to_numpy(dtype=np.float64)
+                valid = np.isfinite(x) & np.isfinite(y)
+                corr_rows.append(
+                    {
+                        "dataset_key": dataset_key,
+                        "dataset": DISPLAY_DATASETS[dataset_key],
+                        "target": target,
+                        "score": score,
+                        "score_label": score_label,
+                        "spearman": _spearman_corr(x, y),
+                        "n": int(valid.sum()),
+                    }
+                )
+    correlations = pd.DataFrame(corr_rows)
+
+    rng = np.random.default_rng(20260424)
+    primary_scores = ["s2", "gain", "h_raw", "h_roll2", "log_h", "log_h_roll2"]
+    primary_targets = ["sq_change_same", "sq_change_next"]
+    score_labels = dict(MONITORING_SCORE_ORDER)
+    boot_rows: list[dict[str, object]] = []
+    for dataset_key in DISPLAY_DATASETS:
+        dataset_df = blockwise[blockwise["dataset_key"] == dataset_key]
+        for target in primary_targets:
+            for score in primary_scores:
+                stats = _bootstrap_monitoring_corr(blockwise, dataset_key, score, target, rng)
+                x = dataset_df[score].to_numpy(dtype=np.float64)
+                y = dataset_df[target].to_numpy(dtype=np.float64)
+                boot_rows.append(
+                    {
+                        "dataset_key": dataset_key,
+                        "dataset": DISPLAY_DATASETS[dataset_key],
+                        "target": target,
+                        "score": score,
+                        "score_label": score_labels[score],
+                        "n": int((np.isfinite(x) & np.isfinite(y)).sum()),
+                        **stats,
+                    }
+                )
+    bootstrap = pd.DataFrame(boot_rows)
+    return blockwise, correlations, bootstrap
 
 
 def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
@@ -317,7 +413,7 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
     conservative_stats = _summary_stats(conservative_rows)
     conservative_paired = _paired_comparisons(conservative_rows)
     air_quality_dtr_path = _air_quality_dtr_path(air["summary"])
-    hazard = _hazard_ablation(
+    monitoring_blockwise, monitoring_correlations, monitoring_bootstrap = _monitoring_volatility_reports(
         air["selected_trajectories_all_seeds"],
         tetouan["selected_trajectories_all_seeds"],
     )
@@ -327,7 +423,9 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
     conservative_summary_path = figures_dir / "real_deployment_conservative_gain_summary.csv"
     conservative_paired_path = figures_dir / "real_deployment_conservative_gain_paired.csv"
     air_quality_path_path = figures_dir / "air_quality_dtr_lambda_path.csv"
-    hazard_path = figures_dir / "hazard_score_ablation.csv"
+    monitoring_blockwise_path = figures_dir / "monitoring_blockwise_selected_dtr.csv"
+    monitoring_correlations_path = figures_dir / "monitoring_volatility_ablation.csv"
+    monitoring_bootstrap_path = figures_dir / "monitoring_volatility_bootstrap.csv"
     report_path = figures_dir / "real_deployment_report.json"
     air_subspace_summary_path = figures_dir / "air_quality_subspace_ablation_selected.csv"
     air_subspace_paired_path = figures_dir / "air_quality_subspace_ablation_paired.csv"
@@ -337,7 +435,9 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
     conservative_stats.to_csv(conservative_summary_path, index=False)
     conservative_paired.to_csv(conservative_paired_path, index=False)
     air_quality_dtr_path.to_csv(air_quality_path_path, index=False)
-    hazard.to_csv(hazard_path, index=False)
+    monitoring_blockwise.to_csv(monitoring_blockwise_path, index=False)
+    monitoring_correlations.to_csv(monitoring_correlations_path, index=False)
+    monitoring_bootstrap.to_csv(monitoring_bootstrap_path, index=False)
     with report_path.open("w", encoding="utf-8") as handle:
         json.dump(
             {
@@ -361,7 +461,15 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
                 "air_quality_subspace_ablation_paired_path": str(
                     air_subspace_paired_path.relative_to(base_dir)
                 ),
-                "hazard_score_ablation_path": str(hazard_path.relative_to(base_dir)),
+                "monitoring_target": "next-block squared risk change, (r_{t+1} - r_t)^2",
+                "monitoring_statistic": "Spearman correlation on selected DTR deployment blocks",
+                "monitoring_blockwise_path": str(monitoring_blockwise_path.relative_to(base_dir)),
+                "monitoring_volatility_ablation_path": str(
+                    monitoring_correlations_path.relative_to(base_dir)
+                ),
+                "monitoring_volatility_bootstrap_path": str(
+                    monitoring_bootstrap_path.relative_to(base_dir)
+                ),
                 "tetouan_output_dir": str(tetouan_dir.relative_to(base_dir)),
             },
             handle,
@@ -374,7 +482,9 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
         "conservative_gain_summary": conservative_stats,
         "conservative_gain_paired": conservative_paired,
         "air_quality_dtr_lambda_path": air_quality_dtr_path,
-        "hazard_ablation": hazard,
+        "monitoring_blockwise": monitoring_blockwise,
+        "monitoring_volatility_ablation": monitoring_correlations,
+        "monitoring_volatility_bootstrap": monitoring_bootstrap,
     }
 
 
@@ -388,7 +498,8 @@ def main() -> None:
         "Wrote real deployment reports to "
         f"{args.base_dir / 'figures'} "
         f"({len(results['summary_stats'])} summary rows, "
-        f"{len(results['paired_comparisons'])} paired rows)."
+        f"{len(results['paired_comparisons'])} paired rows, "
+        f"{len(results['monitoring_volatility_ablation'])} monitoring-correlation rows)."
     )
 
 

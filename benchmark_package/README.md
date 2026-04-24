@@ -13,7 +13,7 @@ Reading order:
 
 - Open `tetouan_city_power_consumption/README.md` for the protocol and headline result.
 - Use `selected_summary.csv`, `selected_trajectories.csv`, `selected_trajectories_all_seeds.csv`, and `summary.json` for the detailed outputs behind the manuscript numbers.
-- The cross-dataset real-deployment reports live under the repository-level `figures/` directory: `real_deployment_summary_stats.csv`, `real_deployment_paired_comparisons.csv`, `real_deployment_conservative_gain_summary.csv`, `real_deployment_conservative_gain_paired.csv`, `air_quality_dtr_lambda_path.csv`, the Air Quality subspace-ablation CSVs, and `hazard_score_ablation.csv`.
+- The cross-dataset real-deployment reports live under the repository-level `figures/` directory: `real_deployment_summary_stats.csv`, `real_deployment_paired_comparisons.csv`, `real_deployment_conservative_gain_summary.csv`, `real_deployment_conservative_gain_paired.csv`, `air_quality_dtr_lambda_path.csv`, the Air Quality subspace-ablation CSVs, `monitoring_blockwise_selected_dtr.csv`, `monitoring_volatility_ablation.csv`, and `monitoring_volatility_bootstrap.csv`.
 
 Reproduction:
 
