@@ -26,7 +26,7 @@
       --radius: 20px;
     }
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
     body {
       margin: 0;
       font-family: "Manrope", sans-serif;
@@ -180,7 +180,7 @@
       border: 1px solid rgba(16,21,34,.08);
       box-shadow: inset 0 1px 0 rgba(255,255,255,.42);
       scrollbar-width: thin;
-      scrollbar-color: rgba(47,68,88,.42) rgba(255,255,255,.58);
+      scrollbar-color: rgba(47,68,88,.32) transparent;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-x: contain;
       touch-action: pan-x pinch-zoom;
@@ -198,19 +198,19 @@
       text-align: center !important;
     }
     .math::-webkit-scrollbar {
-      height: 9px;
+      height: 6px;
+      background: transparent;
     }
     .math::-webkit-scrollbar-track {
-      background: rgba(255,255,255,.58);
-      border-radius: 999px;
+      background: transparent;
     }
     .math::-webkit-scrollbar-thumb {
-      background: linear-gradient(90deg, rgba(179,107,66,.56), rgba(47,68,88,.58));
+      background: rgba(47,68,88,.28);
       border-radius: 999px;
-      border: 2px solid rgba(255,255,255,.58);
+      transition: background .2s ease;
     }
     .math::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(90deg, rgba(179,107,66,.7), rgba(47,68,88,.72));
+      background: rgba(47,68,88,.5);
     }
     .microgrid, .card-grid, .highlights, .figure-grid { display: grid; gap: 1rem; }
     .microgrid { display: flex; flex-direction: column; margin-top: .8rem; gap: .7rem; }
@@ -309,6 +309,7 @@
     @media (max-width: 760px) {
       body { font-size: 14px; }
       .wrap { width: min(calc(100% - 1rem), var(--max)); }
+      html { scroll-padding-top: 0; }
       .topbar { position: static; }
       .navline {
         min-height: auto;
@@ -361,7 +362,7 @@
         font-size: 88% !important;
       }
       .math::-webkit-scrollbar {
-        height: 7px;
+        height: 5px;
       }
       .result-list li {
         flex-direction: column;
@@ -533,10 +534,10 @@
           <article class="card">
             <h3>The payoff</h3>
             <div class="math">\[
-            \begin{multline*}
+            \begin{gather*}
             \mathcal{L}_{\mathrm{DTR}}(\theta) = \\
             \mathbb{E}\ell(f_\theta(X),Y) + \lambda \mathbb{E}\|J_f(X)V\|_F^2
-            \end{multline*}
+            \end{gather*}
             \]</div>
             <p>
               Once the drift geometry is estimated, robustness should be enforced in those directions instead of spread uniformly across the ambient space.
@@ -563,30 +564,30 @@
           <article class="card">
             <h3>Lemma 1</h3>
             <div class="math">\[
-            \begin{multline*}
+            \begin{gather*}
             \mathrm{Var}_U(r(U)) \le \\
             \frac{T}{\pi^2}\int_0^T (r'(t))^2dt.
-            \end{multline*}
+            \end{gather*}
             \]</div>
             <p>Large volatility requires large derivative energy somewhere along deployment time.</p>
           </article>
           <article class="card">
             <h3>Theorem 1</h3>
             <div class="math">\[
-            \begin{multline*}
+            \begin{gather*}
             \mathrm{Var}_U(r(U)) \le \\
             \frac{\beta^2 T}{\pi^2}\int_0^T \mathbb{E}\!\left[\|J_f(X_t)\dot X_t\|^2\right]dt.
-            \end{multline*}
+            \end{gather*}
             \]</div>
             <p>Deployment instability is driven by accumulated tangent amplification of realized motion.</p>
           </article>
           <article class="card">
             <h3>Corollary 1</h3>
             <div class="math">\[
-            \begin{multline*}
-            \dot X_t = \\
-            Va_t+\rho_t, \qquad V^\top V=I_k.
-            \end{multline*}
+            \begin{gather*}
+            \dot X_t = Va_t+\rho_t, \\
+            V^\top V = I_k.
+            \end{gather*}
             \]</div>
             <p>In low-rank regimes, the leading term is directional Jacobian energy in the drift subspace.</p>
           </article>

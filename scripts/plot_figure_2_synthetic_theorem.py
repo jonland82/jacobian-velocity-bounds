@@ -25,12 +25,12 @@ def main() -> None:
 
     plt.rcParams.update(
         {
-            "font.size": 14,
-            "axes.titlesize": 14,
-            "axes.labelsize": 15,
-            "xtick.labelsize": 13,
-            "ytick.labelsize": 13,
-            "legend.fontsize": 13,
+            "font.size": 15,
+            "axes.titlesize": 15,
+            "axes.labelsize": 16,
+            "xtick.labelsize": 14,
+            "ytick.labelsize": 14,
+            "legend.fontsize": 14,
         }
     )
     fig, ax = plt.subplots(figsize=(7.2, 5.6), constrained_layout=True)
@@ -66,12 +66,12 @@ def main() -> None:
     ax.set_ylim(0.0, upper)
     ax.set_xlabel(
         r"estimated derivative-energy bound $\frac{T}{\pi^2}\int_0^T (r'(t))^2 dt$",
-        fontsize=16,
+        fontsize=17,
     )
     ax.set_ylabel(r"empirical risk volatility $\mathrm{Var}_U(r(U))$")
     ax.grid(color="#e5e7eb", linewidth=0.8)
     ax.set_axisbelow(True)
-    ax.set_title("Synthetic theorem sanity check", fontsize=16)
+    ax.set_title("Synthetic theorem sanity check", fontsize=17)
     ax.legend(frameon=False, loc="upper left")
     for label in ax.get_xticklabels():
         label.set_rotation(28)
@@ -84,7 +84,7 @@ def main() -> None:
         transform=ax.transAxes,
         ha="right",
         va="bottom",
-        fontsize=11,
+        fontsize=13,
         color=label_color,
         bbox={
             "facecolor": "white",
@@ -107,7 +107,7 @@ def main() -> None:
         xy=standard_center,
         xytext=(-70, 34),
         textcoords="offset points",
-        fontsize=12,
+        fontsize=14,
         color=label_color,
         ha="right",
         va="bottom",
@@ -118,11 +118,11 @@ def main() -> None:
     ax.annotate(
         "DTR mean",
         xy=dtr_center,
-        xytext=(24, 46),
+        xytext=(0, 115),
         textcoords="offset points",
-        fontsize=12,
+        fontsize=14,
         color=label_color,
-        ha="left",
+        ha="right",
         va="bottom",
         bbox={"facecolor": "white", "edgecolor": "#d1d5db", "alpha": 0.94, "pad": 2.0},
         arrowprops={"arrowstyle": "->", "color": mean_edge, "linewidth": 1.4},
