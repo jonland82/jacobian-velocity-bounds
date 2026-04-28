@@ -142,10 +142,9 @@ If $r$ is absolutely continuous on $[0,T]$, then
 
 \begin{proof}
 Let $\bar r=T^{-1}\int_0^T r(t)\,dt$. The Wirtinger inequality yields
-\begin{equation}
-\label{eq:wirtinger}
+\[
 \int_0^T (r(t)-\bar r)^2dt \le \frac{T^2}{\pi^2}\int_0^T (r'(t))^2dt.
-\end{equation}
+\]
 Divide by $T$.
 \end{proof}
 
@@ -170,19 +169,17 @@ r(t)-r(s)
 \int_s^t \E[\nabla g_\theta(X_u)^\top \dot X_u]\,du.
 \end{align*}
 Hence $r$ is absolutely continuous and, for almost every $t$,
-\begin{equation}
-\label{eq:r-prime}
+\[
 r'(t)=\E[\nabla g_\theta(X_t)^\top \dot X_t].
-\end{equation}
+\]
 Jensen's inequality and Assumption A3 then give
-\begin{equation}
-\label{eq:r-prime-bound}
+\[
 \begin{aligned}
 (r'(t))^2
 &\le \E[(\nabla g_\theta(X_t)^\top \dot X_t)^2] \\
 &\le \beta^2 \E\|J_f(X_t)\dot X_t\|^2.
 \end{aligned}
-\end{equation}
+\]
 Apply Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}.
 \end{proof}
 
@@ -327,7 +324,7 @@ h_t&=(|\bar a_t|^2+\|\bar\rho_t\|^2) \\
 The identities are immediate from orthogonal decompositions. The first uses $(\Delta\mu_t)/\Delta=v\bar a_t+\bar\rho_t$ with $v^\top\bar\rho_t=0$. The second expands $J_f(X_t)v_t=\cos\theta_t\,J_f(X_t)v+\sin\theta_t\,J_f(X_t)u_t$ and takes expectations.
 \end{proof}
 
-Proposition~\ref{prop:hazard} makes the proxy gap explicit in the rank-$1$ monitoring setting. The finite-window drift statistic contributes the residual term $\|\bar\rho_t\|^2$, while angular error mixes aligned, orthogonal, and overlap energies through $\theta_t$, $G_{\perp,t}$, and $C_t$. In that precise bookkeeping sense, $h_t$ matches the leading low-rank quantity from Corollary~\ref{cor:lowrank} up to block averaging, residual drift, and subspace-estimation error rather than reproducing the corollary integrand exactly. It becomes large only when the stream is moving quickly \emph{and} the predictor is steep along that motion. Relative to dataset-shift diagnostics \cite{rabanser-shift}, uncertainty diagnostics under shift \cite{ovadia-shift}, and sequential detection procedures \cite{wu-rscusum,cao-xie-allerton2015,cooper-allerton2024}, the point of $h_t$ is alignment rather than optimality. It monitors the same directional mechanism singled out by the theory without claiming to be a sequentially optimal detector.
+Proposition~\ref{prop:hazard} makes the proxy gap explicit in the rank-$1$ monitoring setting for the score in \eqref{eq:hazard-score}. The finite-window drift statistic contributes the residual term $\|\bar\rho_t\|^2$, while angular error mixes aligned, orthogonal, and overlap energies through $\theta_t$, $G_{\perp,t}$, and $C_t$. In that precise bookkeeping sense, $h_t$ matches the leading low-rank quantity from Corollary~\ref{cor:lowrank} up to block averaging, residual drift, and subspace-estimation error rather than reproducing the corollary integrand exactly. It becomes large only when the stream is moving quickly \emph{and} the predictor is steep along that motion. Relative to dataset-shift diagnostics \cite{rabanser-shift}, uncertainty diagnostics under shift \cite{ovadia-shift}, and sequential detection procedures \cite{wu-rscusum,cao-xie-allerton2015,cooper-allerton2024}, the point of $h_t$ is alignment rather than optimality. It monitors the same directional mechanism singled out by the theory without claiming to be a sequentially optimal detector.
 This symmetry between training and monitoring is deliberate. The same geometry used to suppress future instability is reused to measure when future instability is likely.
 
 \section{Experiments}
