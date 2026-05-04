@@ -1,0 +1,21 @@
+# Python caches
+__pycache__/
+*.py[cod]
+
+# LaTeX build products
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+# Local working notes
+allerton_notes/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*~

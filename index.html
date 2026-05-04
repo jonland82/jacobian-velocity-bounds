@@ -787,7 +787,7 @@
             <ul class="repo-list">
               <li><strong>Manuscript</strong><span><a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">PDF</a> and <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.tex">LaTeX source</a> for the paper.</span></li>
               <li><strong><code>scripts/</code></strong><span>Training, evaluation, reporting, and plotting code for the synthetic theorem benchmark, directional ablation, Air Quality study and subspace ablation, Tetouan figure, real-data paired comparisons, and monitoring-volatility ablation.</span></li>
-              <li><strong><code>benchmark_package/</code></strong><span>Isolated Tetouan benchmark package used for the paper's second real deployment study, with cached matched-seed outputs and a dedicated runner.</span></li>
+              <li><strong><code>benchmark_package/</code></strong><span>Isolated Tetouan benchmark package used for the paper's second real deployment study, with cached matched-seed outputs, a dedicated runner, and benchmark-selection notes.</span></li>
               <li><strong><code>proof_verification/</code></strong><span>SymPy-based checks, numerical stress tests, and the generated HTML/JSON verification reports.</span></li>
               <li><strong><code>figures/</code></strong><span>Rendered manuscript figure assets, now including the Tetouan deployment plot, plus cached CSV/JSON summaries consumed by the plotting scripts.</span></li>
               <li><strong><code>data/</code></strong><span>Cached Air Quality dataset used by the main field-deployment experiment.</span></li>
@@ -806,7 +806,7 @@
               <div class="command-line">python benchmark_package/scripts/run_tetouan_power_benchmark.py --force</div>
               <div class="command-line">latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</div>
             </div>
-            <div class="linkbox"><strong>License</strong><span>This repository is released under the <a href="./LICENSE">MIT License</a>.</span></div>
+            <div class="linkbox"><strong>License</strong><span>Repository code is MIT licensed; cached third-party UCI datasets are documented in <a href="./DATA_LICENSES.md">DATA_LICENSES.md</a>.</span></div>
           </article>
         </div>
       </div>

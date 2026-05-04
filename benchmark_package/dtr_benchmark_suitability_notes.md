@@ -2,7 +2,7 @@
 
 This note records what we learned from the real-data benchmark search around drift-aligned tangent regularization (DTR). The goal is not only to remember which datasets were kept or dropped, but to make explicit **when DTR is the right inductive bias and when it is not**.
 
-Some of the discarded benchmark branches were intentionally removed from the cleaned repo. Where exact numbers are included below, they come either from the retained local report for the UCI gas-sensor benchmark or from earlier exploratory run summaries recorded during the benchmark search.
+Some discarded benchmark branches were intentionally removed from the cleaned repo. Where exact numbers are included below, they come either from retained diagnostic reports or from exploratory run summaries recorded during the benchmark search. These notes are benchmark-search context, not additional manuscript experiments.
 
 ## 1. The regime DTR is designed for
 
@@ -198,15 +198,15 @@ $$
 
 with a small number of dominant directions than the discarded mixed-shift benchmarks.
 
-The validation-selected matched-seed numbers are mixed:
+The final manuscript uses the target-orthogonal sensor subspace rather than the earlier all-covariate drift subspace. That distinction matters:
 
-- Validation-selected DTR setting: $\lambda = 0.08$.
-- Mean directional gain falls from $0.079 \pm 0.008$ to $0.044 \pm 0.004$.
-- Mean volatility rises from $0.073 \pm 0.023$ to $0.112 \pm 0.031$.
-- Mean deployment MSE rises from $0.449 \pm 0.069$ to $0.485 \pm 0.077$.
-- In paired seed comparisons, DTR improves directional gain in `10 / 10` seeds but volatility in only `2 / 10` seeds.
+- With the target-orthogonal sensor subspace, validation selects $\lambda = 0.003$ for DTR.
+- Mean deployment MSE improves from $0.449 \pm 0.069$ for standard training to $0.432 \pm 0.058$ for DTR.
+- Mean volatility improves from $0.073 \pm 0.023$ to $0.069 \pm 0.020$.
+- Terminal risk improves from $0.165 \pm 0.034$ to $0.161 \pm 0.028$.
+- In paired seed comparisons against standard training, DTR improves deployment MSE in `9 / 10` seeds and volatility in `9 / 10` seeds.
 
-Air Quality remains useful because it checks the directional-gain mechanism in a sensor-drift setting, but it is no longer presented as a validation-selected deployment-risk win.
+The earlier all-covariate subspace remains useful as a cautionary ablation. It selected a larger penalty, $\lambda = 0.08$, reduced block-direction gain, but worsened deployment MSE and volatility. The lesson is the same as the synthetic misspecification study: DTR is useful when the estimated subspace captures nuisance motion rather than broad covariate motion or target signal.
 
 ### 3.2 UCI Tetouan City power consumption
 

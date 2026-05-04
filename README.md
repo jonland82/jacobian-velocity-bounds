@@ -216,6 +216,7 @@ The intended claim is narrow: rolling theorem-matched hazard is informative for 
 |-- index.html
 |-- LICENSE
 |-- README.md
+|-- DATA_LICENSES.md
 |-- requirements.txt
 |-- jacobian_velocity_bounds_deployment_risk_covariate_drift.tex
 |-- jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf
@@ -317,9 +318,14 @@ Notes:
 
 - The Air Quality experiment caches the UCI dataset to [`data/air_quality.csv`](./data/air_quality.csv).
 - The Tetouan follow-on benchmark lives under [`benchmark_package/`](./benchmark_package/) and is included in the real-deployment reporting suite.
+- The cached UCI datasets are third-party data with their own terms; see [`DATA_LICENSES.md`](./DATA_LICENSES.md).
 - The scripts are CPU-oriented and use PyTorch for the training loops.
 - The `figures/*.json` and `figures/*.csv` files are cached summaries consumed by the plotting scripts.
 - The proof verifier adds `sympy` on top of the experiment dependencies and emits both HTML and JSON outputs under [`proof_verification/`](./proof_verification/).
+
+## Data and Licensing
+
+Repository code and original generated artifacts are MIT licensed. The cached Air Quality and Tetouan CSV files are third-party UCI Machine Learning Repository datasets and remain subject to their own dataset terms. See [`DATA_LICENSES.md`](./DATA_LICENSES.md) for source links, DOI links, and attribution notes.
 
 ## Citation
 
@@ -337,4 +343,4 @@ If you use this repository, cite the manuscript:
 
 ## License
 
-This repository is released under the [MIT License](./LICENSE).
+Repository code is released under the [MIT License](./LICENSE). Cached third-party UCI datasets are documented separately in [`DATA_LICENSES.md`](./DATA_LICENSES.md).
