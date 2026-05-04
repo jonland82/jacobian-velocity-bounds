@@ -493,6 +493,9 @@ Long-horizon robustness under dynamic shift is best viewed as a tangent-control 
 
 That positioning matters. Relative to temporal-shift benchmarks and static shift analyses \cite{ben-david-shift,koh-wilds,yao-wildtime,han-temporal}, the paper contributes a theorem-backed mechanism: deployment trajectories differ across frozen models because the same environmental motion can encounter very different directional tangent gains. Relative to test-time adaptation \cite{sun-ttt,wang-tent,gui-atta}, it studies the frozen-model regime in which that geometry can be analyzed directly. Relative to Jacobian smoothing and shift detection \cite{sokolic-jacobian,kim-jacobian,rabanser-shift,cooper-allerton2024}, it ties training-time regularization and deployment-time monitoring to the same directional notion of drift sensitivity. If future deployment motion is concentrated in a few directions, then robustness should be enforced, measured, and monitored in those directions rather than spread uniformly over the ambient space.
 
+\section*{Acknowledgment}
+The author used standard computational tools and programming libraries, including Python packages and AI-assisted language tools from OpenAI and Anthropic, to support code development, algebraic checks, proof-verification scaffolding, repository hygiene, and editorial refinement. All mathematical statements, experiments, code, interpretations, and final text were conceptualized, reviewed, and finalized by the author, who is solely responsible for the content. The author received no external funding and reports no conflicts of interest.
+
 \balance
 \bibliographystyle{IEEEtran}
 \bibliography{references}
