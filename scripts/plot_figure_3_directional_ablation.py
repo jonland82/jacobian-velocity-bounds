@@ -68,7 +68,7 @@ def plot_ratio_panel(
 
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
-    out_path = base_dir / "figures" / "figure_4_directional_ablation.png"
+    out_path = base_dir / "figures" / "figure_3_directional_ablation.png"
     ensure_directional_ablation_outputs(base_dir)
     summary = load_summary(base_dir)
 

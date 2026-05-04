@@ -16,7 +16,7 @@ from run_tetouan_power_benchmark import run_suite as run_tetouan_benchmark
 
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
-    out_path = base_dir / "figures" / "figure_5_tetouan_deployment.png"
+    out_path = base_dir / "figures" / "figure_4_tetouan_deployment.png"
     results = run_tetouan_benchmark(base_dir, force=False)
     trajectory = results["selected_trajectories"].copy()
     trajectory["block_start"] = pd.to_datetime(trajectory["block"] + "-01")

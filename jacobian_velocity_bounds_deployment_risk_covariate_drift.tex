@@ -63,7 +63,7 @@ Finally, the work draws on two technical lines. The regularization side is relat
 \begin{figure*}[t]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/figure_1_geometry.png}
-  \caption{Geometric intuition for drift-aligned instability. The deployment path is the same in both panels, but the local tangent geometry is different. When the drift direction aligns with a steep tangent direction, the score changes rapidly, whereas when the model is flat along that same direction, the score remains stable. Figure~1 visualizes the directional quantity that appears in Theorem~\ref{thm:jv} and \eqref{eq:jv-bound}.}
+  \caption{Geometric intuition for drift-aligned instability. The deployment path is the same in both panels, but the local tangent geometry is different. When the drift direction aligns with a steep tangent direction, the score changes rapidly, whereas when the model is flat along that same direction, the score remains stable. This figure visualizes the directional quantity that appears in Theorem~\ref{thm:jv} and \eqref{eq:jv-bound}.}
   \label{fig:geometry}
 \end{figure*}
 
@@ -397,7 +397,7 @@ its alignment with the true drift direction $e_2$ is $\cos\alpha$. With the corr
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/figure_4_directional_ablation.png}
+  \includegraphics[width=0.9\textwidth]{figures/figure_3_directional_ablation.png}
   \caption{Synthetic directional comparisons. Left shows matched $\lambda=0.03$ ratios for derivative energy, risk volatility, directional gain, and terminal risk, normalized by the standard model. DTR is lower than isotropic Jacobian regularization on all four metrics. Right shows the same metrics normalized by aligned DTR for the correct subspace, a mild $20^\circ$ rotation, and a wrong subspace. Mild misspecification is tolerable, but wrong subspaces are not.}
   \label{fig:comparison}
 \end{figure*}
@@ -476,7 +476,7 @@ Tetouan & $-0.339$ & $0.328$ & $0.218$ & $0.305$ & $0.335$ \\
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/figure_5_tetouan_deployment.png}
+  \includegraphics[width=\columnwidth]{figures/figure_4_tetouan_deployment.png}
   \caption{Tetouan frozen deployment over six monthly blocks. DTR stays below both standard and isotropic training throughout the deployment horizon, with the largest gap in the late-summer high-risk regime.}
   \label{fig:tetouan}
 \end{figure}

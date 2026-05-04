@@ -144,7 +144,7 @@ The misspecification study shows the expected directional behavior:
 
 Figure:
 
-<img src="./figures/figure_4_directional_ablation.png" alt="Directional comparison and misspecification ablation" width="420" style="max-width: 420px; width: 100%;">
+<img src="./figures/figure_3_directional_ablation.png" alt="Directional comparison and misspecification ablation" width="420" style="max-width: 420px; width: 100%;">
 
 ### Field deployment on UCI Air Quality
 
@@ -172,7 +172,7 @@ In the mean selected trajectory shown in the figure, standard training peaks at 
 
 Figure:
 
-<img src="./figures/figure_3_air_quality_monitoring.png" alt="Air Quality deployment monitoring" width="420" style="max-width: 420px; width: 100%;">
+<img src="./figures/air_quality_monitoring.png" alt="Air Quality deployment monitoring" width="420" style="max-width: 420px; width: 100%;">
 
 ### Second real benchmark on UCI Tetouan City power consumption
 
@@ -196,7 +196,7 @@ The Tetouan scripts and outputs live under [`benchmark_package/`](./benchmark_pa
 
 Figure:
 
-<img src="./figures/figure_5_tetouan_deployment.png" alt="Tetouan deployment risk trajectory" width="420" style="max-width: 420px; width: 100%;">
+<img src="./figures/figure_4_tetouan_deployment.png" alt="Tetouan deployment risk trajectory" width="420" style="max-width: 420px; width: 100%;">
 
 ### Monitoring-score volatility ablation
 
@@ -236,9 +236,9 @@ The intended claim is narrow: rolling theorem-matched hazard is informative for 
 |-- figures/
 |   |-- figure_1_geometry.png
 |   |-- figure_2_synthetic_theorem.png
-|   |-- figure_3_air_quality_monitoring.png
-|   |-- figure_4_directional_ablation.png
-|   |-- figure_5_tetouan_deployment.png
+|   |-- air_quality_monitoring.png
+|   |-- figure_3_directional_ablation.png
+|   |-- figure_4_tetouan_deployment.png
 |   |-- synthetic_theorem_summary.json
 |   |-- synthetic_directional_summary.json
 |   |-- air_quality_summary.json
@@ -262,9 +262,9 @@ The intended claim is narrow: rolling theorem-matched hazard is informative for 
     |-- run_real_deployment_reporting.py
     |-- plot_figure_1_geometry.py
     |-- plot_figure_2_synthetic_theorem.py
-    |-- plot_figure_3_air_quality_monitoring.py
-    |-- plot_figure_4_directional_ablation.py
-    `-- plot_figure_5_tetouan_deployment.py
+    |-- plot_air_quality_monitoring.py
+    |-- plot_figure_3_directional_ablation.py
+    `-- plot_figure_4_tetouan_deployment.py
 ```
 
 ## Reproduction

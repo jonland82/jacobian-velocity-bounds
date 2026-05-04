@@ -11,7 +11,7 @@ from run_air_quality_experiment import ensure_air_quality_outputs
 
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
-    out_path = base_dir / "figures" / "figure_3_air_quality_monitoring.png"
+    out_path = base_dir / "figures" / "air_quality_monitoring.png"
     results = ensure_air_quality_outputs(base_dir)
     trajectory = results["selected_trajectories_all_seeds"].copy()
     trajectory["block_start"] = pd.to_datetime(trajectory["block_start"])
