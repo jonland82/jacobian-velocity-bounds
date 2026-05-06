@@ -61,6 +61,7 @@ def draw_panel(ax: plt.Axes, weights: tuple[float, float], title: str, scale_wor
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
     out_path = base_dir / "figures" / "figure_1_geometry.png"
+    pdf_path = out_path.with_suffix(".pdf")
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
     plt.rcParams.update(
@@ -70,6 +71,8 @@ def main() -> None:
             "xtick.labelsize": 11,
             "ytick.labelsize": 11,
             "mathtext.fontset": "stix",
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
         }
     )
     fig, axes = plt.subplots(1, 2, figsize=(9.2, 4.0), constrained_layout=True)
@@ -87,6 +90,7 @@ def main() -> None:
     )
     fig.suptitle("Dynamic shift matters through the directional derivative along the drift path", fontsize=12)
     fig.savefig(out_path, dpi=220)
+    fig.savefig(pdf_path)
     plt.close(fig)
 
 

@@ -17,6 +17,7 @@ from run_tetouan_power_benchmark import run_suite as run_tetouan_benchmark
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
     out_path = base_dir / "figures" / "figure_4_tetouan_deployment.png"
+    pdf_path = out_path.with_suffix(".pdf")
     results = run_tetouan_benchmark(base_dir, force=False)
     trajectory = results["selected_trajectories"].copy()
     trajectory["block_start"] = pd.to_datetime(trajectory["block"] + "-01")
@@ -34,6 +35,8 @@ def main() -> None:
             "xtick.labelsize": 7.5,
             "ytick.labelsize": 7.5,
             "legend.fontsize": 7.5,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
         }
     )
     fig, ax = plt.subplots(figsize=(3.45, 2.35), constrained_layout=True)
@@ -72,6 +75,7 @@ def main() -> None:
     ax.tick_params(length=4.2, width=0.9)
 
     fig.savefig(out_path, dpi=220, bbox_inches="tight", pad_inches=0.02)
+    fig.savefig(pdf_path, bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
 
 

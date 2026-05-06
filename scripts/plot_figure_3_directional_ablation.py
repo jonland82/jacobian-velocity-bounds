@@ -69,6 +69,7 @@ def plot_ratio_panel(
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
     out_path = base_dir / "figures" / "figure_3_directional_ablation.png"
+    pdf_path = out_path.with_suffix(".pdf")
     ensure_directional_ablation_outputs(base_dir)
     summary = load_summary(base_dir)
 
@@ -85,6 +86,8 @@ def main() -> None:
             "xtick.labelsize": 11,
             "ytick.labelsize": 11,
             "legend.fontsize": 11,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
         }
     )
     fig, axes = plt.subplots(1, 2, figsize=(9.6, 4.0), constrained_layout=True)
@@ -134,6 +137,7 @@ def main() -> None:
     axes[1].legend(frameon=True, framealpha=0.92, edgecolor="#d1d5db", loc="center", bbox_to_anchor=(0.38, 0.5))
 
     fig.savefig(out_path, dpi=220, bbox_inches="tight", pad_inches=0.02)
+    fig.savefig(pdf_path, bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
 
 

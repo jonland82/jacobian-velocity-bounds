@@ -11,6 +11,7 @@ from run_synthetic_theorem_experiment import ensure_experiment_outputs
 def main() -> None:
     base_dir = Path(__file__).resolve().parents[1]
     out_path = base_dir / "figures" / "figure_2_synthetic_theorem.png"
+    pdf_path = out_path.with_suffix(".pdf")
     results = ensure_experiment_outputs(base_dir)
     summary = results["summary"]
     standard_color = "#a8b0bb"
@@ -31,6 +32,8 @@ def main() -> None:
             "xtick.labelsize": 14,
             "ytick.labelsize": 14,
             "legend.fontsize": 14,
+            "pdf.fonttype": 42,
+            "ps.fonttype": 42,
         }
     )
     fig, ax = plt.subplots(figsize=(7.2, 5.6), constrained_layout=True)
@@ -157,6 +160,7 @@ def main() -> None:
     )
 
     fig.savefig(out_path, dpi=220, bbox_inches="tight", pad_inches=0.02)
+    fig.savefig(pdf_path, bbox_inches="tight", pad_inches=0.02)
     plt.close(fig)
 
 

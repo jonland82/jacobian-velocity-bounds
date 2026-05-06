@@ -62,13 +62,13 @@ Finally, the work draws on two technical lines. The regularization side is relat
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/figure_1_geometry.png}
+  \includegraphics[width=0.9\textwidth]{figures/figure_1_geometry.pdf}
   \caption{Geometric intuition for drift-aligned instability. The deployment path is the same in both panels, but the local tangent geometry is different. When the drift direction aligns with a steep tangent direction, the score changes rapidly, whereas when the model is flat along that same direction, the score remains stable. This figure visualizes the directional quantity that appears in Theorem~\ref{thm:jv} and \eqref{eq:jv-bound}.}
   \label{fig:geometry}
 \end{figure*}
 
 \section{Setup and Assumptions}
-Let $t\in[0,T]$ index deployment time. Let $X_t\in\R^d$ denote the covariate process, and let $f_\theta:\R^d\to\R$ be a frozen scalar score function. We study a scalar deployment performance field $g_\theta:\R^d\to\R$ and the associated trajectory
+Let $t\in[0,T]$ index deployment time. Let $X_t\in\R^d$ denote the covariate process, and let $f_\theta:\R^d\to\R$ be a frozen scalar score with row Jacobian $J_f(x):=\nabla f_\theta(x)^\top$. We study a scalar deployment performance field $g_\theta:\R^d\to\R$ and the associated trajectory
 \begin{equation}
 \label{eq:risk-trajectory}
 r(t):=\E[g_\theta(X_t)].
@@ -83,7 +83,7 @@ The point of this setup is to separate two roles that are often conflated in shi
 To measure temporal instability, draw $U\sim\mathrm{Unif}[0,T]$ and define
 \begin{equation}
 \label{eq:temporal-volatility}
-\Var_U(r(U))=\E[(r(U)-\E r(U))^2].
+\Var_U(r(U))=\E_U[(r(U)-\E_U r(U))^2].
 \end{equation}
 The quantity in \eqref{eq:temporal-volatility} is the notion of deployment volatility studied throughout the paper.
 
@@ -125,7 +125,7 @@ h'(f_\theta(X_t))\,J_f(X_t)\dot X_t,
 \]
 so A3 follows with $\beta=\sup|h'|$ whenever $J_f(X_t)$ is well defined almost surely for almost every $t$. For Bernoulli cross-entropy against a fixed soft target, $|h'|\le 1$, giving $\beta=1$. The theorem is therefore not ReLU-specific. Smooth predictors fit directly, and piecewise-linear predictors such as ReLU networks fit as soon as the deployment path avoids their nondifferentiability set almost surely for almost every deployment time.
 
-A3 does not follow from pure covariate shift alone. The general risk $g_\theta(x)=\E_{Y\sim P_0(\cdot\mid x)}[\ell(f_\theta(x),Y)]$ carries an extra $\nabla\eta(x)$ term from the label conditional, which need not be dominated by the score-Jacobian term even when $\eta$ is time-invariant. A3 also fails under simultaneous concept shift, and at score saturation wherever $\nabla f_\theta(x)=0$ but $\nabla g_\theta(x)\neq 0$.
+A3 does not follow from pure covariate shift alone. The general risk $g_\theta(x)=\E_{Y\sim P_0(\cdot\mid x)}[\ell(f_\theta(x),Y)]$ carries an extra $\nabla\eta(x)$ term from the label conditional $\eta(x)$, not necessarily dominated by the score-Jacobian term even when $\eta$ is time-invariant. A3 also fails under simultaneous concept shift, and at score saturation wherever $\nabla f_\theta(x)=0$ but $\nabla g_\theta(x)\neq 0$.
 \end{remark}
 
 \section{Main Theorem Package}
@@ -195,7 +195,7 @@ Assume the hypotheses of Theorem~\ref{thm:jv}. If
 \qquad
 V\in\R^{d\times k},
 \]
-with $V^\top V=I_k$ and $V^\top \rho_t=0$, then
+with $a_t\in\R^k$, $\rho_t\in\R^d$, $V^\top V=I_k$, and $V^\top \rho_t=0$, then
 \begin{equation}
 \label{eq:lowrank-bound}
 \Var_U(r(U))
@@ -233,7 +233,7 @@ Corollary~\ref{cor:lowrank} is the paper's main reduction. When $B_\rho$ is smal
 The theorem package suggests a simple design principle. If instability is created by motion through steep directions, then regularization should flatten the model along directions deployment is expected to traverse, not everywhere at once.
 
 \subsection{Drift-aligned tangent regularization}
-Let $V$ estimate the dominant drift subspace from unlabeled deployment covariates. Two minimal estimators are sufficient for the present paper. One is a mean-difference direction
+Let $V$ estimate the dominant drift subspace from unlabeled deployment covariates. Two minimal estimators are sufficient for the present paper. For window mean $\mu_t$ and lag $\Delta$, one is a mean-difference direction
 \[
 \Delta\mu_t=\mu_t-\mu_{t-\Delta},
 \qquad
@@ -254,7 +254,7 @@ The objective in \eqref{eq:dtr-objective} is not global Jacobian smoothing. It i
 In other words, DTR concentrates regularization budget on directions the future trajectory is expected to traverse, rather than spreading it uniformly over directions the deployment path may never visit.
 
 \subsection{Monitoring score}
-The same geometry yields a matched deployment diagnostic, now at the level of a theorem-motivated proxy rather than the literal corollary integrand. Let
+The same geometry yields a theorem-motivated proxy diagnostic. With current drift-subspace estimate $V_t$, define speed $s_t$, gain $g_t$, and product $h_t$ by
 \begin{equation}
 \label{eq:hazard-score}
 \begin{aligned}
@@ -329,7 +329,7 @@ This symmetry between training and monitoring is deliberate. The same geometry u
 
 \section{Experiments}
 \textit{Evaluation protocol.}
-Hyperparameters are selected using only training/validation windows. Deployment windows are held out and used only once for final evaluation. For each method, $\lambda$ is selected by validation loss, with validation directional gain used only as a secondary tie-breaker. All reported deployment metrics are computed after selection and averaged over matched random seeds.
+Hyperparameters use only training/validation windows; deployment is held out for final evaluation. $\lambda$ is selected by validation loss, with validation directional gain only a secondary tie-breaker. Metrics are post-selection matched-seed means: volatility is \eqref{eq:temporal-volatility}, derivative energy the empirical integral in \eqref{eq:poincare-bound}, directional gain drift-direction Jacobian energy, and terminal risk final-block loss.
 
 \subsection{Synthetic time-domain sanity check}
 The synthetic study uses the smallest setup that exposes the paper's mechanism. There is one stable signal coordinate, one drifting nuisance coordinate, and a frozen classifier whose tangent geometry can either amplify or suppress that drift. The drift direction is deliberately known so the theorem-to-method link can be read cleanly \cite{yao-wildtime,han-temporal}. Labels are sampled as $Y\sim\mathrm{Bernoulli}(1/2)$ and we write $S=2Y-1\in\{-1,+1\}$. Conditional on $S$, features are generated as
@@ -356,7 +356,7 @@ Figure~\ref{fig:theory} plays the lemma-linked role in the paper's narrative arc
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/figure_2_synthetic_theorem.png}
+  \includegraphics[width=\columnwidth]{figures/figure_2_synthetic_theorem.pdf}
   \caption{Synthetic time-domain sanity check. Each point is one trained model evaluated over the drifting deployment path. The horizontal axis is the derivative-energy quantity from Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}, and the vertical axis is empirical volatility $\Var_U(r(U))$. DTR shifts models toward lower energy and lower volatility.}
   \label{fig:theory}
 \end{figure}
@@ -397,7 +397,7 @@ its alignment with the true drift direction $e_2$ is $\cos\alpha$. With the corr
 
 \begin{figure*}[t]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/figure_3_directional_ablation.png}
+  \includegraphics[width=0.9\textwidth]{figures/figure_3_directional_ablation.pdf}
   \caption{Synthetic directional comparisons. Left shows matched $\lambda=0.03$ ratios for derivative energy, risk volatility, directional gain, and terminal risk, normalized by the standard model. DTR is lower than isotropic Jacobian regularization on all four metrics. Right shows the same metrics normalized by aligned DTR for the correct subspace, a mild $20^\circ$ rotation, and a wrong subspace. Mild misspecification is tolerable, but wrong subspaces are not.}
   \label{fig:comparison}
 \end{figure*}
@@ -406,7 +406,7 @@ its alignment with the true drift direction $e_2$ is $\cos\alpha$. With the corr
 We next ask whether the same directional story survives on real deployments where the drift subspace must be estimated from unlabeled covariates. We use two complementary regression settings: Air Quality as the direct sensor-drift case, and Tetouan as a weather-driven load-prediction task with fixed label semantics and explicit exogenous covariates.
 In the real-data experiments, the drift subspace is estimated retrospectively from unlabeled deployment covariates; a fully online deployment would replace this with rolling estimates of $V_t$.
 
-The UCI Air Quality dataset records hourly outputs of a five-sensor gas array together with temperature and humidity in an Italian city, and the associated field-study paper explicitly discusses sensor drift and seasonal influences over long deployments \cite{de-vito-airquality}. We predict the reference CO concentration $\mathrm{CO(GT)}$ from the five sensor channels $\mathrm{PT08.S1}$--$\mathrm{PT08.S5}$ together with $T$, $RH$, and $AH$. Rows with the dataset's $-200$ missing-value marker are removed, leaving $1573$ training points from the first $12$ weeks, $580$ validation points from the next $4$ weeks, and $5191$ deployment points grouped into $20$ biweekly blocks. The predictor is frozen after training, and deployment risk is blockwise mean-squared error.
+The UCI Air Quality dataset records hourly outputs of a five-sensor gas array together with temperature and humidity in an Italian city, and the associated field-study paper explicitly discusses sensor drift and seasonal influences over long deployments \cite{de-vito-airquality}. We predict the reference CO concentration $\mathrm{CO(GT)}$ from the five sensor channels $\mathrm{PT08.S1}$--$\mathrm{PT08.S5}$ together with temperature, $RH$, and $AH$. Rows with the dataset's $-200$ missing-value marker are removed, leaving $1573$ training points from the first $12$ weeks, $580$ validation points from the next $4$ weeks, and $5191$ deployment points grouped into $20$ biweekly blocks. The predictor is frozen after training, and deployment risk is blockwise mean-squared error.
 Because this dataset is explicitly a sensor-drift setting, the primary Air Quality DTR subspace is estimated from the sensor channels only. We first remove the supervised linear target direction learned on the training window, then take the top two singular vectors of consecutive biweekly mean-shift vectors in that target-orthogonal sensor space and embed them back into the full feature space. This keeps weather covariates available to the predictor while avoiding a DTR penalty on the main target-predictive sensor direction. We compare standard training, isotropic Jacobian regularization, and DTR over $10$ matched random seeds. For reporting the deployment monitor, we use the blockwise rank-$1$ diagnostic: if $\mu_t$ is the standardized covariate mean in block $t$ and $\Delta=1$ block, then
 \begin{align*}
 s_t &= \|\mu_t-\mu_{t-1}\|, & v_t &= \frac{\mu_t-\mu_{t-1}}{\|\mu_t-\mu_{t-1}\|}, \\
@@ -476,7 +476,7 @@ Tetouan & $-0.339$ & $0.328$ & $0.218$ & $0.305$ & $0.335$ \\
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=\columnwidth]{figures/figure_4_tetouan_deployment.png}
+  \includegraphics[width=\columnwidth]{figures/figure_4_tetouan_deployment.pdf}
   \caption{Tetouan frozen deployment over six monthly blocks. DTR stays below both standard and isotropic training throughout the deployment horizon, with the largest gap in the late-summer high-risk regime.}
   \label{fig:tetouan}
 \end{figure}
@@ -491,10 +491,10 @@ The low-rank story also depends on estimating a drift subspace. The synthetic mi
 \section{Conclusion}
 Long-horizon robustness under dynamic shift is best viewed as a tangent-control problem. The data stream contributes a velocity, the model contributes a local linear map, and deployment volatility is governed by their interaction. The central message is simple. Deployment becomes unstable when environmental motion repeatedly passes through directions to which the model is locally sensitive. The theorem package makes this precise, DTR acts on it, and the experiments show where that directional geometry is strongest: controlled low-rank drift, target-orthogonal sensor drift on Air Quality, and the Tetouan frozen deployment. Air Quality adds the complementary lesson that estimating $V$ is part of the method: drift-aligned regularization helps when the subspace captures nuisance motion, but an overly broad subspace can flatten useful predictive signal.
 
-That positioning matters. Relative to temporal-shift benchmarks and static shift analyses \cite{ben-david-shift,koh-wilds,yao-wildtime,han-temporal}, the paper contributes a theorem-backed mechanism: deployment trajectories differ across frozen models because the same environmental motion can encounter very different directional tangent gains. Relative to test-time adaptation \cite{sun-ttt,wang-tent,gui-atta}, it studies the frozen-model regime in which that geometry can be analyzed directly. Relative to Jacobian smoothing and shift detection \cite{sokolic-jacobian,kim-jacobian,rabanser-shift,cooper-allerton2024}, it ties training-time regularization and deployment-time monitoring to the same directional notion of drift sensitivity. If future deployment motion is concentrated in a few directions, then robustness should be enforced, measured, and monitored in those directions rather than spread uniformly over the ambient space.
+Relative to temporal-shift benchmarks and static shift analyses \cite{ben-david-shift,koh-wilds,yao-wildtime,han-temporal}, the paper contributes a theorem-backed mechanism: the same environmental motion can encounter different directional tangent gains across frozen models. Relative to test-time adaptation \cite{sun-ttt,wang-tent,gui-atta}, it studies the frozen-model regime directly. Relative to Jacobian smoothing and shift detection \cite{sokolic-jacobian,kim-jacobian,rabanser-shift,cooper-allerton2024}, it ties training-time regularization and monitoring to the same directional drift sensitivity. If future motion is low-dimensional, robustness should be enforced, measured, and monitored in those directions rather than spread uniformly over the ambient space.
 
 \section*{Acknowledgment}
-The author used standard computational tools and programming libraries, including Python packages and the AI-assisted coding tools Codex and Claude Code, to support code development, algebraic checks, proof-verification scaffolding, repository hygiene, and editorial refinement. All mathematical statements, experiments, code, interpretations, and final text were conceptualized, reviewed, and finalized by the author, who is solely responsible for the content. The author received no external funding and reports no conflicts of interest.
+The author used Python packages and AI-assisted coding tools, including Codex and Claude Code, for code development, algebraic checks, proof-verification scaffolding, repository hygiene, and editorial refinement. The author conceptualized, reviewed, and finalized all mathematical statements, experiments, code, interpretations, and final text and is solely responsible for the content. The author received no external funding and reports no conflicts of interest.
 
 \balance
 \bibliographystyle{IEEEtran}
