@@ -6,6 +6,8 @@ Professional package for the manuscript, experiments, and figures accompanying:
 
 **[View the live project site](https://jonland82.github.io/jacobian-velocity-bounds/)**
 
+**[Read the arXiv paper](https://arxiv.org/abs/2605.04932)**
+
 **[Read the manuscript (PDF)](./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf)**
 
 **[Open the proof verification report](./proof_verification/verification_report.html)**
@@ -336,8 +338,11 @@ If you use this repository, cite the manuscript:
   title   = {Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift},
   author  = {Landers, Jonathan R.},
   year    = {2026},
-  note    = {Manuscript},
-  url     = {./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf}
+  eprint  = {2605.04932},
+  archivePrefix = {arXiv},
+  primaryClass = {stat.ML},
+  note    = {arXiv:2605.04932},
+  url     = {https://arxiv.org/abs/2605.04932}
 }
 ```
 
