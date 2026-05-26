@@ -253,14 +253,14 @@ With a fixed subspace estimate $V$, we train using
 The objective in \eqref{eq:dtr-objective} is not global Jacobian smoothing. It is a directional sensitivity constraint. The model is flattened only along directions expected to dominate future drift. Corollary~\ref{cor:lowrank} explains why this is the quantity worth shrinking, and it distinguishes DTR from isotropic Jacobian penalties that aim at broader smoothness or margin control \cite{sokolic-jacobian,kim-jacobian}. It is also conceptually adjacent to empirical sensitivity analyses that track related Jacobian quantities without imposing directional structure \cite{novak-sensitivity}.
 
 \subsection{Monitoring score}
-The same geometry yields a theorem-motivated proxy diagnostic. With current drift-subspace estimate $V_t$, define speed $s_t$, gain $g_t$, and product $h_t$ by
+The same geometry yields a theorem-motivated proxy diagnostic. With current drift-subspace estimate $V_t$, define speed $s_t$, gain $G_t$, and product $h_t$ by
 \begin{equation}
 \label{eq:hazard-score}
 \begin{aligned}
 s_t&:=\|\Delta\mu_t\|/\Delta,
 &
-g_t&:=\E\|J_f(X_t)V_t\|_F^2, \\
-h_t&:=s_t^2g_t.
+G_t&:=\E\|J_f(X_t)V_t\|_F^2, \\
+h_t&:=s_t^2G_t.
 \end{aligned}
 \end{equation}
 In the experiments we also report short rolling averages of $h_t$, which better match the accumulated-energy form of the volatility bound.
@@ -297,7 +297,7 @@ s_t^2=|\bar a_t|^2+\|\bar\rho_t\|^2
 \]
 and
 \[
-g_t=\cos^2\theta_t\,G_{\parallel,t}
+G_t=\cos^2\theta_t\,G_{\parallel,t}
 \;+\;
 \sin^2\theta_t\,G_{\perp,t}
 \;+\;
@@ -409,7 +409,7 @@ The UCI Air Quality dataset records hourly outputs of a five-sensor gas array to
 Because this dataset is explicitly a sensor-drift setting, the primary Air Quality DTR subspace is estimated from the sensor channels only. We first remove the supervised linear target direction learned on the training window. We then take the top two singular vectors of consecutive biweekly mean-shift vectors in that target-orthogonal sensor space and embed them back into the full feature space. This keeps weather covariates available to the predictor while avoiding a DTR penalty on the main target-predictive sensor direction. We compare standard training, isotropic Jacobian regularization, and DTR over $10$ matched random seeds. For reporting the deployment monitor, we use the blockwise rank-$1$ diagnostic: if $\mu_t$ is the standardized covariate mean in block $t$ and $\Delta=1$ block, then
 \begin{align*}
 s_t &= \|\mu_t-\mu_{t-1}\|, & v_t &= \frac{\mu_t-\mu_{t-1}}{\|\mu_t-\mu_{t-1}\|}, \\
-g_t &= \E[(\nabla f_\theta(X_t)^\top v_t)^2], & h_t &= s_t^2 g_t.
+G_t &= \E[(\nabla f_\theta(X_t)^\top v_t)^2], & h_t &= s_t^2 G_t.
 \end{align*}
 We then test a second real benchmark on the UCI Tetouan City power-consumption dataset \cite{uci-tetouan}. It is a ten-minute 2017 weather-and-load series with three zone-level targets; we predict Zone~1 power consumption from temperature, humidity, wind speed, and diffuse-flow channels. Using the same frozen-model protocol, we train on January--April, validate on May--June, and deploy on July--December in six monthly blocks, yielding $17280/8784/26352$ training/validation/deployment points.
 
@@ -464,7 +464,7 @@ Finally, we evaluated the matched hazard score against block-to-block risk movem
 \scriptsize
 \begin{tabular}{lrrrrr}
 \toprule
-Dataset & Drift $s_t^2$ & Gain $g_t$ & Product $h_t$ & Roll-2 $h_t$ & Roll-3 $h_t$ \\
+Dataset & Drift $s_t^2$ & Gain $G_t$ & Product $h_t$ & Roll-2 $h_t$ & Roll-3 $h_t$ \\
 \midrule
 Air Quality & $0.169$ & $-0.099$ & $0.044$ & $0.307$ & $0.353$ \\
 Tetouan & $-0.339$ & $0.328$ & $0.218$ & $0.305$ & $0.335$ \\
