@@ -75,15 +75,15 @@ $$ \dot X_t = Va_t + \rho_t, \qquad V^\top V = I_k, $$
 
 then the controllable term separates into Jacobian energy parallel and orthogonal to the drift subspace. The corresponding anisotropic objective is
 
-$$
+```math
 \begin{aligned}
 \mathcal{L}_{\mathrm{A\text{-}DTR}}(\theta)
 &= \mathbb{E}_{(X,Y)}[\ell(f_\theta(X),Y)] \\
-&\quad + \lambda_\parallel \mathbb{E}_X\|J_f(X)V\|_F^2
-+ \lambda_\perp \mathbb{E}_X\|J_f(X)P_V^\perp\|_F^2,
+&\quad + \lambda_\parallel \mathbb{E}_X\|J_f(X)V\|_F^2 \\
+&\quad + \lambda_\perp \mathbb{E}_X\|J_f(X)P_V^\perp\|_F^2,
 \qquad 0\leq\lambda_\perp\leq\lambda_\parallel.
 \end{aligned}
-$$
+```
 
 Here $P_V=VV^\top$ and $P_V^\perp=I-P_V$. This family contains standard training when both weights vanish, pure DTR when $\lambda_\perp=0$, and isotropic Jacobian smoothing when $\lambda_\perp=\lambda_\parallel$. Interior settings retain stronger control along expected drift while adding a weaker orthogonal guardrail for residual motion or subspace error.
 
