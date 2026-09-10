@@ -218,6 +218,17 @@
       padding: .75rem .85rem; border-radius: 14px; background: rgba(255,255,255,.66);
       border: 1px solid rgba(16,21,34,.06);
     }
+    .micro-equation {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: .12rem;
+      scrollbar-width: thin;
+    }
+    .micro-equation mjx-container[display="true"] {
+      margin: .3rem 0 0 !important;
+      font-size: 86% !important;
+      min-width: max-content;
+    }
     .micro strong, .highlight strong { display: block; margin-bottom: .25rem; }
     .micro, .highlight, .card li, .repo-list li, .result-list li, .linkbox { font-size: .9rem; }
     .section { padding: .5rem 0 1.45rem; }
@@ -485,7 +496,15 @@
           <div class="microgrid">
             <div class="micro">
               <strong>Anisotropic DTR</strong>
-              <div>\(\mathcal{L}_{\mathrm{A\text{-}DTR}}=\mathbb{E}\ell+\lambda_\parallel\mathbb{E}\|J_fV\|_F^2+\lambda_\perp\mathbb{E}\|J_fP_V^\perp\|_F^2\)</div>
+              <div class="micro-equation">
+                \[
+                \begin{aligned}
+                \mathcal{L}_{\mathrm{A\text{-}DTR}} &= \mathbb{E}\ell \\
+                &\quad + \lambda_\parallel\mathbb{E}\|J_fV\|_F^2 \\
+                &\quad + \lambda_\perp\mathbb{E}\|J_fP_V^\perp\|_F^2
+                \end{aligned}
+                \]
+              </div>
             </div>
             <div class="micro">
               <strong>Matched monitor</strong>
