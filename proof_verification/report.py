@@ -355,15 +355,15 @@ def write_html_report(results: list[CheckResult], output_path: Path, repo_root: 
         <div class="hero-copy">
           <div class="hero-top">
             <div class="eyebrow">Symbolic and Numerical Checks</div>
-            <h1>Formal verification for the theorem chain, monitoring bookkeeping, and cached experiment bounds.</h1>
+            <h1>Formal verification for the complete theorem chain, anisotropic corollary, monitoring bookkeeping, and cached experiment bounds.</h1>
             <div class="hero-meta">
               Generated {escape(generated_at)}<br>
               Python {escape(platform.python_version())} on {escape(platform.platform())}
             </div>
             <p>
               This report verifies the paper's main mathematical steps in three ways: exact symbolic identities
-              for the theorem package and the rank-1 hazard-score proposition, numerical stress tests for the low-rank inequalities, and direct consistency
-              checks against the cached experiment summaries already committed in the repository.
+              for the theorem package and conditional-risk decomposition, numerical stress tests for the low-rank and anisotropic inequalities, and direct consistency
+              checks against the cached experiment summaries in the repository.
             </p>
           </div>
           <div class="hero-bottom">
@@ -388,24 +388,24 @@ def write_html_report(results: list[CheckResult], output_path: Path, repo_root: 
             <li>
               <strong>Exact symbolic checks</strong>
               Sharpness of the Poincar\u00e9 bound, a deterministic equality case for the Jacobian-velocity theorem,
-              the composition-chain identity, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
+              the composition and conditional-risk remainder identities, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </li>
             <li>
               <strong>Numerical checks</strong>
-              Randomized low-rank stress tests and a nontrivial expectation example verifying the full inequality chain.
+              Randomized low-rank and anisotropic parallel--orthogonal stress tests, plus a nontrivial expectation example verifying the full inequality chain.
             </li>
             <li>
               <strong>Artifact checks</strong>
-              Row-by-row validation that the cached synthetic experiment summaries satisfy the stored upper bounds.
+              Row-by-row validation of the cached synthetic bounds and the conditional-risk remainder experiment.
             </li>
           </ul>
         </div>
       </div>
     </section>
 
-    {_render_section("exact", "Exact Symbolic Checks", "These checks use SymPy to simplify the main algebraic identities and sharp examples exactly, including the rank-1 hazard-score bookkeeping proposition.", exact)}
-    {_render_section("numerical", "Numerical Stress Tests", "These checks verify the theorem chain and low-rank inequalities in settings where exact symbolic proof is less natural but dense numerical evaluation is informative.", numerical)}
-    {_render_section("artifacts", "Cached Experiment Artifact Checks", "These checks validate the inequality columns stored in the committed CSV summaries that drive the synthetic theorem and directional-ablation figures.", artifacts)}
+    {_render_section("exact", "Exact Symbolic Checks", "These checks use SymPy to simplify the theorem, conditional-risk remainder, and rank-1 monitoring identities exactly.", exact)}
+    {_render_section("numerical", "Numerical Stress Tests", "These checks verify the theorem chain and the low-rank and anisotropic inequalities where dense numerical evaluation is informative.", numerical)}
+    {_render_section("artifacts", "Cached Experiment Artifact Checks", "These checks validate the inequality columns behind the synthetic, directional-ablation, and conditional-risk remainder results.", artifacts)}
   </main>
 
   <footer class="footer">
@@ -422,4 +422,5 @@ def write_html_report(results: list[CheckResult], output_path: Path, repo_root: 
 </body>
 </html>
 """
+    html = "\n".join(line.rstrip() for line in html.splitlines()) + "\n"
     output_path.write_text(html, encoding="utf-8")

@@ -135,6 +135,49 @@ def check_composition_chain_rule() -> CheckResult:
     )
 
 
+def check_conditional_risk_remainder() -> CheckResult:
+    x = sp.symbols("x", real=True)
+    beta, gamma, q = sp.symbols("beta gamma q", nonnegative=True)
+    score = sp.Function("f")(x)
+    eta = sp.Function("eta")(x)
+
+    conditional_ce = sp.log(1 + sp.exp(score)) - eta * score
+    model_term = (1 / (1 + sp.exp(-score)) - eta) * sp.diff(score, x)
+    remainder_term = -sp.diff(eta, x) * score
+    decomposition_gap = sp.simplify(
+        sp.diff(conditional_ce, x) - model_term - remainder_term
+    )
+
+    separated_gap = sp.expand(
+        2 * beta**2 * gamma**2 + 2 * q**2 - (beta * gamma + q) ** 2
+    )
+    square_gap = sp.simplify(separated_gap - (beta * gamma - q) ** 2)
+
+    passed = decomposition_gap == 0 and square_gap == 0
+    return CheckResult(
+        slug="conditional-risk-remainder",
+        title="Conditional-risk remainder identity",
+        category="exact symbolic",
+        method="sympy",
+        passed=passed,
+        summary="The conditional cross-entropy derivative splits exactly into a score-mediated term and the remainder used in Proposition 1.",
+        details=[
+            "Wrote binary conditional risk as softplus(f(x)) - eta(x) f(x).",
+            "Verified its derivative equals (sigma(f)-eta) f' - eta' f exactly.",
+            "Verified the separated bound because 2 beta^2 gamma^2 + 2 q^2 - (beta gamma + q)^2 = (beta gamma - q)^2 >= 0.",
+        ],
+        metrics={
+            "decomposition_gap": sp.sstr(decomposition_gap),
+            "separated_square_gap": sp.sstr(square_gap),
+        },
+        math_blocks=[
+            r"g(x)=\log(1+e^{f(x)})-\eta(x)f(x)",
+            r"g'(x)=(\sigma(f(x))-\eta(x))f'(x)-\eta'(x)f(x)",
+            r"2\beta^2\gamma^2+2q^2-(\beta\gamma+q)^2=(\beta\gamma-q)^2\ge 0",
+        ],
+    )
+
+
 def check_hazard_rank1_bookkeeping() -> CheckResult:
     a, r, c, s = sp.symbols("a r c s", real=True)
     m11, m12, m21, m22 = sp.symbols("m11 m12 m21 m22", real=True)
@@ -166,7 +209,7 @@ def check_hazard_rank1_bookkeeping() -> CheckResult:
         category="exact symbolic",
         method="sympy",
         passed=passed,
-        summary="The pointwise algebra behind Proposition 1 is exact; the expectation form follows by averaging these identities.",
+        summary="The pointwise algebra behind Proposition 2 is exact; the expectation form follows by averaging these identities.",
         details=[
             "Worked in an orthonormal basis with v = e1, u = e2, Delta mu / Delta = (a, r), and a generic 2 x 2 Jacobian matrix.",
             "Verified s_t^2 = |a|^2 + |r|^2 from the orthogonal block-drift decomposition.",
@@ -297,6 +340,97 @@ def check_corollary_randomized(trials: int = 5000, seed: int = 7) -> CheckResult
     )
 
 
+def check_anisotropic_corollary(trials: int = 5000, seed: int = 19) -> CheckResult:
+    rng = np.random.default_rng(seed)
+    d = 8
+    k = 3
+    out_dim = 4
+
+    max_parallel_violation = -math.inf
+    max_orthogonal_violation = -math.inf
+    max_path_violation = -math.inf
+    max_anisotropic_violation = -math.inf
+    max_remainder_violation = -math.inf
+
+    for _ in range(trials):
+        v_basis, _ = np.linalg.qr(rng.normal(size=(d, k)), mode="reduced")
+        projector_perp = np.eye(d) - v_basis @ v_basis.T
+        matrix = rng.normal(size=(out_dim, d))
+        coeff = rng.normal(size=k)
+        rho = projector_perp @ rng.normal(size=d)
+
+        coeff_sq = float(np.linalg.norm(coeff) ** 2)
+        rho_sq = float(np.linalg.norm(rho) ** 2)
+        a_cap = coeff_sq + float(rng.uniform(0.0, 2.0))
+        r_cap = rho_sq + float(rng.uniform(0.0, 2.0))
+        e_parallel = float(np.linalg.norm(matrix @ v_basis, ord="fro") ** 2)
+        e_perp = float(np.linalg.norm(matrix @ projector_perp, ord="fro") ** 2)
+
+        b_parallel = e_parallel * coeff_sq
+        b_residual = float(np.linalg.norm(matrix @ rho) ** 2)
+        energy_cap = a_cap * e_parallel + r_cap * e_perp
+        path_energy = float(np.linalg.norm(matrix @ (v_basis @ coeff + rho)) ** 2)
+
+        beta = float(rng.uniform(0.1, 2.0))
+        q_energy = float(rng.uniform(0.0, 3.0))
+        anisotropic_lhs = 2 * beta**2 * (b_parallel + b_residual)
+        anisotropic_rhs = 2 * beta**2 * energy_cap
+        remainder_lhs = 4 * beta**2 * (b_parallel + b_residual) + 2 * q_energy
+        remainder_rhs = 4 * beta**2 * energy_cap + 2 * q_energy
+
+        max_parallel_violation = max(
+            max_parallel_violation, b_parallel - a_cap * e_parallel
+        )
+        max_orthogonal_violation = max(
+            max_orthogonal_violation, b_residual - r_cap * e_perp
+        )
+        max_path_violation = max(max_path_violation, path_energy - 2 * energy_cap)
+        max_anisotropic_violation = max(
+            max_anisotropic_violation, anisotropic_lhs - anisotropic_rhs
+        )
+        max_remainder_violation = max(
+            max_remainder_violation, remainder_lhs - remainder_rhs
+        )
+
+    tolerance = 1e-10
+    passed = all(
+        value <= tolerance
+        for value in (
+            max_parallel_violation,
+            max_orthogonal_violation,
+            max_path_violation,
+            max_anisotropic_violation,
+            max_remainder_violation,
+        )
+    )
+    return CheckResult(
+        slug="anisotropic-corollary",
+        title="Anisotropic parallel--orthogonal corollary",
+        category="numerical",
+        method="numpy randomized stress test",
+        passed=passed,
+        summary="The parallel and orthogonal energy caps imply both anisotropic bounds, including the explicit remainder term.",
+        details=[
+            "Generated random orthonormal drift subspaces and their complementary projectors.",
+            "Checked B_V <= A E_parallel and B_rho <= R E_perp under sampled velocity-energy caps.",
+            "Checked the no-remainder and remainder versions of the anisotropic corollary over 5000 trials.",
+        ],
+        metrics={
+            "trials": trials,
+            "max_parallel_violation": _to_builtin(max_parallel_violation),
+            "max_orthogonal_violation": _to_builtin(max_orthogonal_violation),
+            "max_path_energy_violation": _to_builtin(max_path_violation),
+            "max_anisotropic_bound_violation": _to_builtin(max_anisotropic_violation),
+            "max_remainder_bound_violation": _to_builtin(max_remainder_violation),
+        },
+        math_blocks=[
+            r"B_V\le A\mathcal E_\parallel,\qquad B_\rho\le R\mathcal E_\perp",
+            r"\mathrm{Var}_U(r(U))\le\frac{2\beta^2T}{\pi^2}(A\mathcal E_\parallel+R\mathcal E_\perp)",
+            r"\mathrm{Var}_U(r(U))\le\frac{4\beta^2T}{\pi^2}(A\mathcal E_\parallel+R\mathcal E_\perp)+\frac{2T}{\pi^2}Q",
+        ],
+    )
+
+
 def check_theorem_numeric_expectation() -> CheckResult:
     horizon = 1.0
     times = np.linspace(0.0, horizon, 4001)
@@ -401,14 +535,69 @@ def _artifact_check(
     )
 
 
+def check_conditional_remainder_artifact(repo_root: Path) -> CheckResult:
+    relative_path = "figures/conditional_remainder_raw.csv"
+    frame = pd.read_csv(repo_root / relative_path)
+    tolerance = 1e-12
+
+    residual_slack = frame["residual_bound"] - frame["volatility"]
+    separated_slack = frame["separated_bound"] - frame["volatility"]
+    derivative_slack = frame["derivative_bound"] - frame["volatility"]
+    shifted_dtr = frame[(frame["method"] == "dtr") & (frame["conditional_slope"] > 0)]
+
+    jacobian_failures = int((~shifted_dtr["jacobian_bound_holds"].astype(bool)).sum())
+    residual_holds = int(shifted_dtr["residual_bound_holds"].astype(bool).sum())
+    derivative_holds = int(shifted_dtr["derivative_bound_holds"].astype(bool).sum())
+    shifted_count = int(len(shifted_dtr))
+
+    passed = (
+        float(residual_slack.min()) >= -tolerance
+        and float(separated_slack.min()) >= -tolerance
+        and float(derivative_slack.min()) >= -tolerance
+        and shifted_count == 400
+        and jacobian_failures == shifted_count
+        and residual_holds == shifted_count
+        and derivative_holds == shifted_count
+    )
+    return CheckResult(
+        slug="conditional-remainder-artifact",
+        title="Conditional-risk remainder experiment",
+        category="artifact consistency",
+        method="pandas cached-summary validation",
+        passed=passed,
+        summary="The cached stress test reproduces the paper's boundary claim: the Jacobian-only bound fails while the coupled remainder bound holds.",
+        details=[
+            f"Loaded {len(frame)} rows from {relative_path}.",
+            "Checked the derivative-energy, coupled remainder, and separated remainder bounds row by row.",
+            "Checked all 400 DTR runs with nonconstant conditional risk against the paper's reported hold/failure pattern.",
+        ],
+        metrics={
+            "rows": int(len(frame)),
+            "shifted_dtr_runs": shifted_count,
+            "jacobian_only_failures": jacobian_failures,
+            "coupled_remainder_holds": residual_holds,
+            "derivative_bound_holds": derivative_holds,
+            "min_residual_bound_slack": _to_builtin(float(residual_slack.min())),
+            "min_separated_bound_slack": _to_builtin(float(separated_slack.min())),
+            "min_derivative_bound_slack": _to_builtin(float(derivative_slack.min())),
+        },
+        math_blocks=[
+            r"\mathrm{Var}_U(r(U))\le\frac{T}{\pi^2}\int_0^T\mathbb E[(\beta\gamma_t+q_t)^2]dt",
+            r"\mathrm{Var}_U(r(U))\le\frac{2\beta^2T}{\pi^2}\int_0^T\mathbb E\gamma_t^2dt+\frac{2T}{\pi^2}\int_0^T\mathbb E q_t^2dt",
+        ],
+    )
+
+
 def run_all_checks(repo_root: Path) -> list[CheckResult]:
     return [
         check_poincare_sharpness(),
         check_jacobian_velocity_equality(),
         check_composition_chain_rule(),
+        check_conditional_risk_remainder(),
         check_hazard_rank1_bookkeeping(),
         check_cross_entropy_derivative_bound(),
         check_corollary_randomized(),
+        check_anisotropic_corollary(),
         check_theorem_numeric_expectation(),
         _artifact_check(
             repo_root,
@@ -428,4 +617,5 @@ def run_all_checks(repo_root: Path) -> list[CheckResult]:
             "Misspecification bounds",
             "Every cached misspecification run preserves the volatility upper bounds under subspace rotation.",
         ),
+        check_conditional_remainder_artifact(repo_root),
     ]

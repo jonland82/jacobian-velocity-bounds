@@ -111,13 +111,13 @@ This bookkeeping statement shows how block averaging, residual drift, and angula
 
 ## Proof Verification Suite
 
-The repository also includes a dedicated verification package in [`proof_verification/`](./proof_verification/) that checks the paper's main mathematics, including the hazard-score bookkeeping proposition, independently of the prose presentation and experiment plots.
+The repository also includes a dedicated verification package in [`proof_verification/`](./proof_verification/) that checks the paper's main mathematics, including the conditional-risk remainder, anisotropic corollary, and hazard-score bookkeeping proposition, independently of the prose presentation and experiment plots.
 
 The verifier covers:
 
-- exact symbolic checks for the Poincar&eacute;/Wirtinger step, a deterministic equality case for the Jacobian-velocity theorem, the composition case behind A3, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound;
-- numerical stress tests for the low-rank corollary inequalities and for the full inequality chain in a smooth expectation-based example;
-- artifact checks against the cached synthetic CSV summaries under [`figures/`](./figures/).
+- exact symbolic checks for the Poincar&eacute;/Wirtinger step, a deterministic equality case for the Jacobian-velocity theorem, the composition case behind A3, the conditional-risk remainder identity, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound;
+- numerical stress tests for the low-rank and anisotropic parallel--orthogonal corollaries and for the full inequality chain in a smooth expectation-based example;
+- artifact checks against the cached synthetic and conditional-risk remainder summaries under [`figures/`](./figures/).
 
 Running the verifier generates:
 

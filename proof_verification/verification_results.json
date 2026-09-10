@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-09-10T19:28:35.489069+00:00",
+  "generated_at_utc": "2026-09-10T19:46:16.639374+00:00",
   "python": "3.13.5 | packaged by Anaconda, Inc. | (main, Jun 12 2025, 16:37:03) [MSC v.1929 64 bit (AMD64)]",
   "platform": "Windows-11-10.0.26200-SP0",
   "results": [
@@ -71,12 +71,34 @@
       ]
     },
     {
+      "slug": "conditional-risk-remainder",
+      "title": "Conditional-risk remainder identity",
+      "category": "exact symbolic",
+      "method": "sympy",
+      "passed": true,
+      "summary": "The conditional cross-entropy derivative splits exactly into a score-mediated term and the remainder used in Proposition 1.",
+      "details": [
+        "Wrote binary conditional risk as softplus(f(x)) - eta(x) f(x).",
+        "Verified its derivative equals (sigma(f)-eta) f' - eta' f exactly.",
+        "Verified the separated bound because 2 beta^2 gamma^2 + 2 q^2 - (beta gamma + q)^2 = (beta gamma - q)^2 >= 0."
+      ],
+      "metrics": {
+        "decomposition_gap": "0",
+        "separated_square_gap": "0"
+      },
+      "math_blocks": [
+        "g(x)=\\log(1+e^{f(x)})-\\eta(x)f(x)",
+        "g'(x)=(\\sigma(f(x))-\\eta(x))f'(x)-\\eta'(x)f(x)",
+        "2\\beta^2\\gamma^2+2q^2-(\\beta\\gamma+q)^2=(\\beta\\gamma-q)^2\\ge 0"
+      ]
+    },
+    {
       "slug": "hazard-rank1-bookkeeping",
       "title": "Rank-1 hazard-score bookkeeping",
       "category": "exact symbolic",
       "method": "sympy",
       "passed": true,
-      "summary": "The pointwise algebra behind Proposition 1 is exact; the expectation form follows by averaging these identities.",
+      "summary": "The pointwise algebra behind Proposition 2 is exact; the expectation form follows by averaging these identities.",
       "details": [
         "Worked in an orthonormal basis with v = e1, u = e2, Delta mu / Delta = (a, r), and a generic 2 x 2 Jacobian matrix.",
         "Verified s_t^2 = |a|^2 + |r|^2 from the orthogonal block-drift decomposition.",
@@ -138,6 +160,32 @@
         "\\|u+w\\|^2 \\le 2\\|u\\|^2 + 2\\|w\\|^2",
         "\\|MVa\\|^2 \\le \\|MV\\|_F^2 \\|a\\|^2",
         "\\begin{aligned} \\|M(Va+\\rho)\\|^2 &\\le 2\\|MV\\|_F^2\\|a\\|^2 \\\\ &\\quad + 2\\|M\\rho\\|^2 \\end{aligned}"
+      ]
+    },
+    {
+      "slug": "anisotropic-corollary",
+      "title": "Anisotropic parallel--orthogonal corollary",
+      "category": "numerical",
+      "method": "numpy randomized stress test",
+      "passed": true,
+      "summary": "The parallel and orthogonal energy caps imply both anisotropic bounds, including the explicit remainder term.",
+      "details": [
+        "Generated random orthonormal drift subspaces and their complementary projectors.",
+        "Checked B_V <= A E_parallel and B_rho <= R E_perp under sampled velocity-energy caps.",
+        "Checked the no-remainder and remainder versions of the anisotropic corollary over 5000 trials."
+      ],
+      "metrics": {
+        "trials": 5000,
+        "max_parallel_violation": -0.0012560208312955012,
+        "max_orthogonal_violation": -5.003739661384925,
+        "max_path_energy_violation": -36.689649258696356,
+        "max_anisotropic_bound_violation": -0.862401641527793,
+        "max_remainder_bound_violation": -1.7248032830555857
+      },
+      "math_blocks": [
+        "B_V\\le A\\mathcal E_\\parallel,\\qquad B_\\rho\\le R\\mathcal E_\\perp",
+        "\\mathrm{Var}_U(r(U))\\le\\frac{2\\beta^2T}{\\pi^2}(A\\mathcal E_\\parallel+R\\mathcal E_\\perp)",
+        "\\mathrm{Var}_U(r(U))\\le\\frac{4\\beta^2T}{\\pi^2}(A\\mathcal E_\\parallel+R\\mathcal E_\\perp)+\\frac{2T}{\\pi^2}Q"
       ]
     },
     {
@@ -233,6 +281,33 @@
       },
       "math_blocks": [
         "\\begin{aligned} \\mathrm{volatility} &\\le \\mathrm{bound\\_fd} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_chain} \\\\ \\mathrm{volatility} &\\le \\mathrm{bound\\_jv} \\end{aligned}"
+      ]
+    },
+    {
+      "slug": "conditional-remainder-artifact",
+      "title": "Conditional-risk remainder experiment",
+      "category": "artifact consistency",
+      "method": "pandas cached-summary validation",
+      "passed": true,
+      "summary": "The cached stress test reproduces the paper's boundary claim: the Jacobian-only bound fails while the coupled remainder bound holds.",
+      "details": [
+        "Loaded 1000 rows from figures/conditional_remainder_raw.csv.",
+        "Checked the derivative-energy, coupled remainder, and separated remainder bounds row by row.",
+        "Checked all 400 DTR runs with nonconstant conditional risk against the paper's reported hold/failure pattern."
+      ],
+      "metrics": {
+        "rows": 1000,
+        "shifted_dtr_runs": 400,
+        "jacobian_only_failures": 400,
+        "coupled_remainder_holds": 400,
+        "derivative_bound_holds": 400,
+        "min_residual_bound_slack": 8.333598130192387e-08,
+        "min_separated_bound_slack": 1.666727618633099e-07,
+        "min_derivative_bound_slack": 1.6786166073543756e-13
+      },
+      "math_blocks": [
+        "\\mathrm{Var}_U(r(U))\\le\\frac{T}{\\pi^2}\\int_0^T\\mathbb E[(\\beta\\gamma_t+q_t)^2]dt",
+        "\\mathrm{Var}_U(r(U))\\le\\frac{2\\beta^2T}{\\pi^2}\\int_0^T\\mathbb E\\gamma_t^2dt+\\frac{2T}{\\pi^2}\\int_0^T\\mathbb E q_t^2dt"
       ]
     }
   ]

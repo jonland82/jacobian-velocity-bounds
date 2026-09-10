@@ -394,7 +394,7 @@
         padding-inline: .35rem;
       }
     }
-  
+
 
     .badge {
       display: inline-flex;
@@ -585,15 +585,15 @@
         <div class="hero-copy">
           <div class="hero-top">
             <div class="eyebrow">Symbolic and Numerical Checks</div>
-            <h1>Formal verification for the theorem chain, monitoring bookkeeping, and cached experiment bounds.</h1>
+            <h1>Formal verification for the complete theorem chain, anisotropic corollary, monitoring bookkeeping, and cached experiment bounds.</h1>
             <div class="hero-meta">
-              Generated 2026-09-10 15:28:35 Eastern Daylight Time<br>
+              Generated 2026-09-10 15:46:16 Eastern Daylight Time<br>
               Python 3.13.5 on Windows-11-10.0.26200-SP0
             </div>
             <p>
               This report verifies the paper's main mathematical steps in three ways: exact symbolic identities
-              for the theorem package and the rank-1 hazard-score proposition, numerical stress tests for the low-rank inequalities, and direct consistency
-              checks against the cached experiment summaries already committed in the repository.
+              for the theorem package and conditional-risk decomposition, numerical stress tests for the low-rank and anisotropic inequalities, and direct consistency
+              checks against the cached experiment summaries in the repository.
             </p>
           </div>
           <div class="hero-bottom">
@@ -602,32 +602,32 @@
               <a class="btn secondary" href="../index.html">Back to Project Site</a>
             </div>
             <div class="summary-grid">
-              
+
         <div class="summary-card">
-          <strong>10</strong>
+          <strong>13</strong>
           <span>Total</span>
         </div>
-        
+
         <div class="summary-card">
-          <strong>10</strong>
+          <strong>13</strong>
           <span>Passed</span>
         </div>
-        
+
         <div class="summary-card">
-          <strong>5</strong>
+          <strong>6</strong>
           <span>Exact Symbolic</span>
         </div>
-        
-        <div class="summary-card">
-          <strong>2</strong>
-          <span>Numerical</span>
-        </div>
-        
+
         <div class="summary-card">
           <strong>3</strong>
+          <span>Numerical</span>
+        </div>
+
+        <div class="summary-card">
+          <strong>4</strong>
           <span>Artifact Consistency</span>
         </div>
-        
+
             </div>
             <div class="status-line pass">All verification checks passed.</div>
           </div>
@@ -643,22 +643,22 @@
             <li>
               <strong>Exact symbolic checks</strong>
               Sharpness of the Poincaré bound, a deterministic equality case for the Jacobian-velocity theorem,
-              the composition-chain identity, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
+              the composition and conditional-risk remainder identities, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </li>
             <li>
               <strong>Numerical checks</strong>
-              Randomized low-rank stress tests and a nontrivial expectation example verifying the full inequality chain.
+              Randomized low-rank and anisotropic parallel--orthogonal stress tests, plus a nontrivial expectation example verifying the full inequality chain.
             </li>
             <li>
               <strong>Artifact checks</strong>
-              Row-by-row validation that the cached synthetic experiment summaries satisfy the stored upper bounds.
+              Row-by-row validation of the cached synthetic bounds and the conditional-risk remainder experiment.
             </li>
           </ul>
         </div>
       </div>
     </section>
 
-    
+
       <section class="section" id="exact">
         <div class="wrap">
           <div class="section-head">
@@ -666,10 +666,10 @@
               <div class="kicker">Verification Block</div>
               <h2>Exact Symbolic Checks</h2>
             </div>
-            <p>These checks use SymPy to simplify the main algebraic identities and sharp examples exactly, including the rank-1 hazard-score bookkeeping proposition.</p>
+            <p>These checks use SymPy to simplify the theorem, conditional-risk remainder, and rank-1 monitoring identities exactly.</p>
           </div>
           <div class="check-grid">
-            
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">sympy</span>
@@ -681,7 +681,7 @@
         <ul class="detail-list"><li>Used r(t) = cos(pi t / T), the first zero-mean eigenfunction on [0, T].</li><li>Verified the temporal mean is exactly zero.</li><li>Verified Var_U(r(U)) and (T / pi^2) int_0^T (r&#x27;(t))^2 dt simplify to the same closed form.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>mean</td><td><code>0</code></td></tr><tr><td>variance</td><td><code>1/2</code></td></tr><tr><td>rhs</td><td><code>1/2</code></td></tr><tr><td>gap</td><td><code>0</code></td></tr></tbody></table></div>
       </article>
-    
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">sympy</span>
@@ -693,7 +693,7 @@
         <ul class="detail-list"><li>The deployment path is deterministic, so the expectation operators collapse exactly.</li><li>Because g = f, Assumption A3 holds with beta = 1 and |grad g dot Xdot| = |J_f Xdot|.</li><li>The Jacobian-velocity right-hand side equals the exact volatility from the lemma-sharp example.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>variance</td><td><code>1/2</code></td></tr><tr><td>jv rhs</td><td><code>1/2</code></td></tr><tr><td>gap</td><td><code>0</code></td></tr></tbody></table></div>
       </article>
-    
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">sympy</span>
@@ -705,19 +705,31 @@
         <ul class="detail-list"><li>Used a nontrivial smooth score field f(x1, x2) = x1^2 + x1 x2 + sin(x2).</li><li>Used h(z) = atan(z), so g(x1, x2) = atan(f(x1, x2)).</li><li>Simplified grad g dot v - h&#x27;(f) grad f dot v to zero exactly.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>difference</td><td><code>0</code></td></tr></tbody></table></div>
       </article>
-    
+
+      <article class="check-card">
+        <div class="check-meta">
+          <span class="pill">sympy</span>
+          <span class="badge pass">Pass</span>
+        </div>
+        <h3>Conditional-risk remainder identity</h3>
+        <p>The conditional cross-entropy derivative splits exactly into a score-mediated term and the remainder used in Proposition 1.</p>
+        <div class="math">\[g(x)=\log(1+e^{f(x)})-\eta(x)f(x)\]</div><div class="math">\[g'(x)=(\sigma(f(x))-\eta(x))f'(x)-\eta'(x)f(x)\]</div><div class="math">\[2\beta^2\gamma^2+2q^2-(\beta\gamma+q)^2=(\beta\gamma-q)^2\ge 0\]</div>
+        <ul class="detail-list"><li>Wrote binary conditional risk as softplus(f(x)) - eta(x) f(x).</li><li>Verified its derivative equals (sigma(f)-eta) f&#x27; - eta&#x27; f exactly.</li><li>Verified the separated bound because 2 beta^2 gamma^2 + 2 q^2 - (beta gamma + q)^2 = (beta gamma - q)^2 &gt;= 0.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>decomposition gap</td><td><code>0</code></td></tr><tr><td>separated square gap</td><td><code>0</code></td></tr></tbody></table></div>
+      </article>
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">sympy</span>
           <span class="badge pass">Pass</span>
         </div>
         <h3>Rank-1 hazard-score bookkeeping</h3>
-        <p>The pointwise algebra behind Proposition 1 is exact; the expectation form follows by averaging these identities.</p>
+        <p>The pointwise algebra behind Proposition 2 is exact; the expectation form follows by averaging these identities.</p>
         <div class="math">\[\frac{\Delta \mu_t}{\Delta} = a v + r u,\qquad v_t = c v + s u,\qquad v^\top u = 0\]</div><div class="math">\[s_t^2 = \left\|\frac{\Delta \mu_t}{\Delta}\right\|^2 = |a|^2 + |r|^2\]</div><div class="math">\[\|J_f v_t\|^2 = c^2\|J_f v\|^2 + s^2\|J_f u\|^2 + 2cs\langle J_f v, J_f u\rangle\]</div>
         <ul class="detail-list"><li>Worked in an orthonormal basis with v = e1, u = e2, Delta mu / Delta = (a, r), and a generic 2 x 2 Jacobian matrix.</li><li>Verified s_t^2 = |a|^2 + |r|^2 from the orthogonal block-drift decomposition.</li><li>Verified the directional energy splits into aligned, orthogonal, and overlap terms with coefficients c^2, s^2, and 2cs.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>s sq gap</td><td><code>0</code></td></tr><tr><td>g gap</td><td><code>0</code></td></tr><tr><td>h gap</td><td><code>0</code></td></tr></tbody></table></div>
       </article>
-    
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">sympy + dense numeric sweep</span>
@@ -729,12 +741,12 @@
         <ul class="detail-list"><li>Differentiated the scalar loss h(z) = -q log sigma(z) - (1-q) log(1-sigma(z)) exactly.</li><li>Verified the closed form h&#x27;(z) = sigma(z) - q symbolically.</li><li>Checked the beta = 1 bound over a dense grid in z and q.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>identity gap</td><td><code>0</code></td></tr><tr><td>max abs derivative on grid</td><td><code>0.999994</code></td></tr></tbody></table></div>
       </article>
-    
+
           </div>
         </div>
       </section>
-    
-    
+
+
       <section class="section" id="numerical">
         <div class="wrap">
           <div class="section-head">
@@ -742,10 +754,10 @@
               <div class="kicker">Verification Block</div>
               <h2>Numerical Stress Tests</h2>
             </div>
-            <p>These checks verify the theorem chain and low-rank inequalities in settings where exact symbolic proof is less natural but dense numerical evaluation is informative.</p>
+            <p>These checks verify the theorem chain and the low-rank and anisotropic inequalities where dense numerical evaluation is informative.</p>
           </div>
           <div class="check-grid">
-            
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">numpy randomized stress test</span>
@@ -757,7 +769,19 @@
         <ul class="detail-list"><li>Generated random orthonormal drift bases V with QR factorization.</li><li>Projected residual drift rho into the orthogonal complement of span(V).</li><li>Checked the split inequality, the Frobenius inequality, and the combined corollary bound trial by trial.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>trials</td><td><code>5000</code></td></tr><tr><td>max split violation</td><td><code>-0.553367</code></td></tr><tr><td>max frobenius violation</td><td><code>-0.049472</code></td></tr><tr><td>max combined violation</td><td><code>-0.999537</code></td></tr><tr><td>min combined slack</td><td><code>0.999537</code></td></tr><tr><td>max orthogonality error</td><td><code>3.027151e-15</code></td></tr></tbody></table></div>
       </article>
-    
+
+      <article class="check-card">
+        <div class="check-meta">
+          <span class="pill">numpy randomized stress test</span>
+          <span class="badge pass">Pass</span>
+        </div>
+        <h3>Anisotropic parallel--orthogonal corollary</h3>
+        <p>The parallel and orthogonal energy caps imply both anisotropic bounds, including the explicit remainder term.</p>
+        <div class="math">\[B_V\le A\mathcal E_\parallel,\qquad B_\rho\le R\mathcal E_\perp\]</div><div class="math">\[\mathrm{Var}_U(r(U))\le\frac{2\beta^2T}{\pi^2}(A\mathcal E_\parallel+R\mathcal E_\perp)\]</div><div class="math">\[\mathrm{Var}_U(r(U))\le\frac{4\beta^2T}{\pi^2}(A\mathcal E_\parallel+R\mathcal E_\perp)+\frac{2T}{\pi^2}Q\]</div>
+        <ul class="detail-list"><li>Generated random orthonormal drift subspaces and their complementary projectors.</li><li>Checked B_V &lt;= A E_parallel and B_rho &lt;= R E_perp under sampled velocity-energy caps.</li><li>Checked the no-remainder and remainder versions of the anisotropic corollary over 5000 trials.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>trials</td><td><code>5000</code></td></tr><tr><td>max parallel violation</td><td><code>-0.001256</code></td></tr><tr><td>max orthogonal violation</td><td><code>-5.00374</code></td></tr><tr><td>max path energy violation</td><td><code>-36.689649</code></td></tr><tr><td>max anisotropic bound violation</td><td><code>-0.862402</code></td></tr><tr><td>max remainder bound violation</td><td><code>-1.724803</code></td></tr></tbody></table></div>
+      </article>
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">dense quadrature on a smooth finite-mixture path</span>
@@ -769,12 +793,12 @@
         <ul class="detail-list"><li>Used X_t = t + Z with a three-point discrete random offset Z and deterministic velocity Xdot = 1.</li><li>Used f(x) = cos(pi x) and g(x) = atan(f(x)), so A3 holds with beta &lt;= 1.</li><li>Integrated the continuous-time quantities on a dense grid to verify the theorem in a genuine expectation setting.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>beta upper</td><td><code>1</code></td></tr><tr><td>volatility</td><td><code>0.296534</code></td></tr><tr><td>chain bound</td><td><code>0.298842</code></td></tr><tr><td>jv bound</td><td><code>0.5</code></td></tr><tr><td>chain minus volatility</td><td><code>0.002309</code></td></tr><tr><td>jv minus chain</td><td><code>0.201158</code></td></tr></tbody></table></div>
       </article>
-    
+
           </div>
         </div>
       </section>
-    
-    
+
+
       <section class="section" id="artifacts">
         <div class="wrap">
           <div class="section-head">
@@ -782,10 +806,10 @@
               <div class="kicker">Verification Block</div>
               <h2>Cached Experiment Artifact Checks</h2>
             </div>
-            <p>These checks validate the inequality columns stored in the committed CSV summaries that drive the synthetic theorem and directional-ablation figures.</p>
+            <p>These checks validate the inequality columns behind the synthetic, directional-ablation, and conditional-risk remainder results.</p>
           </div>
           <div class="check-grid">
-            
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">pandas cached-summary validation</span>
@@ -797,7 +821,7 @@
         <ul class="detail-list"><li>Loaded 80 rows from figures/synthetic_theorem_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>80</code></td></tr><tr><td>absolute tolerance</td><td><code>1.000000e-04</code></td></tr><tr><td>min slack bound fd</td><td><code>0.001071</code></td></tr><tr><td>min slack bound chain</td><td><code>-6.602279e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.042823</code></td></tr></tbody></table></div>
       </article>
-    
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">pandas cached-summary validation</span>
@@ -809,7 +833,7 @@
         <ul class="detail-list"><li>Loaded 140 rows from figures/synthetic_directional_comparison_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>140</code></td></tr><tr><td>absolute tolerance</td><td><code>1.000000e-04</code></td></tr><tr><td>min slack bound fd</td><td><code>7.220234e-04</code></td></tr><tr><td>min slack bound chain</td><td><code>-6.602279e-05</code></td></tr><tr><td>min slack bound jv</td><td><code>0.042823</code></td></tr></tbody></table></div>
       </article>
-    
+
       <article class="check-card">
         <div class="check-meta">
           <span class="pill">pandas cached-summary validation</span>
@@ -821,11 +845,23 @@
         <ul class="detail-list"><li>Loaded 60 rows from figures/synthetic_directional_misspecification_summary.csv.</li><li>Checked volatility &lt;= bound_fd, volatility &lt;= bound_chain, and volatility &lt;= bound_jv wherever those columns exist.</li><li>Allowed an absolute tolerance of 1e-4 for cached numerical summaries, since those bounds come from finite grids and Monte Carlo estimates rather than exact algebra.</li></ul>
         <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>60</code></td></tr><tr><td>absolute tolerance</td><td><code>1.000000e-04</code></td></tr><tr><td>min slack bound fd</td><td><code>9.769829e-04</code></td></tr><tr><td>min slack bound chain</td><td><code>7.011415e-07</code></td></tr><tr><td>min slack bound jv</td><td><code>0.11503</code></td></tr></tbody></table></div>
       </article>
-    
+
+      <article class="check-card">
+        <div class="check-meta">
+          <span class="pill">pandas cached-summary validation</span>
+          <span class="badge pass">Pass</span>
+        </div>
+        <h3>Conditional-risk remainder experiment</h3>
+        <p>The cached stress test reproduces the paper&#x27;s boundary claim: the Jacobian-only bound fails while the coupled remainder bound holds.</p>
+        <div class="math">\[\mathrm{Var}_U(r(U))\le\frac{T}{\pi^2}\int_0^T\mathbb E[(\beta\gamma_t+q_t)^2]dt\]</div><div class="math">\[\mathrm{Var}_U(r(U))\le\frac{2\beta^2T}{\pi^2}\int_0^T\mathbb E\gamma_t^2dt+\frac{2T}{\pi^2}\int_0^T\mathbb E q_t^2dt\]</div>
+        <ul class="detail-list"><li>Loaded 1000 rows from figures/conditional_remainder_raw.csv.</li><li>Checked the derivative-energy, coupled remainder, and separated remainder bounds row by row.</li><li>Checked all 400 DTR runs with nonconstant conditional risk against the paper&#x27;s reported hold/failure pattern.</li></ul>
+        <div class="metric-table-wrap"><table class="metrics"><thead><tr><th>Metric</th><th>Value</th></tr></thead><tbody><tr><td>rows</td><td><code>1000</code></td></tr><tr><td>shifted dtr runs</td><td><code>400</code></td></tr><tr><td>jacobian only failures</td><td><code>400</code></td></tr><tr><td>coupled remainder holds</td><td><code>400</code></td></tr><tr><td>derivative bound holds</td><td><code>400</code></td></tr><tr><td>min residual bound slack</td><td><code>8.333598e-08</code></td></tr><tr><td>min separated bound slack</td><td><code>1.666728e-07</code></td></tr><tr><td>min derivative bound slack</td><td><code>1.678617e-13</code></td></tr></tbody></table></div>
+      </article>
+
           </div>
         </div>
       </section>
-    
+
   </main>
 
   <footer class="footer">

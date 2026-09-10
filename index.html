@@ -632,7 +632,7 @@
         <div class="section-head">
           <h2>Proof Verification</h2>
           <p>
-            The mathematical claims are paired with an explicit verification layer: exact symbolic checks for the theorem chain and hazard-score bookkeeping, numerical stress tests for the low-rank inequalities, and consistency checks against the cached synthetic summaries used by the plotting code.
+            The mathematical claims are paired with an explicit verification layer: exact symbolic checks for the theorem chain, conditional-risk remainder, and hazard-score bookkeeping; numerical stress tests for the low-rank and anisotropic inequalities; and consistency checks against the cached experiment summaries.
           </p>
         </div>
         <div class="card-grid">
@@ -642,7 +642,7 @@
             \mathrm{Var}_U(r(U)) \le \frac{T}{\pi^2}\int_0^T (r'(t))^2dt
             \]</div>
             <p>
-              SymPy checks the core algebra exactly rather than numerically: the Poincar&eacute; sharpness example, a deterministic equality case for the Jacobian-velocity theorem, the composition-chain identity behind A3, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
+              SymPy checks the core algebra exactly: the Poincar&eacute; sharpness example, a deterministic equality case for the Jacobian-velocity theorem, the composition and conditional-risk remainder identities, the rank-1 hazard-score bookkeeping identity, and the Bernoulli cross-entropy derivative bound.
             </p>
             <ul>
               <li>Equality case for the temporal bound</li>
@@ -660,7 +660,7 @@
             \end{aligned}
             \]</div>
             <p>
-              Some parts of the argument are more naturally checked by dense quadrature or randomized linear-algebra trials. The verification suite therefore stress-tests the low-rank corollary and a smooth expectation-based example of the full theorem chain.
+              Some parts of the argument are more naturally checked by dense quadrature or randomized linear-algebra trials. The suite therefore stress-tests both the low-rank and anisotropic corollaries and a smooth expectation-based example of the full theorem chain.
             </p>
             <ul>
               <li>Randomized orthonormal-basis checks for the corollary inequalities</li>
