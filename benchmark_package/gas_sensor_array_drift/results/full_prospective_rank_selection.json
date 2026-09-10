@@ -1,0 +1,65 @@
+{
+  "selection_rule": "Minimum mean class-balanced validation cross-entropy over rank and lambda.",
+  "selected": {
+    "rank": 4.0,
+    "lambda": 1.0,
+    "val_ce_mean": 0.1987815484404564,
+    "val_macro_accuracy_mean": 0.9696986547277173,
+    "deploy_ce_mean": 1.2438474774360657,
+    "deploy_ce_std": 0.18143573093802304,
+    "volatility_mean": 0.340124042190276,
+    "volatility_std": 0.09600377459432392,
+    "terminal_ce_mean": 1.9502836108207702,
+    "deploy_macro_accuracy_mean": 0.6803278397299332
+  },
+  "best_by_rank": [
+    {
+      "rank": 1,
+      "lambda": 0.01,
+      "val_ce_mean": 1.497549593448639,
+      "val_macro_accuracy_mean": 0.8010707655919027,
+      "deploy_ce_mean": 2.157882010936737,
+      "deploy_ce_std": 0.3080103477767007,
+      "volatility_mean": 0.6435268526070589,
+      "volatility_std": 0.26058458103426163,
+      "terminal_ce_mean": 3.009594178199768,
+      "deploy_macro_accuracy_mean": 0.5809570892064205
+    },
+    {
+      "rank": 2,
+      "lambda": 1.0,
+      "val_ce_mean": 0.2631763190031051,
+      "val_macro_accuracy_mean": 0.9559852042177033,
+      "deploy_ce_mean": 1.4517067193984985,
+      "deploy_ce_std": 0.19059013701402372,
+      "volatility_mean": 0.5727962885507085,
+      "volatility_std": 0.1599162402967985,
+      "terminal_ce_mean": 2.5039255619049072,
+      "deploy_macro_accuracy_mean": 0.6878392154316875
+    },
+    {
+      "rank": 3,
+      "lambda": 1.0,
+      "val_ce_mean": 0.2629908502101898,
+      "val_macro_accuracy_mean": 0.961359835378593,
+      "deploy_ce_mean": 1.3295212864875794,
+      "deploy_ce_std": 0.20521948217158895,
+      "volatility_mean": 0.38803844831012524,
+      "volatility_std": 0.11767666500376965,
+      "terminal_ce_mean": 2.0860063433647156,
+      "deploy_macro_accuracy_mean": 0.6762254587850374
+    },
+    {
+      "rank": 4,
+      "lambda": 1.0,
+      "val_ce_mean": 0.1987815484404564,
+      "val_macro_accuracy_mean": 0.9696986547277173,
+      "deploy_ce_mean": 1.2438474774360657,
+      "deploy_ce_std": 0.18143573093802304,
+      "volatility_mean": 0.340124042190276,
+      "volatility_std": 0.09600377459432392,
+      "terminal_ce_mean": 1.9502836108207702,
+      "deploy_macro_accuracy_mean": 0.6803278397299332
+    }
+  ]
+}

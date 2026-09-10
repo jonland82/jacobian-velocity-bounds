@@ -402,7 +402,7 @@ def build_paper_summary(
         "split": split.split_summary,
         "selection_rule": (
             "Per-method lambda chosen by mean validation MSE across matched seeds, "
-            "with validation directional gain used only as a secondary tie-breaker."
+            "with validation directional energy used only as a secondary tie-breaker."
         ),
         "selected_lambdas": selected_lambdas.to_dict(orient="records"),
         "selected_summary": selected_summary.to_dict(orient="records"),

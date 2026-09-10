@@ -443,14 +443,14 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
             {
                 "selection_rule": (
                     "Per-method lambda selected by validation MSE across matched seeds; "
-                    "validation directional gain is used only as a secondary tie-breaker."
+                    "validation directional energy is used only as a secondary tie-breaker."
                 ),
                 "real_data_seeds": 10,
                 "summary_stats_path": str(summary_path.relative_to(base_dir)),
                 "paired_comparisons_path": str(paired_path.relative_to(base_dir)),
                 "conservative_gain_selection_rule": (
                     "Secondary ablation: choose the smallest lambda whose mean validation MSE is no worse "
-                    f"than standard training and whose validation directional gain is reduced by at least {GAIN_TARGET:.0%}."
+                    f"than standard training and whose validation directional energy is reduced by at least {GAIN_TARGET:.0%}."
                 ),
                 "conservative_gain_summary_path": str(conservative_summary_path.relative_to(base_dir)),
                 "conservative_gain_paired_path": str(conservative_paired_path.relative_to(base_dir)),

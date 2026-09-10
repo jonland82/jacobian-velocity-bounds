@@ -1,0 +1,145 @@
+{
+  "setup": {
+    "dataset": "UCI Gas Sensor Array Drift at Different Concentrations",
+    "excluded_gas": "Toluene (class 6; absent from several middle batches)",
+    "task": "five-gas classification",
+    "train_batches": [
+      1,
+      2
+    ],
+    "validation_batches": [
+      3,
+      4,
+      5
+    ],
+    "deployment_batches": [
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "train_rows": 1610,
+    "validation_rows": 1944,
+    "deployment_rows": 8523,
+    "features": 128,
+    "subspace_rank": 2,
+    "predeploy_singular_values": [
+      12.524954602303833,
+      5.450884786263934,
+      2.3355528818868962,
+      0.8373242279577153
+    ],
+    "deployment_singular_values": [
+      7.36855709163325,
+      1.968902181886712,
+      1.5416442341862453,
+      0.9134433918827317
+    ],
+    "mode": "full",
+    "seeds": 10,
+    "epochs": 35
+  },
+  "selection": {
+    "rule": "Mean class-balanced validation CE; directional gain breaks ties.",
+    "prospective_lambda_used_for_random_controls": 1.0
+  },
+  "main_results": [
+    {
+      "method": "dtr",
+      "basis": "oracle_deployment",
+      "lambda_value": 1.0,
+      "deploy_ce_mean": 1.6744778513908387,
+      "deploy_ce_std": 0.2135419079445464,
+      "volatility_mean": 0.2713722434470005,
+      "volatility_std": 0.09446510636021466,
+      "terminal_ce_mean": 2.1988433718681337,
+      "terminal_ce_std": 0.32670187474099455,
+      "worst_block_ce_mean": 2.1988433718681337,
+      "deploy_macro_accuracy_mean": 0.5823809219854194,
+      "angle_to_oracle_deg": 0.0,
+      "captured_deploy_drift_energy": 0.9476886987686157,
+      "deploy_ce_wins_vs_standard": 10.0,
+      "volatility_wins_vs_standard": 10.0,
+      "terminal_wins_vs_standard": 10.0
+    },
+    {
+      "method": "dtr",
+      "basis": "prospective",
+      "lambda_value": 1.0,
+      "deploy_ce_mean": 1.4517067193984985,
+      "deploy_ce_std": 0.19059013701402375,
+      "volatility_mean": 0.5727962885507085,
+      "volatility_std": 0.15991624029679846,
+      "terminal_ce_mean": 2.5039255619049072,
+      "terminal_ce_std": 0.32961636791594134,
+      "worst_block_ce_mean": 2.5039255619049072,
+      "deploy_macro_accuracy_mean": 0.6878392154316875,
+      "angle_to_oracle_deg": 88.53981018066406,
+      "captured_deploy_drift_energy": 0.58686763048172,
+      "deploy_ce_wins_vs_standard": 10.0,
+      "volatility_wins_vs_standard": 7.0,
+      "terminal_wins_vs_standard": 9.0
+    },
+    {
+      "method": "isotropic",
+      "basis": "isotropic",
+      "lambda_value": 1.0,
+      "deploy_ce_mean": 1.267454981803894,
+      "deploy_ce_std": 0.07103821012160372,
+      "volatility_mean": 0.02120047046070101,
+      "volatility_std": 0.004196946371459479,
+      "terminal_ce_mean": 1.1385177493095398,
+      "terminal_ce_std": 0.05276415489036129,
+      "worst_block_ce_mean": 1.4480570793151855,
+      "deploy_macro_accuracy_mean": 0.5025653418186703,
+      "angle_to_oracle_deg": NaN,
+      "captured_deploy_drift_energy": NaN,
+      "deploy_ce_wins_vs_standard": 10.0,
+      "volatility_wins_vs_standard": 10.0,
+      "terminal_wins_vs_standard": 10.0
+    },
+    {
+      "method": "standard",
+      "basis": "standard",
+      "lambda_value": 0.0,
+      "deploy_ce_mean": 2.151244747638702,
+      "deploy_ce_std": 0.22933280283650326,
+      "volatility_mean": 0.6462422182832623,
+      "volatility_std": 0.1825790623538515,
+      "terminal_ce_mean": 3.010240650177002,
+      "terminal_ce_std": 0.36256003085028277,
+      "worst_block_ce_mean": 3.010240650177002,
+      "deploy_macro_accuracy_mean": 0.5763162302596209,
+      "angle_to_oracle_deg": NaN,
+      "captured_deploy_drift_energy": NaN,
+      "deploy_ce_wins_vs_standard": NaN,
+      "volatility_wins_vs_standard": NaN,
+      "terminal_wins_vs_standard": NaN
+    }
+  ],
+  "random_control_distributions": [
+    {
+      "control_type": "ambient_random_distribution",
+      "bases": 10,
+      "deploy_ce_mean": 2.108298338651657,
+      "deploy_ce_basis_std": 0.06152765723823223,
+      "volatility_mean": 0.6236901939978736,
+      "volatility_basis_std": 0.041630275616679334,
+      "terminal_ce_mean": 2.952735815048218,
+      "captured_energy_mean": 0.02735444693826139,
+      "angle_to_oracle_mean": 86.78820114135742
+    },
+    {
+      "control_type": "drift_span_random_distribution",
+      "bases": 10,
+      "deploy_ce_mean": 1.7252776288986205,
+      "deploy_ce_basis_std": 0.3546592107234394,
+      "volatility_mean": 0.5094150275846604,
+      "volatility_basis_std": 0.07159325888928261,
+      "terminal_ce_mean": 2.5155667340755463,
+      "captured_energy_mean": 0.30913172140717504,
+      "angle_to_oracle_mean": 72.85790901184082
+    }
+  ]
+}

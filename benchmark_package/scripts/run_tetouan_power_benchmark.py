@@ -21,9 +21,8 @@ def load_tetouan_power(base_dir: Path) -> pd.DataFrame:
     return frame
 
 
-def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
-    frame = load_tetouan_power(base_dir)
-    config = BenchmarkConfig(
+def benchmark_config() -> BenchmarkConfig:
+    return BenchmarkConfig(
         name="tetouan_zone1_power",
         target_col="Zone 1 Power Consumption",
         timestamp_col="timestamp",
@@ -47,6 +46,11 @@ def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
         hidden_width=64,
         subspace_dim=2,
     )
+
+
+def run_suite(base_dir: Path, force: bool = False) -> dict[str, pd.DataFrame]:
+    frame = load_tetouan_power(base_dir)
+    config = benchmark_config()
     output_dir = base_dir / "benchmark_package" / "tetouan_city_power_consumption"
     return run_temporal_regression_benchmark(frame, config, output_dir, force=force)
 

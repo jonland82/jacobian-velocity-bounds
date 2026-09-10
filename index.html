@@ -6,7 +6,7 @@
   <title>Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift</title>
   <meta
     name="description"
-    content="Formal bounds, drift-aligned tangent regularization, and frozen-deployment experiments spanning synthetic studies plus Air Quality and Tetouan real benchmarks."
+    content="Formal bounds, anisotropic drift-aligned tangent regularization, and frozen-deployment studies spanning synthetic mechanisms, gas-sensor drift, air quality, and power consumption."
   >
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -437,10 +437,10 @@
               The central object is the Jacobian-velocity interaction \(J_f(X_t)\dot X_t\): environmental motion only becomes dangerous when it passes through directions where the model is locally steep.
             </p>
             <p>
-              The practical implication is that robustness should not be spread uniformly over every direction in feature space, but concentrated where deployment drift is actually expected to travel. That same directional geometry also gives a natural monitoring signal, linking training-time regularization and deployment-time volatility assessment through one coherent mechanism.
+              The practical implication is to concentrate robustness where deployment drift is expected to travel. When that estimated subspace may be incomplete, anisotropic DTR adds a weaker orthogonal guardrail instead of smoothing every direction equally. The same geometry also yields a matched monitoring signal.
             </p>
             <p>
-              The empirical arc is deliberately staged: first verify the time-domain bound, then show that directional smoothing beats isotropic smoothing in a controlled low-rank setting, and finally test the same story on two real frozen deployments, UCI Air Quality and Tetouan City power consumption.
+              The empirical arc first verifies the time-domain bound, directional advantage, and conditional-risk remainder in controlled settings. The central field study then tests a strict predeployment drift basis on a 128-dimensional gas-sensor array, with Air Quality and Tetouan City power consumption providing complementary regression evidence.
             </p>
             <p>
               In the rank-1 setting, a short bookkeeping proposition makes the monitoring proxy gap explicit: block averaging, residual drift, and angular misalignment determine how the hazard proxy departs from the leading low-rank term.
@@ -458,9 +458,9 @@
               <a class="btn secondary" href="#experiments">Explore Results</a>
             </div>
             <div class="stats">
-              <div class="stat"><strong>92.6%</strong><span>Synthetic volatility reduction with DTR</span></div>
-              <div class="stat"><strong>9/10</strong><span>Air Quality DTR MSE and volatility wins vs standard</span></div>
-              <div class="stat"><strong>8/10</strong><span>Tetouan DTR volatility wins vs isotropic</span></div>
+              <div class="stat"><strong>10/10</strong><span>Gas hybrid CE and volatility wins vs pure DTR</span></div>
+              <div class="stat"><strong>4 / 128</strong><span>Selected predeployment drift-subspace rank</span></div>
+              <div class="stat"><strong>10/10</strong><span>Random gas subspaces beaten on all four metrics</span></div>
             </div>
           </div>
         </div>
@@ -480,12 +480,12 @@
             \]
           </div>
           <p>
-            In low-rank drift regimes, the leading term lives in the drift subspace, which motivates drift-aligned tangent regularization rather than isotropic smoothing.
+            In low-rank drift regimes, the leading term lies in the drift subspace. Residual motion motivates a weaker orthogonal penalty, producing an anisotropic family between pure DTR and isotropic smoothing.
           </p>
           <div class="microgrid">
             <div class="micro">
-              <strong>DTR objective</strong>
-              <div>\(\mathcal{L}_{\mathrm{DTR}}=\mathbb{E}\ell+\lambda \mathbb{E}\|J_f(X)V\|_F^2\)</div>
+              <strong>Anisotropic DTR</strong>
+              <div>\(\mathcal{L}_{\mathrm{A\text{-}DTR}}=\mathbb{E}\ell+\lambda_\parallel\mathbb{E}\|J_fV\|_F^2+\lambda_\perp\mathbb{E}\|J_fP_V^\perp\|_F^2\)</div>
             </div>
             <div class="micro">
               <strong>Matched monitor</strong>
@@ -501,7 +501,7 @@
         <div class="section-head">
           <h2>Context</h2>
           <p>
-            The paper is deliberately scoped to frozen-model deployment under continuous covariate drift: the predictor is frozen, the environment drifts continuously, and the object of interest is a deployment-risk trajectory rather than a single train-test shift gap.
+            The paper studies frozen-model deployment under continuous covariate drift: the predictor is fixed, the environment evolves, and the object of interest is a deployment-risk trajectory rather than a single train-test shift gap.
           </p>
         </div>
         <div class="card-grid">
@@ -536,16 +536,17 @@
           <article class="card">
             <h3>The payoff</h3>
             <div class="math">\[
-            \begin{gather*}
-            \mathcal{L}_{\mathrm{DTR}}(\theta) = \\
-            \mathbb{E}\ell(f_\theta(X),Y) + \lambda \mathbb{E}\|J_f(X)V\|_F^2
-            \end{gather*}
+            \begin{aligned}
+            \mathcal{L}_{\mathrm{A\text{-}DTR}}(\theta)&=\mathbb{E}\ell(f_\theta(X),Y)\\
+            &+\lambda_\parallel\mathbb{E}\|J_f(X)V\|_F^2\\
+            &+\lambda_\perp\mathbb{E}\|J_f(X)P_V^\perp\|_F^2
+            \end{aligned}
             \]</div>
             <p>
               Once the drift geometry is estimated, robustness should be enforced in those directions instead of spread uniformly across the ambient space.
             </p>
             <ul>
-              <li>Directional regularization instead of isotropic Jacobian smoothing</li>
+              <li>Strong aligned control with a limited orthogonal guardrail</li>
               <li>Monitoring score aligned with the same geometry</li>
               <li>One theorem-to-method story from synthetic to field deployment</li>
             </ul>
@@ -559,7 +560,7 @@
         <div class="section-head">
           <h2>Main Mathematical Results</h2>
           <p>
-            The formal story is compact: control temporal volatility by derivative energy, control derivative energy by Jacobian-velocity energy, then specialize to low-rank drift. A short bookkeeping proposition quantifies the rank-1 monitoring proxy gap.
+            The formal story controls temporal volatility by derivative energy, bounds the model-mediated component by Jacobian-velocity energy, retains conditional-risk variation as an explicit remainder, and then specializes the controllable term to low-rank drift.
           </p>
         </div>
         <div class="card-grid math-grid">
@@ -594,7 +595,16 @@
             <p>In low-rank regimes, the leading term is directional Jacobian energy in the drift subspace.</p>
           </article>
           <article class="card">
-            <h3>Proposition 1</h3>
+            <h3>Remainder extension</h3>
+            <div class="math">\[
+            \mathrm{Var}_U(r(U)) \le
+            \frac{T}{\pi^2}\int_0^T
+            \mathbb{E}\!\left[(\beta\|J_f\dot X_t\|+q_t)^2\right]dt.
+            \]</div>
+            <p>Conditional-risk variation outside the score geometry remains explicit rather than being attributed to the predictor Jacobian.</p>
+          </article>
+          <article class="card">
+            <h3>Monitoring proposition</h3>
             <div class="math">\[
             \begin{aligned}
             s_t^2 &= |\bar a_t|^2 + \|\bar\rho_t\|^2, \\
@@ -681,7 +691,7 @@
         <div class="section-head">
           <h2>Experimental Results</h2>
           <p>
-            The experiments mirror the theorem-to-method pipeline: visualize the geometry, verify the time-domain step in a clean synthetic benchmark, compare directional and isotropic smoothing, then test the same story on two real frozen deployments.
+            The experiments isolate the theorem, alignment, and remainder mechanisms before testing anisotropic tangent control on a strict predeployment gas-sensor benchmark. Air Quality and Tetouan then test transfer to regression.
           </p>
         </div>
         <div class="figure-grid">
@@ -713,7 +723,7 @@
                 <li><span>Standard volatility</span><span>\(3.25\times10^{-3}\)</span></li>
                 <li><span>DTR volatility</span><span>\(2.39\times10^{-4}\)</span></li>
                 <li><span>Volatility reduction</span><span>92.6%</span></li>
-                <li><span>Directional-gain reduction</span><span>95.5%</span></li>
+                <li><span>Directional-energy reduction</span><span>95.5%</span></li>
               </ul>
             </div>
           </article>
@@ -724,7 +734,7 @@
               <div class="kicker">Figure 3</div>
               <h3>Directional beats isotropic</h3>
               <p>
-                At matched \(\lambda=0.03\), DTR improves on both the standard model and isotropic Jacobian regularization across derivative energy, volatility, directional gain, and terminal risk.
+                At matched \(\lambda=0.03\), DTR improves on both the standard model and isotropic Jacobian regularization across derivative energy, volatility, directional energy, and terminal risk.
               </p>
               <ul class="result-list">
                 <li><span>Standard terminal risk</span><span>0.189</span></li>
@@ -736,10 +746,46 @@
           </article>
 
           <article class="figure-card">
+            <div class="frame"><div class="frame-inner"><img src="./figures/figure_5_conditional_remainder.png" alt="Conditional-risk remainder stress test comparing the Jacobian-only and coupled bounds."></div></div>
+            <div class="figure-copy">
+              <div class="kicker">Figure 4</div>
+              <h3>The remainder marks the boundary</h3>
+              <p>
+                When the fixed label conditional varies along the covariate path, a small directional Jacobian need not imply stable risk. The explicit remainder restores the bound in every tested nonconstant-conditional run.
+              </p>
+              <ul class="result-list">
+                <li><span>DTR runs with \(c&gt;0\)</span><span>400</span></li>
+                <li><span>Jacobian-only bound</span><span>fails in 400/400</span></li>
+                <li><span>Coupled remainder bound</span><span>holds in 400/400</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="figure-card">
+            <div class="figure-copy">
+              <div class="kicker">Main Field Study</div>
+              <h3>Gas-sensor drift with an orthogonal guardrail</h3>
+              <p>
+                A five-gas classifier is trained on the first two chronological batches, tuned on batches 3&ndash;5, and frozen for deployment on batches 6&ndash;10. The rank-4 basis is estimated entirely before deployment from concentration-adjusted calibration motion in 128 sensor dimensions.
+              </p>
+              <p>
+                The CE-rule hybrid improves deployment CE, volatility, and terminal CE over pure DTR in every matched seed. The stability-rule hybrid gives the best mean CE and terminal CE while retaining substantially more accuracy than isotropic smoothing.
+              </p>
+              <ul class="result-list">
+                <li><span>Standard CE / volatility</span><span>2.151 / 0.646</span></li>
+                <li><span>Pure DTR CE / volatility</span><span>1.244 / 0.340</span></li>
+                <li><span>CE-rule hybrid CE / volatility</span><span>0.987 / 0.179</span></li>
+                <li><span>Stability hybrid CE / volatility</span><span>0.968 / 0.043</span></li>
+                <li><span>Rank-4 basis vs random controls</span><span>10/10</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="figure-card">
             <div class="frame"><div class="frame-inner"><img src="./figures/air_quality_monitoring.png" alt="Air Quality deployment figure showing blockwise MSE and hazard score."></div></div>
             <div class="figure-copy">
               <div class="kicker">Companion Figure</div>
-              <h3>Field deployment on UCI Air Quality</h3>
+              <h3>Complementary regression: Air Quality</h3>
               <p>
                 This site-only companion plot visualizes the Air Quality deployment and monitoring trajectories that support the real-data table. The real-data study freezes the regressor, estimates a target-orthogonal sensor-drift subspace from unlabeled deployment covariates, and evaluates blockwise MSE over 20 biweekly deployment blocks. With that more focused nuisance-drift subspace, validation-selected DTR improves deployment MSE and volatility against standard training.
               </p>
@@ -757,10 +803,10 @@
           <article class="figure-card">
             <div class="frame"><div class="frame-inner"><img src="./figures/figure_4_tetouan_deployment.png" alt="Tetouan deployment figure showing monthly blockwise MSE for standard, isotropic, and DTR models."></div></div>
             <div class="figure-copy">
-              <div class="kicker">Figure 4</div>
-              <h3>Second real benchmark: Tetouan power</h3>
+              <div class="kicker">Figure 5</div>
+              <h3>Complementary regression: Tetouan power</h3>
               <p>
-                The paper adds a second real frozen-deployment study on the UCI Tetouan City power-consumption dataset, predicting Zone 1 load from weather and diffuse-flow covariates across six monthly deployment blocks in late 2017. Validation-selected DTR gives the strongest real-data stability result.
+                This frozen-deployment study predicts Zone 1 load from weather and diffuse-flow covariates across six monthly deployment blocks in late 2017. Validation-selected DTR improves both deployment MSE and volatility relative to both baselines.
               </p>
               <ul class="result-list">
                 <li><span>Deploy MSE, standard / isotropic / DTR</span><span>1.08e8 / 1.01e8 / 6.82e7</span></li>
@@ -788,22 +834,23 @@
             <h3>What lives where</h3>
             <ul class="repo-list">
               <li><strong>Manuscript</strong><span><a href="https://arxiv.org/abs/2605.04932">arXiv record</a>, <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.pdf">PDF</a>, and <a href="./jacobian_velocity_bounds_deployment_risk_covariate_drift.tex">LaTeX source</a> for the paper.</span></li>
-              <li><strong><code>scripts/</code></strong><span>Training, evaluation, reporting, and plotting code for the synthetic theorem benchmark, directional ablation, Air Quality study and subspace ablation, Tetouan figure, real-data paired comparisons, and monitoring-volatility ablation.</span></li>
-              <li><strong><code>benchmark_package/</code></strong><span>Isolated Tetouan benchmark package used for the paper's second real deployment study, with cached matched-seed outputs, a dedicated runner, and benchmark-selection notes.</span></li>
+              <li><strong><code>scripts/</code></strong><span>Training, evaluation, reporting, and plotting code for the synthetic theorem benchmark, remainder stress test, directional ablation, regression studies, prospective subspaces, and monitoring ablations.</span></li>
+              <li><strong><code>benchmark_package/</code></strong><span>Gas-sensor and Tetouan benchmark assets, including the gas rank sweep, random-subspace controls, anisotropic hybrid sweep, matched-seed outputs, and dedicated runners.</span></li>
               <li><strong><code>proof_verification/</code></strong><span>SymPy-based checks, numerical stress tests, and the generated HTML/JSON verification reports.</span></li>
-              <li><strong><code>figures/</code></strong><span>Rendered manuscript figure assets, now including the Tetouan deployment plot, plus cached CSV/JSON summaries consumed by the plotting scripts.</span></li>
-              <li><strong><code>data/</code></strong><span>Cached Air Quality dataset used by the main field-deployment experiment.</span></li>
+              <li><strong><code>figures/</code></strong><span>Rendered manuscript figures and cached CSV/JSON summaries consumed by the plotting scripts.</span></li>
+              <li><strong><code>data/</code></strong><span>Cached Air Quality data; the gas-sensor and Tetouan data are contained in their benchmark-package directories.</span></li>
             </ul>
           </article>
           <article class="repo-card">
             <h3>Quick Start</h3>
-            <p>Install the Python dependencies, regenerate the manuscript figure assets and real-data reports, run the verification suite, and use the isolated Tetouan benchmark package to reproduce the paper's second real deployment study.</p>
+            <p>Install the Python dependencies, regenerate the manuscript figures and reports, run the verification suite, and use the benchmark-package runners for the gas-sensor and Tetouan studies.</p>
             <div class="command-block" aria-label="Quick start commands">
               <div class="command-line">python -m venv .venv</div>
               <div class="command-line">.venv\Scripts\Activate.ps1</div>
               <div class="command-line">pip install -r requirements.txt</div>
               <div class="command-line">python scripts/generate_all_figures.py --force</div>
               <div class="command-line">python scripts/run_real_deployment_reporting.py --force</div>
+              <div class="command-line">python benchmark_package/scripts/run_gas_sensor_hybrid_sweep.py --force</div>
               <div class="command-line">python proof_verification/generate_report.py</div>
               <div class="command-line">python benchmark_package/scripts/run_tetouan_power_benchmark.py --force</div>
               <div class="command-line">latexmk -pdf jacobian_velocity_bounds_deployment_risk_covariate_drift.tex</div>
@@ -819,7 +866,7 @@
     <div class="wrap footer-line">
       <div>
         <h3>Jacobian-Velocity Bounds for Deployment Risk Under Covariate Drift</h3>
-        <p>A formal and empirical case for drift-aligned tangent control in frozen-model deployment, with validation-selected Air Quality and Tetouan real benchmarks.</p>
+        <p>A theorem-backed case for anisotropic tangent control in frozen deployment, centered on strict predeployment gas-sensor drift and complemented by two regression studies.</p>
       </div>
       <div class="actions">
         <a class="btn secondary" href="#repo">Repository</a>

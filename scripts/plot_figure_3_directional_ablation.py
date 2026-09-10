@@ -12,7 +12,7 @@ from run_synthetic_directional_ablation import ensure_directional_ablation_outpu
 METRICS = [
     ("bound_chain", "derivative\nenergy"),
     ("volatility", "risk\nvolatility"),
-    ("mean_gain", "directional\ngain"),
+    ("mean_gain", "directional\nenergy"),
     ("terminal_risk", "terminal\nrisk"),
 ]
 

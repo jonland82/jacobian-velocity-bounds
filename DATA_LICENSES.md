@@ -15,6 +15,15 @@ The raw datasets cached in this repository are third-party UCI Machine Learning 
 
 The UCI page also includes historical usage wording for research use. Users should consult the current UCI page before redistributing or reusing the raw dataset.
 
+## UCI Gas Sensor Array Drift at Different Concentrations
+
+- Local path: `benchmark_package/gas_sensor_array_drift/gas_sensor_array_drift.zip`
+- Source: UCI Machine Learning Repository, Gas Sensor Array Drift at Different Concentrations dataset
+- UCI page: <https://archive.ics.uci.edu/dataset/270/gas+sensor+array+drift+dataset+at+different+concentrations>
+- UCI DOI: <https://doi.org/10.24432/C5MK6M>
+- UCI page license: Creative Commons Attribution 4.0 International (CC BY 4.0)
+- Dataset creator: Alexander Vergara
+
 ## UCI Power Consumption of Tetouan City
 
 - Local path: `benchmark_package/data/power_consumption_of_tetouan_city/Tetuan City power consumption.csv`

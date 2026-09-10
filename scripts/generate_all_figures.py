@@ -4,6 +4,8 @@ import argparse
 from pathlib import Path
 
 from run_air_quality_subspace_ablation import run_suite as run_air_quality_subspace_ablation
+from run_conditional_remainder_experiment import run_suite as run_conditional_remainder
+from run_prospective_subspace_experiment import run_suite as run_prospective_subspace
 from run_real_deployment_reporting import run_suite as run_real_deployment_reporting
 from run_synthetic_directional_ablation import run_suite as run_directional_ablation
 from run_synthetic_theorem_experiment import run_suite as run_synthetic_experiment
@@ -12,6 +14,7 @@ from plot_figure_2_synthetic_theorem import main as run_figure_2
 from plot_air_quality_monitoring import main as run_air_quality_monitoring
 from plot_figure_3_directional_ablation import main as run_figure_3
 from plot_figure_4_tetouan_deployment import main as run_figure_4
+from plot_figure_5_conditional_remainder import main as run_figure_5
 
 
 def main() -> None:
@@ -24,10 +27,13 @@ def main() -> None:
     run_directional_ablation(base_dir / "figures", force=args.force)
     run_real_deployment_reporting(base_dir, force=args.force)
     run_air_quality_subspace_ablation(base_dir, force=args.force)
+    run_prospective_subspace(base_dir, force=args.force)
+    run_conditional_remainder(base_dir / "figures", force=args.force)
     run_figure_1()
     run_figure_2()
     run_figure_3()
     run_figure_4()
+    run_figure_5()
     run_air_quality_monitoring()
 
 

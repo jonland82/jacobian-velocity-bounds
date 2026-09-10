@@ -1,0 +1,9 @@
+dataset,basis,selected_lambda
+Air Quality,oracle_deployment,0.003
+Air Quality,prospective_predeployment,0.003
+Air Quality,random_control,0.003
+Air Quality,standard,0.0
+Tetouan,oracle_deployment,0.01
+Tetouan,prospective_predeployment,0.01
+Tetouan,random_control,0.01
+Tetouan,standard,0.0
