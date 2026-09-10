@@ -2,7 +2,7 @@
 
 File tracked: `references.bib`
 
-Date compiled: 2026-05-17
+Date compiled: 2026-09-10
 
 This document records the online source location used for each metadata field in `references.bib`.
 
@@ -257,6 +257,41 @@ This document records the online source location used for each metadata field in
 | howpublished | [DataCite](https://api.datacite.org/dois/10.24432/C5B034) | `data.attributes.publisher` |
 | doi | [DataCite](https://api.datacite.org/dois/10.24432/C5B034) | DOI record URL |
 | note | [DataCite](https://api.datacite.org/dois/10.24432/C5B034) | `data.attributes.types.resourceTypeGeneral` |
+
+## `uci-gas-drift`
+
+| Field | Source | Source location |
+| --- | --- | --- |
+| author | [DataCite](https://api.datacite.org/dois/10.24432/C5MK6M) | `data.attributes.creators` |
+| title | [DataCite](https://api.datacite.org/dois/10.24432/C5MK6M) | `data.attributes.titles` |
+| year | [DataCite](https://api.datacite.org/dois/10.24432/C5MK6M) | `data.attributes.publicationYear` |
+| howpublished | [DataCite](https://api.datacite.org/dois/10.24432/C5MK6M) | `data.attributes.publisher` |
+| doi | [DataCite](https://api.datacite.org/dois/10.24432/C5MK6M) | DOI record URL |
+| note | [DataCite](https://api.datacite.org/dois/10.24432/C5MK6M) | `data.attributes.types.resourceTypeGeneral` |
+
+## `vergara-gas-drift`
+
+| Field | Source | Source location |
+| --- | --- | --- |
+| author | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | `message.author` |
+| title | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | `message.title` |
+| journal | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | `message.container-title` |
+| volume | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | `message.volume` |
+| pages | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | `message.page` |
+| year | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | `message.published-print.date-parts` |
+| doi | [Crossref](https://api.crossref.org/works/10.1016%2Fj.snb.2012.01.074) | DOI work record URL |
+
+## `rodriguez-gas-calibration`
+
+| Field | Source | Source location |
+| --- | --- | --- |
+| author | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | `message.author` |
+| title | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | `message.title` |
+| journal | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | `message.container-title` |
+| volume | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | `message.volume` |
+| pages | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | `message.page` |
+| year | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | `message.published-print.date-parts` |
+| doi | [Crossref](https://api.crossref.org/works/10.1016%2Fj.chemolab.2013.10.012) | DOI work record URL |
 
 ## `landers-repo`
 
