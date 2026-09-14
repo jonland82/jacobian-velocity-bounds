@@ -2,7 +2,7 @@
 
 File tracked: `references.bib`
 
-Date compiled: 2026-09-10
+Date compiled: 2026-09-14
 
 This document records the online source location used for each metadata field in `references.bib`.
 
@@ -155,6 +155,38 @@ This document records the online source location used for each metadata field in
 | volume | [PMLR](https://proceedings.mlr.press/v235/kim24ah.html) | paper information line, `PMLR 235` |
 | pages | [PMLR](https://proceedings.mlr.press/v235/kim24ah.html) | `citation_firstpage`, `citation_lastpage` metadata |
 | year | [PMLR](https://proceedings.mlr.press/v235/kim24ah.html) | `citation_publication_date` metadata |
+
+## `simard-tangentprop`
+
+| Field | Source | Source location |
+| --- | --- | --- |
+| author | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/1991/file/65658fde58ab3c2b6e5132a39fae7cb9-Metadata.json) | `authors` array |
+| title | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/1991/file/65658fde58ab3c2b6e5132a39fae7cb9-Metadata.json) | `title` |
+| booktitle | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/1991/file/65658fde58ab3c2b6e5132a39fae7cb9-Metadata.json) | `book` |
+| volume | [NeurIPS paper page](https://proceedings.neurips.cc/paper/1991/hash/65658fde58ab3c2b6e5132a39fae7cb9-Abstract.html) | proceedings volume, `4` |
+| pages | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/1991/file/65658fde58ab3c2b6e5132a39fae7cb9-Metadata.json) | `page_first`, `page_last` |
+| year | [NeurIPS paper page](https://proceedings.neurips.cc/paper/1991/hash/65658fde58ab3c2b6e5132a39fae7cb9-Abstract.html) | proceedings year, `1991` |
+
+## `rifai-manifold-tangent`
+
+| Field | Source | Source location |
+| --- | --- | --- |
+| author | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/2011/file/d1f44e2f09dc172978a4d3151d11d63e-Metadata.json) | `authors` array |
+| title | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/2011/file/d1f44e2f09dc172978a4d3151d11d63e-Metadata.json) | `title` |
+| booktitle | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/2011/file/d1f44e2f09dc172978a4d3151d11d63e-Metadata.json) | `book` |
+| volume | [NeurIPS paper page](https://proceedings.neurips.cc/paper_files/paper/2011/hash/d1f44e2f09dc172978a4d3151d11d63e-Abstract.html) | proceedings volume, `24` |
+| pages | [NeurIPS metadata](https://proceedings.neurips.cc/paper_files/paper/2011/file/d1f44e2f09dc172978a4d3151d11d63e-Metadata.json) | `page_first`, `page_last` |
+| year | [NeurIPS paper page](https://proceedings.neurips.cc/paper_files/paper/2011/hash/d1f44e2f09dc172978a4d3151d11d63e-Abstract.html) | proceedings year, `2011` |
+
+## `janvier-neural-de`
+
+| Field | Source | Source location |
+| --- | --- | --- |
+| author | [arXiv](https://arxiv.org/abs/2602.04608) | author list |
+| title | [arXiv](https://arxiv.org/abs/2602.04608) | title |
+| year | [arXiv](https://arxiv.org/abs/2602.04608) | submission date, February 4, 2026 |
+| howpublished | [arXiv](https://arxiv.org/abs/2602.04608) | arXiv identifier and preprint status |
+| doi | [arXiv](https://arxiv.org/abs/2602.04608) | arXiv-issued DOI |
 
 ## `rabanser-shift`
 
