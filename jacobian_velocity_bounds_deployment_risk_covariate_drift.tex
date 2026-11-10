@@ -497,7 +497,7 @@ x_1\sim\mathcal N(1.05S,0.90^2),
 \qquad
 x_2\sim\mathcal N(1.25S+\delta(t),0.55^2).
 \]
-The first coordinate is a stable signal. The second is a nuisance coordinate that is predictive at training time but drifts during deployment. The label mechanism is held fixed throughout. Only $\delta(t)$ changes.
+The first coordinate is a stable signal. The second is a nuisance coordinate that is predictive at training time but drifts during deployment. Only $\delta(t)$ changes, preserving labels along transported sample paths while generally changing $P_t(Y\mid X)$. Thus this benchmark tests the directional mechanism under label-preserving transport rather than pure covariate shift.
 The benchmark is intentionally simple. Its job is to make the paper's directional mechanism observable with as little confounding structure as possible.
 
 The drift schedule is monotone and smooth, with speed
@@ -511,7 +511,7 @@ The drift schedule is monotone and smooth, with speed
 \end{align*}
 so the stream contains two periods of rapid motion. We train a small ReLU classifier on samples drawn at $t=0$ and evaluate it on fresh samples along the deployment path. The sweep uses $\lambda\in\{0,0.01,0.03,0.08\}$ over $20$ random seeds. DTR uses the true drift direction $V=e_2$ so that this experiment isolates the theorem-to-method link rather than subspace-estimation error.
 
-Figure~\ref{fig:theory} illustrates the temporal step in the paper's argument. Each point is one trained model, plotted by empirical risk volatility in \eqref{eq:temporal-volatility} versus the derivative-energy quantity from Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}. The points sit below the diagonal, as they should, and DTR moves the cloud toward the lower-left corner. The results also satisfy the full Jacobian-velocity upper bound from Theorem~\ref{thm:jv}, but that bound is numerically looser, so the figure emphasizes the sharper temporal step that anchors the rest of the pipeline. Averaging over $20$ seeds, mean volatility falls from $3.25\times10^{-3}$ for standard training to $2.39\times10^{-4}$ across the DTR sweep, while mean directional energy falls from $41.5$ to $1.85$.
+Figure~\ref{fig:theory} illustrates the temporal step in the paper's argument. Each point is one trained model, plotted by empirical risk volatility in \eqref{eq:temporal-volatility} versus the derivative-energy quantity from Lemma~\ref{lem:poincare} and \eqref{eq:poincare-bound}. The points sit below the diagonal, as they should, and DTR moves the cloud toward the lower-left corner. The Jacobian-velocity expression also upper-bounds empirical volatility in this transport example, but it is numerically looser, so the figure emphasizes the sharper temporal step. Averaging over $20$ seeds, mean volatility falls from $3.25\times10^{-3}$ for standard training to $2.39\times10^{-4}$ across the DTR sweep, while mean directional energy falls from $41.5$ to $1.85$.
 
 \begin{figure}[t]
   \centering
