@@ -14,6 +14,7 @@ __pycache__/
 
 # Local working notes
 allerton_notes/
+ieee_tai_submission_local/
 
 # OS/editor noise
 .DS_Store
