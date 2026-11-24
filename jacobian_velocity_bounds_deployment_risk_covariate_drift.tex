@@ -103,7 +103,7 @@ The quantity in \eqref{eq:temporal-volatility} is the notion of deployment volat
 \E\int_0^T \|\dot X_t\|^2dt < \infty.
 \]
 
-\textit{Assumption A2 (chain rule under the expectation).} The field $g_\theta$ is weakly differentiable, $t\mapsto g_\theta(X_t)$ is almost surely absolutely continuous, and
+\textit{Assumption A2 (chain rule under the expectation).} Assume $\E|g_\theta(X_0)|<\infty$. The field $g_\theta$ is weakly differentiable, $t\mapsto g_\theta(X_t)$ is almost surely absolutely continuous, and
 \[
 g_\theta(X_t)-g_\theta(X_s)=\int_s^t \nabla g_\theta(X_u)^\top \dot X_u\,du,
 \]
@@ -616,7 +616,7 @@ Because this dataset is explicitly a sensor-drift setting, the primary Air Quali
 s_t &= \|\mu_t-\mu_{t-1}\|, & v_t &= \frac{\mu_t-\mu_{t-1}}{\|\mu_t-\mu_{t-1}\|}, \\
 G_t &= \E[(\nabla f_\theta(X_t)^\top v_t)^2], & h_t &= s_t^2 G_t.
 \end{align*}
-We also test the UCI Tetouan City power-consumption dataset \cite{uci-tetouan}. It is a ten-minute 2017 weather-and-load series with three zone-level targets. We predict Zone~1 power consumption from temperature, humidity, wind speed, and diffuse-flow channels. Using the same frozen-model protocol, we train on January--April, validate on May--June, and deploy on July--December in six monthly blocks, yielding $17280/8784/26352$ training/validation/deployment points.
+We also test the UCI Tetouan City power-consumption dataset \cite{uci-tetouan}. It is a ten-minute 2017 weather-and-load series with three zone-level targets. We predict Zone~1 power consumption from temperature, humidity, wind speed, diffuse-flow channels, and eight cyclic calendar features ($13$ inputs). Using the same frozen-model protocol, we train on January--April, validate on May--June, and deploy on July--December in six monthly blocks, yielding $17280/8784/26352$ training/validation/deployment points.
 
 Table~\ref{tab:real-results} reports validation-MSE-selected results. Air Quality chooses $\lambda=0.08$ for isotropic smoothing and $\lambda=0.003$ for DTR, while Tetouan chooses $\lambda=3\times10^{-4}$ for isotropic smoothing and $\lambda=10^{-2}$ for DTR. On Air Quality, DTR improves mean deployment MSE, volatility, and terminal risk relative to standard training, while isotropic smoothing has the lowest mean MSE. On Tetouan, DTR improves both deployment MSE and volatility relative to both baselines (Figure~\ref{fig:tetouan}). The monitoring ablation in Table~\ref{tab:monitoring-volatility} complements these training results: rolling $h_t$ predicts future risk movement better than drift alone. Paired seed comparisons avoid per-block significance tests. Air Quality DTR improves deployment MSE and volatility in $9/10$ seeds against standard training; Tetouan DTR improves volatility in $8/10$ seeds against both standard and isotropic training, with bootstrap $95\%$ CIs for the paired mean differences below zero.
 
@@ -730,7 +730,7 @@ The experiments follow that arc. Synthetic studies isolate the inequality, align
 
 \vspace{-4pt}
 \section*{Acknowledgment}
-The author used AI tools, including Claude Code (Anthropic) and Codex (OpenAI), iteratively during development. These tools assisted with manuscript drafting and revision, experimental coding, figure preparation, and algebraic checks. Assistance extended across the manuscript and supporting computational materials. The author is responsible for all content and conclusions. The author reports no conflict of interest. No funding was received for this research.
+The author used AI tools, including Claude Code (Anthropic) and Codex (OpenAI), iteratively during development. These tools assisted with manuscript development, editorial revision, experimental coding, figure preparation, and algebraic checks. Assistance extended across the manuscript and supporting computational materials. The author is responsible for all content and conclusions. The author reports no conflict of interest. No funding was received for this research.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
