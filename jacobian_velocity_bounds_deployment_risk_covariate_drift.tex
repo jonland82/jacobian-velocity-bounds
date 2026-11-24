@@ -538,7 +538,7 @@ for DTR, with the same architecture and $20$ matched seeds over $\lambda\in\{0.0
 \caption{Directional comparison showing the mean over the nonzero-$\lambda$ sweep. Lower is better on all metrics.}
 \centering
 \setlength{\tabcolsep}{4pt}
-\small
+\footnotesize
 \begin{tabular}{lcccc}
 \toprule
 Method & Deriv.\ energy & Volatility & Dir.\ energy & Term.\ risk \\
@@ -589,7 +589,7 @@ Table~\ref{tab:gas-hybrid} compares the three endpoints of \eqref{eq:anisotropic
 \caption{UCI gas-sensor frozen deployment. Hyperparameters are selected on batches $3$--$5$ and evaluated on batches $6$--$10$. Entries are mean $\pm$ standard deviation over $10$ matched seeds. Lower is better except for macro accuracy.}
 \centering
 \setlength{\tabcolsep}{5pt}
-\scriptsize
+\footnotesize
 \begin{tabular}{lccccc}
 \toprule
 Method $(\lambda_\perp,\lambda_\parallel)$ & Deploy CE & Volatility & Terminal CE & Macro acc. \\
@@ -624,7 +624,7 @@ Table~\ref{tab:real-results} reports validation-MSE-selected results. Air Qualit
 \caption{Validation-selected real deployment results. Entries are mean $\pm$ standard deviation over $10$ matched random seeds. Lower is better for all metrics. For Tetouan, deployment MSE, volatility, and terminal risk are reported in units of $10^8$, $10^{16}$, and $10^7$, respectively.}
 \centering
 \setlength{\tabcolsep}{4pt}
-\scriptsize
+\footnotesize
 \begin{tabular}{llcccc}
 \toprule
 Dataset & Method & Deploy MSE & Volatility & Dir.\ energy & Terminal risk \\
@@ -645,7 +645,7 @@ Tetouan & DTR & $0.682\pm0.487$ & $0.307\pm0.432$ & $0.013\pm0.008$ & $1.45\pm0.
 \caption{Retrospective and strict predeployment rank-$2$ subspaces. Entries are means over $10$ matched seeds; Angle is the largest principal angle to the retrospective basis, Energy is captured deployment drift energy, and wins are paired DTR-vs-standard MSE/volatility wins. Tetouan deployment MSE and volatility are reported in units of $10^8$ and $10^{16}$, respectively.}
 \centering
 \setlength{\tabcolsep}{4pt}
-\scriptsize
+\footnotesize
 \begin{tabular}{llcccccc}
 \toprule
 Dataset & Basis & Angle & Energy & $\lambda$ & Deploy MSE & Volatility & Wins \\
@@ -670,7 +670,7 @@ Table~\ref{tab:aq-subspace} shows why the Air Quality subspace definition matter
 \caption{Air Quality DTR subspace ablation. Entries are means over $10$ matched seeds. The first two DTR rows are validation-MSE selected; the weather-residualized row is a moderate-penalty sensitivity point. Wins are paired DTR-vs-standard MSE/volatility wins.}
 \centering
 \setlength{\tabcolsep}{3.5pt}
-\scriptsize
+\footnotesize
 \begin{tabular}{lccccc}
 \toprule
 Subspace & $\lambda$ & MSE & Vol. & Energy & Wins \\
@@ -689,7 +689,7 @@ Finally, we evaluated the matched hazard score against block-to-block risk movem
 \caption{Monitoring-score ablation on selected DTR deployments. Entries are Spearman correlations with next-block squared risk change $(r_{t+1}-r_t)^2$. Higher is better. Roll-2 and Roll-3 are trailing two- and three-block arithmetic averages of $h_t$, including the current block; only complete windows are evaluated.}
 \centering
 \setlength{\tabcolsep}{3pt}
-\scriptsize
+\footnotesize
 \begin{tabular}{lrrrrr}
 \toprule
 Dataset & Drift $s_t^2$ & Energy $G_t$ & Product $h_t$ & Roll-2 $h_t$ & Roll-3 $h_t$ \\
